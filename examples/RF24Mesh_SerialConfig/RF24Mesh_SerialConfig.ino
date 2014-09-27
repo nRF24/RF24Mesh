@@ -51,7 +51,7 @@ void setup() {
   
 }
 
-unsigned long displayTimer;
+unsigned long displayTimer=0;
 
 void loop() {
   
@@ -61,7 +61,7 @@ void loop() {
   if(millis() - displayTimer >= 1000){
     displayTimer = millis();    
     // Send the current millis() value to the master node as an 'M' type message
-    mesh.write(&displayTimer,'M');
+    mesh.write(&displayTimer,'M',sizeof(displayTimer));
   }
   
 }

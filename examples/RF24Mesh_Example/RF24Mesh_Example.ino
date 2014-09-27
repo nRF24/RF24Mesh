@@ -12,15 +12,16 @@
 #include "RF24Mesh.h"
 #include <SPI.h>
 #include <EEPROM.h>
-//#include <printf.h>
+#include <printf.h>
 
-/** Configure the nrf24l01 CE and CS pins */
+
+/**** Configure the nrf24l01 CE and CS pins ****/
 RF24 radio(7,8);
 RF24Network network(radio);
 RF24Mesh mesh(radio,network);
 
 /** 
- * User Configuration: NodeID - A unique identifier for each radio. Allows addressing
+ * User Configuration: nodeID - A unique identifier for each radio. Allows addressing
  * to change dynamically with physical changes to the mesh.  
  *
  * In this example, configuration takes place below, prior to uploading the sketch to the device
@@ -28,14 +29,16 @@ RF24Mesh mesh(radio,network);
  * This will be stored in EEPROM on AVR devices, so remains persistent between further uploads, loss of power, etc.
  *
  **/
-    #define nodeID 1
+#define nodeID 1
     
+
 
 uint32_t displayTimer=0;
 
 void setup() {
   
-  Serial.begin(115200);  
+  Serial.begin(115200);
+  printf_begin();
   // Set the nodeID manually
   mesh.setNodeID(nodeID);
   // Connect to the mesh
@@ -53,10 +56,10 @@ void loop() {
   if(millis() - displayTimer >= 1000){
     displayTimer = millis();
     
-    if(!mesh.write(&displayTimer,'M')){
+    if(!mesh.write(&displayTimer,'M',sizeof(displayTimer))){
        
       // If a write fails, refresh the network address
-      // The address could be refreshed per a specified timeframe or only when multiple sequential writes fail, etc.
+      // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
        mesh.renewAddress(); 
     }
   }
