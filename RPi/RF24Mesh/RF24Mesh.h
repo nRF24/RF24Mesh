@@ -95,7 +95,7 @@ private:
   RF24& radio;
   RF24Network& network;
   
-  bool findNodes(RF24NetworkHeader& header,uint8_t level); /**< Broadcasts to all multicast levels to find available nodes **/
+  bool findNodes(uint8_t level, uint16_t *address); /**< Broadcasts to all multicast levels to find available nodes **/
   bool requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered **/
   bool waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
   uint32_t lastSaveTime;
@@ -103,6 +103,7 @@ private:
   
   //#if defined (ARDUINO_SAM_DUE)
 	std::map<char,uint16_t> addrMap;
+	uint8_t _nodeID;
   //#endif
  };
  

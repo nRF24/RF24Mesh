@@ -39,18 +39,20 @@ void RF24Mesh::renewAddress(){
 }
 
 
-bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level){
+bool RF24Mesh::findNodes(uint8_t level, uint16_t *address){
 
-  
   // Multicast a NETWORK_POLL request to the specified level
+  
+  RF24NetworkHeader header( 0100, NETWORK_POLL );
   network.multicast(header,0,0,level);
   
   // Wait for a response
-  if( waitForAvailable(750UL) == 0 ){ 
+  if( waitForAvailable(1750UL) == 0 ){ 
     IF_MESH_DEBUG(Serial.print("MSH: No poll response from level ");Serial.println(level););
     return 0;
   }
-   // Check to see if a valid response was received
+  
+    // Check to see if a valid response was received
     network.read(header,0,0);
    if(header.type != NETWORK_POLL){
 	  while(network.available()){
@@ -61,7 +63,9 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level){
 	if(header.type != NETWORK_POLL){
       IF_MESH_DEBUG(Serial.print("MSH: Wrong type, expected poll response ");Serial.println(header.type););	  
       return 0; 
-    }
+    }else{
+	  *address = header.from_node;
+	}
     
 	IF_MESH_DEBUG(Serial.println("MSH: Got poll"););
     return 1;
@@ -71,17 +75,17 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level){
 bool RF24Mesh::requestAddress(uint8_t level){    
     
      //Find another radio, starting with level 0 multicast  
-    RF24NetworkHeader header( 0100, NETWORK_POLL );
+    uint16_t contactNode;
 
     // Send the multicast broadcast to find an available contact node
-    if( !findNodes(header,level) ) { IF_MESH_DEBUG(Serial.println("FNds FAIL");); return 0; }
+    if( !findNodes(level,&contactNode) ) { IF_MESH_DEBUG(Serial.println("FNds FAIL");); return 0; }
 
-    uint16_t contactNode = header.from_node;
     
+    RF24NetworkHeader header( contactNode, NETWORK_REQ_ADDRESS );
     // Request an address via the contact node
-    header.type = NETWORK_REQ_ADDRESS;
+    //header.type = NETWORK_REQ_ADDRESS;
     header.reserved = getNodeID();
-    header.to_node = header.from_node;    
+    //header.to_node = header.from_node;    
     
     // Do a direct write (no ack) to the contact node. Include the nodeId and address.
     network.write(header,&mesh_address,2,contactNode);

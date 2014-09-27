@@ -4,7 +4,7 @@
 #define __RF24MESH_CONFIG_H__
 
 /*** User Configuration ***/
-//#define MESH_DEBUG /** Uncomment to enable debug output to serial **/
+#define MESH_DEBUG /** Uncomment to enable debug output to serial **/
 #define MESH_MAX_CHILDREN 2 /** Set 1 to 4 (Default: 4) Restricts the maximum children per node. **/
 /**************************/
 

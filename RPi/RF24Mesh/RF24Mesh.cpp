@@ -39,24 +39,33 @@ void RF24Mesh::renewAddress(){
 }
 
 
-bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level){
+bool RF24Mesh::findNodes(uint8_t level, uint16_t *address){
 
   
   // Multicast a NETWORK_POLL request to the specified level
+  RF24NetworkHeader header( 0100, NETWORK_POLL );
   network.multicast(header,0,0,level);
 
   // Wait for a response
-  if( waitForAvailable(2000UL) == 0 ){ 
+  if( waitForAvailable(1750UL) == 0 ){ 
     IF_MESH_DEBUG(printf("MSH: No poll response from level %d\n",level););
     return 0;
   }
 
     // Check to see if a valid response was received
     network.read(header,0,0);
+   if(header.type != NETWORK_POLL){
+	  while(network.available()){
+	  network.read(header,0,0);
+	  if(header.type == NETWORK_POLL){ break; }
+	  }
+	}
     if(header.type != NETWORK_POLL){
       IF_MESH_DEBUG(printf("MSH: Wrong type, expected poll response %d",header.type););	  
       return 0; 
-    }
+    }else{
+	  *address = header.from_node;
+	}
     
 	IF_MESH_DEBUG(printf("MSH: Got poll\n"););
     return 1;
@@ -66,17 +75,15 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level){
 bool RF24Mesh::requestAddress(uint8_t level){    
     
      //Find another radio, starting with level 0 multicast  
-    RF24NetworkHeader header( 0100, NETWORK_POLL );
+    uint16_t contactNode;
 
     // Send the multicast broadcast to find an available contact node
-    if( !findNodes(header,level) ) { IF_MESH_DEBUG(printf("FNds FAIL\n");); return 0; }
-
-    uint16_t contactNode = header.from_node;
+    if( !findNodes(level,&contactNode) ) { IF_MESH_DEBUG(printf("FNds FAIL\n");); return 0; }
     
+	RF24NetworkHeader header( contactNode, NETWORK_REQ_ADDRESS );
     // Request an address via the contact node
-    header.type = NETWORK_REQ_ADDRESS;
     header.fragment_id = getNodeID();
-    header.to_node = header.from_node;    
+      
     
     // Do a direct write (no ack) to the contact node. Include the nodeId and address.
     network.write(header,&mesh_address,2,contactNode);
@@ -150,9 +157,11 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
 
 //#if defined (ARDUINO_SAM_DUE) || 
 uint8_t RF24Mesh::getNodeID(){
-	return 0;
+	return _nodeID;
 }
-
+void RF24Mesh::setNodeID(uint8_t nodeID){
+	_nodeID = nodeID;
+}
 void RF24Mesh::DHCP(){
   
   if(network.available()){
