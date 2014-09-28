@@ -151,7 +151,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 			   #ifdef MESH_DEBUG_SERIAL
 				 Serial.print("Set address: 0");				    
 					while(addrResponse.new_address){
-						Serial.print(addrResponse.new_address & mask + 47);
+						Serial.print((addrResponse.new_address & mask) );
 						addrResponse.new_address >>= 3; //get the individual Octal numbers, specified in chunks of 3 bits
 					}
 					Serial.println("");
