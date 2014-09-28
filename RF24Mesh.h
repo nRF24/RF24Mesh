@@ -13,18 +13,32 @@
  * Class declaration for RF24Mesh
  */
 
-#include <RF24.h>
-#include <RF24Network.h>
-#include <RF24Mesh_config.h>
-#if defined (__AVR__)
-#include "EEPROM.h"
+#if defined (__AVR_ATtiny85__) || defined (__AVR_ATtiny84__)
+	#define RF24_TINY
 #endif
-#include <stddef.h>
-#include <stdint.h>
-//#include "RF24Mesh_config.h"
-#if defined (ARDUINO_SAM_DUE)
+
+
+
+#if defined (__linux)
+  #include <RF24/RF24.h>
+  #include <RF24Network/RF24Network.h>
+#else
+  #include <RF24.h>
+  #include <RF24Network.h>
+  #include "RF24Mesh_config.h"
+  #if defined (__AVR__) && !defined(RF24_TINY)
+    #include <EEPROM.h>
+  #endif
+#endif
+
+  #include <stddef.h>
+  #include <stdint.h>
+  
+#if defined (__linux) || defined (ARDUINO_SAM_DUE)
   #include <map>
 #endif
+
+
 
 class RF24;
 class RF24Network;
@@ -118,8 +132,10 @@ public:
   bool waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
   uint32_t lastSaveTime;
   
-  #if defined (ARDUINO_SAM_DUE)
-	std::map<char,uint16_t> addrMap;
+  #if defined (ARDUINO_SAM_DUE) || defined (__linux)
+	std::map<char,uint16_t> addrMap;	
+  #endif
+  #if defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY)
 	uint8_t _nodeID;
   #endif
  };
@@ -129,7 +145,7 @@ public:
  
  /**
   * @example RF24Mesh_Example.ino
-  *
+  * <b> Arduino Example Sketch </b><br>
   * This example sketch shows how to manually configure a node via RF24Mesh, and send data to the
   * master node.
   * The nodes will refresh their network address as soon as a single write fails. This allows the
@@ -138,7 +154,7 @@ public:
   
  /**
   * @example RF24Mesh_Example_Master.ino
-  *
+  * <b> Arduino Example Sketch </b><br>
   * @note This sketch only functions on -Arduino Due-
   *
   * This example sketch shows how to manually configure a node via RF24Mesh as a master node, which
@@ -155,6 +171,30 @@ public:
   * 
   * This example sketch shows how the same sketch can be written to a large number of devices, which are
   * configured later via Serial input. 
+  *
+  */
+ 
+  /**
+  * @example RF24Mesh_Example.cpp
+  * 
+  * <b> Raspberry Pi Example Sketch </b><br>
+  * This example sketch shows how to manually configure a node via RF24Mesh, and send data to the
+  * master node.
+  * The nodes will refresh their network address as soon as a single write fails. This allows the
+  * nodes to change position in relation to each other and the master node.
+  */
+  
+ /**
+  * @example RF24Mesh_Example_Master.cpp
+  *
+  * <b> Raspberry Pi Example Sketch </b><br>
+  *
+  * This example sketch shows how to manually configure a node via RF24Mesh as a master node, which
+  * will receive all data from sensor nodes.
+  *
+  * The nodes can change physical or logical position in the network, and reconnect through different
+  * routing nodes as required. The master node manages the address assignments for the individual nodes
+  * in a manner similar to DHCP.
   *
   */
  

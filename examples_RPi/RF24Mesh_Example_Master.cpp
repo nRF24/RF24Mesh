@@ -45,7 +45,7 @@ while(1)
   
   
   // Check for incoming data from the sensors
-  if(network.available()){
+  while(network.available()){
     printf("rcv\n");
     RF24NetworkHeader header;
     network.peek(header);
@@ -54,7 +54,7 @@ while(1)
     switch(header.type){
       // Display the incoming millis() values from the sensor nodes
       case 'M': network.read(header,&dat,sizeof(dat)); printf("Rcv %u from 0%o\n",dat,header.from_node); break;
-      default: network.read(header,0,0);break;
+      default:  network.read(header,0,0); printf("Rcv %d from 0%o\n",header.type,header.from_node); break;
     }
   }
 delay(1);

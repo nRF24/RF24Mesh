@@ -14,11 +14,12 @@
 #define MESH_DEFAULT_ADDRESS 04444
 #define MESH_DEFAULT_CHANNEL 90
 
-
   #if defined (MESH_DEBUG)
-	#define IF_MESH_DEBUG(x) ({x;})
-  #else
-	#define IF_MESH_DEBUG(x)
+    #if !defined (__linux) && !defined ARDUINO_SAM_DUE
+		#define MESH_DEBUG_SERIAL		       
+	#else
+		#define MESH_DEBUG_PRINTF
+	#endif
   #endif
 
 
