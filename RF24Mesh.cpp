@@ -34,7 +34,7 @@ void RF24Mesh::renewAddress(){
 
   while(!requestAddress(reqCounter)){
     delay(requestDelay);   
-    (++reqCounter)%5;
+    (++reqCounter) = reqCounter%4;
   }
 }
 
@@ -181,6 +181,7 @@ bool RF24Mesh::waitForAvailable(uint32_t timeout){
     unsigned long timer = millis();
     while(millis()-timer < timeout){
       network.update();
+	  if(network.available()){ return 1; }
 	}
     if(network.available()){ return 1; }
 	else{  return 0; }
@@ -281,7 +282,7 @@ void RF24Mesh::DHCP(){
      }     
 
        #ifdef MESH_DEBUG_PRINTF
-	     printf("%u MSH: Rcv addr req from_id %d \n",millis(),from_id);
+	   //  printf("%u MSH: Rcv addr req from_id %d \n",millis(),from_id);
 	   #endif
 	   
        std::map<char,uint16_t>::iterator it;
@@ -294,7 +295,7 @@ void RF24Mesh::DHCP(){
          
         bool found = 0;
         addrResponse.new_address = fwd_by | (i << shiftVal);
-		if(!network.is_valid_address(addrResponse.new_address)){ continue; }
+		if(!network.is_valid_address(addrResponse.new_address) || !addrResponse.new_address){ printf("dumped 0%o\n",addrResponse.new_address); continue; }
         //Search through all assigned/stored addresses
         for (std::map<char,uint16_t>::iterator it=addrMap.begin(); it!=addrMap.end(); ++it){                  
           if( it->second == addrResponse.new_address ){ //address found in use
@@ -319,7 +320,7 @@ void RF24Mesh::DHCP(){
 		  addrMap[from_id] = addrResponse.new_address;
           
 		  #ifdef MESH_DEBUG_PRINTF
-		    printf("Sent to 0%o phys: 0%o new: 0%o \n", header.to_node,addrResponse.requester,addrResponse.new_address);
+		    printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,addrResponse.requester,addrResponse.new_address,header.reserved);
           #endif
 		  break;
         }else{
