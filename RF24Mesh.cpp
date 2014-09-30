@@ -169,7 +169,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 		           delay(5); 
 		           break;
         }
-		//network.update();
+		network.update();
     }
     return 0;
   
@@ -285,7 +285,7 @@ void RF24Mesh::DHCP(){
 	   //  printf("%u MSH: Rcv addr req from_id %d \n",millis(),from_id);
 	   #endif
        
-	   for(int i=MESH_MAX_CHILDREN; i> -1; i--){ // For each of the possible addresses (5 max)
+	   for(int i=MESH_MAX_CHILDREN; i> 0; i--){ // For each of the possible addresses (5 max)
          
         bool found = 0;
         addrResponse.new_address = fwd_by | (i << shiftVal);
