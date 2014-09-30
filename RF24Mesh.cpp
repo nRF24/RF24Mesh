@@ -239,7 +239,7 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
 
 void RF24Mesh::DHCP(){
   
-  if(network.available()){
+  while(network.available()){
     RF24NetworkHeader header;
     network.peek(header);
     
@@ -284,14 +284,8 @@ void RF24Mesh::DHCP(){
        #ifdef MESH_DEBUG_PRINTF
 	   //  printf("%u MSH: Rcv addr req from_id %d \n",millis(),from_id);
 	   #endif
-	   
-       std::map<char,uint16_t>::iterator it;
-
-       //Clear any values with this ID
-       it=addrMap.find(from_id);
-       if(it != addrMap.end()){  addrMap.erase(it); } //IF_MESH_DEBUG(printf("addr erased\n");); }
        
-       for(uint16_t i=1; i<MESH_MAX_CHILDREN+1; i++){ // For each of the possible addresses (5 max)
+	   for(int i=MESH_MAX_CHILDREN; i> -1; i--){ // For each of the possible addresses (5 max)
          
         bool found = 0;
         addrResponse.new_address = fwd_by | (i << shiftVal);
@@ -322,12 +316,17 @@ void RF24Mesh::DHCP(){
 		  #ifdef MESH_DEBUG_PRINTF
 		    printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,addrResponse.requester,addrResponse.new_address,header.reserved);
           #endif
+		  
 		  break;
         }else{
-		  printf("not found\n");
+		#if defined (MESH_DEBUG_PRINTF)
+		  printf("not allocated\n");
+		#endif
 		}
       }
 
+   }else{
+	break;
    }
     
   }
