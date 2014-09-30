@@ -169,7 +169,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 		           delay(5); 
 		           break;
         }
-		network.update();
+		//network.update();
     }
     return 0;
   
@@ -292,7 +292,8 @@ void RF24Mesh::DHCP(){
 		if(!network.is_valid_address(addrResponse.new_address) || !addrResponse.new_address){ printf("dumped 0%o\n",addrResponse.new_address); continue; }
         //Search through all assigned/stored addresses
         for (std::map<char,uint16_t>::iterator it=addrMap.begin(); it!=addrMap.end(); ++it){                  
-          if( it->second == addrResponse.new_address ){ //address found in use
+          printf("ID: %d ADDR: 0%o\n", it->first,it->second);
+		  if( it->second == addrResponse.new_address ){ //address found in use		  
              found = 1;             
              break;
           }
