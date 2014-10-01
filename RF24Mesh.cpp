@@ -24,7 +24,7 @@ void RF24Mesh::begin(){
 
 bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size ){
   RF24NetworkHeader header(00,msg_type);
-  return network.write(header,data,size);  
+  return network.write(header,&data,size);  
 }
 
 
@@ -46,7 +46,7 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *addr
   network.multicast(header,0,0,level);
   
   // Wait for a response
-  if( waitForAvailable(150UL) == 0 ){ 
+  if( waitForAvailable(350UL) == 0 ){ 
     #if defined (MESH_DEBUG_SERIAL)
 	Serial.print( millis() ); Serial.print(" MSH: No poll response from level ");Serial.println(level);
     #elif defined (MESH_DEBUG_PRINTF)
@@ -54,7 +54,7 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *addr
 	#endif
     return 0;
   }
-  
+  //delay(100);
     uint16_t tmp_address = 077;
     // Check to see if a valid response was received
     while( network.available()){
@@ -128,6 +128,9 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	  return 0;
     }
     
+	RF24NetworkHeader origHeader = header;
+	bool once = 1;
+	
     while(network.available() ){        
         network.peek(header);   
         uint8_t mask = 7;		
@@ -166,7 +169,12 @@ bool RF24Mesh::requestAddress(uint8_t level){
 				     printf("%u MSH: Expect addr resp,got %d from 0%o\n", millis(), header.type, header.from_node);
 				   #endif
 		           network.read(header,0,0);
-		           delay(5); 
+					
+				   if(once){
+					once=0;		           
+				   network.write(origHeader,&mesh_address,sizeof(addrResponse),contactNode);
+				   waitForAvailable(350UL);
+				   }
 		           break;
         }
 		//network.update();
