@@ -24,7 +24,7 @@ void RF24Mesh::begin(){
 
 bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size ){
   RF24NetworkHeader header(00,msg_type);
-  return network.write(header,&data,size);  
+  return network.write(header,data,size);  
 }
 
 
@@ -48,7 +48,7 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *addr
   // Wait for a response
   if( waitForAvailable(350UL) == 0 ){ 
     #if defined (MESH_DEBUG_SERIAL)
-	Serial.print( millis() ); Serial.print(" MSH: No poll response from level ");Serial.println(level);
+	Serial.print( millis() ); Serial.print(PSTR(" MSH: No poll response from level "));Serial.println(level);
     #elif defined (MESH_DEBUG_PRINTF)
 	printf( "%u MSH: No poll response from level %d\n", millis(), level);
 	#endif
@@ -67,7 +67,7 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *addr
 	
 	if(*address == 077){
       #ifdef MESH_DEBUG_SERIAL
-		Serial.print( millis() );Serial.print(" MSH: Wrong type, expected poll response ");Serial.println(header.type);
+		Serial.print( millis() );Serial.print(PSTR(" MSH: Wrong type, expected poll response "));Serial.println(header.type);
 	  #elif defined MESH_DEBUG_PRINTF
 	    printf("%u MSH: Wrong type, expected poll response %d\n",millis(), header.type);
 	  #endif
@@ -75,7 +75,7 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *addr
     }
 	
     #ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.print(" MSH: Got poll from level "); Serial.println(level);
+	Serial.print( millis() ); Serial.print(PSTR(" MSH: Got poll from level ")); Serial.println(level);
 	#elif defined MESH_DEBUG_PRINTF
 	printf("%u MSH: Got poll from level %d\n",millis(),level);
     #endif
@@ -99,7 +99,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
     // Send the multicast broadcast to find an available contact node
     if( !findNodes(header,level,&contactNode) ) { 
 		#ifdef MESH_DEBUG_SERIAL
-		  Serial.print( millis() ); Serial.println(" FNds FAIL");
+		  Serial.print( millis() ); Serial.println(PSTR(" FNds FAIL"));
 		#elif defined MESH_DEBUG_PRINTF
 		  printf("%u FNds FAIL\n",millis() );
 		#endif
@@ -114,14 +114,14 @@ bool RF24Mesh::requestAddress(uint8_t level){
     // Do a direct write (no ack) to the contact node. Include the nodeId and address.
     network.write(header,&mesh_address,sizeof(addrResponse),contactNode);
     #ifdef MESH_DEBUG_SERIAL
-	  Serial.print( millis() ); Serial.println(" MSH: Request address ");
+	  Serial.print( millis() ); Serial.println(PSTR(" MSH: Request address "));
 	#elif defined MESH_DEBUG_PRINTF
 	  printf("%u  MSH: Request address this node: 0%o\n",millis(),mesh_address);
 	#endif
 	
     if( !waitForAvailable(500UL) ){
 		#ifdef MESH_DEBUG_SERIAL
-          Serial.print( millis() ); Serial.print(" MSH: No address response from level "); Serial.println( level );
+          Serial.print( millis() ); Serial.print(PSTR(" MSH: No address response from level ")); Serial.println( level );
 		#elif defined MESH_DEBUG_PRINTF
 		  printf("%u MSH: No address response from level %d\n",millis(),level );
 		#endif
@@ -141,7 +141,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 			   
 			   if(!addrResponse.new_address || header.reserved != getNodeID() || !network.is_valid_address(addrResponse.new_address)){
                  #ifdef MESH_DEBUG_SERIAL
-				   Serial.print(millis()); Serial.println(" MSH: Response discarded, wrong node");
+				   Serial.print(millis()); Serial.println(PSTR(" MSH: Response discarded, wrong node"));
 				 #elif defined MESH_DEBUG_PRINTF
 				   printf("%u Response discarded, wrong node 0%o from node 0%o sending node 0%o\n",millis(),addrResponse.new_address,header.from_node,addrResponse.requester);
                  #endif
@@ -150,7 +150,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 			   //mesh_address = 0;
 			   mesh_address = addrResponse.new_address;
 			   #ifdef MESH_DEBUG_SERIAL
-				 Serial.print("Set address: 0");				    
+				 Serial.print(PSTR("Set address: 0"));				    
 					while(addrResponse.new_address){
 						Serial.print((addrResponse.new_address & mask) );
 						addrResponse.new_address >>= 3; //get the individual Octal numbers, specified in chunks of 3 bits
@@ -164,7 +164,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
                break; 
           default: 
 				   #ifdef MESH_DEBUG_SERIAL
-					 Serial.print( millis() ); Serial.print(" MSH: Expect addr resp,got "); Serial.println(header.type);
+					 Serial.print( millis() ); Serial.print(PSTR(" MSH: Expect addr resp,got ")); Serial.println(header.type);
                    #elif defined MESH_DEBUG_PRINTF
 				     printf("%u MSH: Expect addr resp,got %d from 0%o\n", millis(), header.type, header.from_node);
 				   #endif
@@ -212,7 +212,7 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
   
   if(millis() - lastSaveTime < MESH_MIN_SAVE_TIME && millis() >= MESH_MIN_SAVE_TIME){	
 	#ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.println(" MSH: Can't change nodeID that fast"); 
+	Serial.print( millis() ); Serial.println(PSTR(" MSH: Can't change nodeID that fast")); 
 	#endif	
 	return;
   }
@@ -221,11 +221,11 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
   if(EEPROM.read(509) != 'R' || EEPROM.read(510) != 'F' || EEPROM.read(511) != nodeID){
     EEPROM.write(509,'R');  EEPROM.write(510,'F'); EEPROM.write(511, nodeID);  
     #ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.println(" MSH: Wrote data to EEPROM");
+	Serial.print( millis() ); Serial.println(PSTR(" MSH: Wrote data to EEPROM"));
 	#endif  
   }else{    
 	#ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.println(" MSH: Data already stored in EEPROM");
+	Serial.print( millis() ); Serial.println(PSTR(" MSH: Data already stored in EEPROM"));
 	#endif  
   }
 }
