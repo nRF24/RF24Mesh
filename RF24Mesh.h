@@ -78,6 +78,12 @@ public:
   void begin();
   
   /**
+   * Very similar to network.update(), it needs to be called regularly to keep the network
+   * and the mesh going.
+   */   
+  void update();
+  
+  /**
    * Automatically construct a header and send a payload to the 'master' node.
    * Very similar to the standard network.write() function, which can be used directly.
    * @param data Send any type of data of any length (Very large payloads will be more error prone)
@@ -109,6 +115,13 @@ public:
   uint8_t getNodeID();
   
   /**
+   * Tests connectivity of this node to the mesh.
+   * @return Return 1 if connected, 0 if mesh not responding after up to 1 second
+   */
+  
+  bool checkConnection();
+  
+  /**
   * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
   * a routing node goes down.
   * @note Currently blocks until a connection is established and an address is received.  
@@ -121,14 +134,16 @@ public:
   */  
   void DHCP();
   
-  /**< The assigned RF24Network (Octal) address of this node */
+  /**
+   * The assigned RF24Network (Octal) address of this node 
+   */
   uint16_t mesh_address; 
   
   private:
   RF24& radio;
   RF24Network& network;  
   bool findNodes(RF24NetworkHeader& header, uint8_t level, uint16_t *address); /**< Broadcasts to all multicast levels to find available nodes **/
-  bool requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered **/
+  bool requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
   bool waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
   uint32_t lastSaveTime;
   

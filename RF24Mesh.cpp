@@ -22,17 +22,52 @@ void RF24Mesh::begin(){
   
 }
 
+void RF24Mesh::update(){
+	
+	network.update();
+	RF24NetworkHeader header;
+	
+	network.peek(header);
+	/*if(header.type > 127){
+	    uint16_t address;
+		switch(header.type){
+			case NETWORK_RECONVERGE:
+				 printf("recnv\n");
+				 network.read(header,&address,sizeof(address));
+				 delay(1500);
+			     requestAddress(0,address);
+				 //renewAddress();
+				 break;
+		
+		
+		}
+	}*/
+
+}
+
 bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size ){
   RF24NetworkHeader header(00,msg_type);
   return network.write(header,data,size);  
 }
 
+bool RF24Mesh::checkConnection(){
+	RF24NetworkHeader header(00,NETWORK_ACK);
+	uint8_t count = 3;
+	bool ok;
+	while(count--){
+		ok = network.write(header,0,0);
+		delay(333);
+		if(ok){break;}
+	}
+	return ok;
+	
+}
 
 void RF24Mesh::renewAddress(){
   static const uint16_t requestDelay = 500;
   uint8_t reqCounter = 0;
 
-  while(!requestAddress(reqCounter)){
+  while(!requestAddress(reqCounter,0)){
     delay(requestDelay);   
     (++reqCounter) = reqCounter%4;
   }
@@ -83,7 +118,8 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *addr
 }
 
 
-bool RF24Mesh::requestAddress(uint8_t level){    
+
+bool RF24Mesh::requestAddress(uint8_t level, uint16_t contactAddress){    
     
 	RF24NetworkHeader header( 0100, NETWORK_POLL );
 	
@@ -92,10 +128,11 @@ bool RF24Mesh::requestAddress(uint8_t level){
       uint16_t new_address;  
     }addrResponse;
 
-
+   
      //Find another radio, starting with level 0 multicast  
     uint16_t contactNode;
 	
+	if(!contactAddress){
     // Send the multicast broadcast to find an available contact node
     if( !findNodes(header,level,&contactNode) ) { 
 		#ifdef MESH_DEBUG_SERIAL
@@ -105,7 +142,9 @@ bool RF24Mesh::requestAddress(uint8_t level){
 		#endif
 		return 0;
     }
-	
+	}else{
+		contactNode = contactAddress;
+	}
     // Request an address via the contact node
     header.type = NETWORK_REQ_ADDRESS;
     header.reserved = getNodeID();
@@ -133,7 +172,9 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	
     while(network.available() ){        
         network.peek(header);   
-        uint8_t mask = 7;		
+		#ifdef MESH_DEBUG_SERIAL
+        uint8_t mask = 7;	char addr[5] = "    ", count=3; uint16_t newAddr;	
+		#endif
         switch(header.type){
           case NETWORK_ADDR_RESPONSE: 
 		       
@@ -146,19 +187,20 @@ bool RF24Mesh::requestAddress(uint8_t level){
 				   printf("%u Response discarded, wrong node 0%o from node 0%o sending node 0%o\n",millis(),addrResponse.new_address,header.from_node,addrResponse.requester);
                  #endif
 				 return 0;
-			   }
-			   //mesh_address = 0;
-			   mesh_address = addrResponse.new_address;
+			   }  
 			   #ifdef MESH_DEBUG_SERIAL
-				 Serial.print("Set address: 0");				    
-					while(addrResponse.new_address){
-						Serial.print((addrResponse.new_address & mask) );
-						addrResponse.new_address >>= 3; //get the individual Octal numbers, specified in chunks of 3 bits
+				 Serial.print("Set address: ");
+					newAddr = addrResponse.new_address;
+					while(newAddr){
+							addr[count] = (newAddr & mask)+48; //get the individual Octal numbers, specified in chunks of 3 bits, convert to ASCII by adding 48
+						newAddr >>= 3;
+						count--;
 					}
-					Serial.println("");
+					Serial.println(addr);
 			   #elif defined (MESH_DEBUG_PRINTF)
-				 printf("Set address 0%o rcvd 0%01o\n",mesh_address,addrResponse.new_address);
+				 printf("Set address 0%o rcvd 0%o\n",mesh_address,addrResponse.new_address);
 			   #endif
+			     mesh_address = addrResponse.new_address;
 				 network.begin(90,mesh_address);
                return 1;
                break; 
@@ -314,13 +356,17 @@ void RF24Mesh::DHCP(){
 		  //This is a routed request to 00
           if(header.from_node != addrResponse.requester){ //Is NOT node 01 to 05
 			delay(2);
-			network.write(header,&addrResponse,sizeof(addrResponse));
+			if( network.write(header,&addrResponse,sizeof(addrResponse)) ){
+				addrMap[from_id] = addrResponse.new_address;
+			}
           }else{
 		    delay(5);
             network.write(header,&addrResponse,sizeof(addrResponse),header.to_node);
+			network.write(header,&addrResponse,sizeof(addrResponse),header.to_node);
+			addrMap[from_id] = addrResponse.new_address;
           }
           
-		  addrMap[from_id] = addrResponse.new_address;
+		  
           
 		  #ifdef MESH_DEBUG_PRINTF
 		    printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,addrResponse.requester,addrResponse.new_address,header.reserved);
