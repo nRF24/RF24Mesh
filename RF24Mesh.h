@@ -148,10 +148,11 @@ public:
   bool doDHCP; /**< Indicator that an address request is available */
   uint32_t lastSaveTime;
   
+  public:
   #if defined (ARDUINO_SAM_DUE) || defined (__linux)
 	std::map<char,uint16_t> addrMap;	
   #endif
-  #if defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY)
+  #if defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)
 	uint8_t _nodeID;
   #endif
  };

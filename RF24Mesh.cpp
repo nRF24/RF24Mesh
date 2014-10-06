@@ -271,10 +271,7 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
   }
 }
 
-#endif
-
-
-#if defined (ARDUINO_SAM_DUE) || defined(RF24_TINY) || defined (__linux)
+#else
 uint8_t RF24Mesh::getNodeID(){
 	return _nodeID;
 }
@@ -345,7 +342,7 @@ void RF24Mesh::DHCP(){
 		if(!network.is_valid_address(addrResponse.new_address) || !addrResponse.new_address){ printf("dumped 0%o\n",addrResponse.new_address); continue; }
         //Search through all assigned/stored addresses
         for (std::map<char,uint16_t>::iterator it=addrMap.begin(); it!=addrMap.end(); ++it){                  
-          printf("ID: %d ADDR: 0%o\n", it->first,it->second);
+          //printf("ID: %d ADDR: 0%o\n", it->first,it->second);
 		  if( it->second == addrResponse.new_address && it->first != from_id ){ //address found in use		  
              found = 1;             
              break;
@@ -370,12 +367,12 @@ void RF24Mesh::DHCP(){
        		uint32_t timer=millis();
 			while(network.update() != NETWORK_ADDR_CONFIRM){
 				if(millis()-timer>2000){
-				    printf("No addr confirmation from 0%o\n",header.to_node);
+				    //printf("No addr confirmation from 0%o\n",header.to_node);
 					return;
 				}
 				
 			}
-		  printf("Got addr confirmation from 0%o\n",header.to_node);
+		  //printf("Got addr confirmation from 0%o\n",header.to_node);
           addrMap[from_id] = addrResponse.new_address;
 		  #ifdef MESH_DEBUG_PRINTF
 		    printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,addrResponse.requester,addrResponse.new_address,header.reserved);

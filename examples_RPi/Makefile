@@ -19,19 +19,28 @@ CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
 # define all programs
 PROGRAMS = RF24Mesh_Example_Master RF24Mesh_Example
 SOURCES = ${PROGRAMS:=.cpp}
+PROGRAMS2 = RF24Mesh_Ncurses_Master
+SOURCES2 = ${PROGRAMS2:=.cpp}
 
-all: ${PROGRAMS}
+all: ${PROGRAMS} ${PROGRAMS2}
 
 ${PROGRAMS}: ${SOURCES}
 	g++ ${CCFLAGS} -Wall -I../ -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o $@
 
+${PROGRAMS2}: ${SOURCES2}
+	g++ ${CCFLAGS} -Wall -I../ -lncurses -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o $@
+
 clean:
 	rm -rf $(PROGRAMS)
-
+	rm -rf $(PROGRAMS2)
+	
 install: all
 	test -d $(prefix) || mkdir $(prefix)
 	test -d $(prefix)/bin || mkdir $(prefix)/bin
 	for prog in $(PROGRAMS); do \
+	  install -m 0755 $$prog $(prefix)/bin; \
+	done
+	for prog in $(PROGRAMS2); do \
 	  install -m 0755 $$prog $(prefix)/bin; \
 	done
 
