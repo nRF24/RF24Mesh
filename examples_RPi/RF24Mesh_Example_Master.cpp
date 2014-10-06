@@ -27,7 +27,7 @@ RF24Mesh mesh(radio,network);
 int main(int argc, char** argv) {
   
   // Set the nodeID to 0 for the master node
- // mesh.setNodeID(0);
+  mesh.setNodeID(0);
   // Connect to the mesh
   printf("start\n");
   mesh.begin();
@@ -37,8 +37,8 @@ while(1)
 {
   
   // Call network.update as usual to keep the network updated
-  network.update();
-  
+  mesh.update();
+
   // In addition, keep the 'DHCP service' running on the master node so addresses will
   // be assigned to the sensor nodes
   mesh.DHCP();
@@ -46,18 +46,22 @@ while(1)
   
   // Check for incoming data from the sensors
   while(network.available()){
-    printf("rcv\n");
+//    printf("rcv\n");
     RF24NetworkHeader header;
     network.peek(header);
     
     uint32_t dat=0;
     switch(header.type){
       // Display the incoming millis() values from the sensor nodes
-      case 'M': network.read(header,&dat,sizeof(dat)); printf("Rcv %u from 0%o\n",dat,header.from_node); break;
-      default:  network.read(header,0,0); printf("Rcv %d from 0%o\n",header.type,header.from_node); break;
+      case 'M': network.read(header,&dat,sizeof(dat)); 
+                printf("Rcv %u from 0%o\n",dat,header.from_node);
+                 break;
+      default:  network.read(header,0,0); 
+                printf("Rcv bad type with data %u from 0%o\n",header.type,header.from_node); 
+                break;
     }
   }
-delay(1);
+delay(2);
   }
 return 0;
 }

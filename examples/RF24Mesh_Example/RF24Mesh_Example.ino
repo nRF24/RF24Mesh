@@ -7,12 +7,13 @@
   * nodes to change position in relation to each other and the master node.
   */
 
-#include "RF24Network.h"
+
 #include "RF24.h"
+#include "RF24Network.h"
 #include "RF24Mesh.h"
 #include <SPI.h>
 #include <EEPROM.h>
-#include <printf.h>
+//#include <printf.h>
 
 
 /**** Configure the nrf24l01 CE and CS pins ****/
@@ -38,33 +39,41 @@ uint32_t displayTimer=0;
 void setup() {
   
   Serial.begin(115200);
-  printf_begin();
+  //printf_begin();
   // Set the nodeID manually
   mesh.setNodeID(nodeID);
   // Connect to the mesh
+  Serial.println(F("Connecting to the mesh..."));
   mesh.begin();  
-  
 }
 
 
 
 void loop() {
   
-  network.update();
-  
-  // Send the current millis() to the master node every second
+  mesh.update();
+
+  // Send to the master node every second
   if(millis() - displayTimer >= 1000){
-    displayTimer = millis();
+    displayTimer = millis();    
     
+    // Send an 'M' type message containing the current millis()
     if(!mesh.write(&displayTimer,'M',sizeof(displayTimer))){
        
-      // If a write fails, refresh the network address
-      // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
-       mesh.renewAddress(); 
+      // If a write fails, check connectivity to the mesh network
+      if( ! mesh.checkConnection() ){
+        //refresh the network address
+        Serial.println("Renewing Address");
+        mesh.renewAddress(); 
+      }else{
+        Serial.println("Send fail, Test OK"); 
+      }
+    }else{
+      Serial.print("Send OK: "); Serial.println(displayTimer);
     }
   }
-}
 
+}
 
 
 

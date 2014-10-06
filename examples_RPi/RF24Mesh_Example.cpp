@@ -28,30 +28,32 @@ int main(int argc, char** argv) {
   mesh.setNodeID(4);
   // Connect to the mesh
   printf("start nodeID %d\n",mesh.getNodeID());
-  radio.begin();
-  radio.printDetails();
-  delay(100);
   mesh.begin();
   radio.printDetails();
 
 while(1)
 {
   
-  // Call network.update as usual to keep the network updated
-  network.update();
-  
-  
-  
+  // Call mesh.update to keep the network updated
+  mesh.update();
+    
   // Send the current millis() to the master node every second
   if(millis() - displayTimer >= 1000){
     displayTimer = millis();
     
     if(!mesh.write(&displayTimer,'M',sizeof(displayTimer))){
        
-      // If a write fails, refresh the network address
-      // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
-       mesh.renewAddress(); 
-    }
+      // If a write fails, check connectivity to the mesh network
+      if( ! mesh.checkConnection() ){
+        // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
+		printf("Renewing Address\n");
+        mesh.renewAddress(); 
+	  }else{
+        printf("Send fail, Test OK\n"); 
+      }
+    }else{
+	  printf("Send OK: %u\n",displayTimer);
+	}
   }
   delay(1);
   }
