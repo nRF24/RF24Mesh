@@ -17,13 +17,13 @@ CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
 #CCFLAGS=
 
 # define all programs
-PROGRAMS = RF24Mesh_Example_Master RF24Mesh_Example
-SOURCES = ${PROGRAMS:=.cpp}
+PROGRAMS = RF24Mesh_Ncurses_Master
+SOURCES = ${PROGRAMS2:=.cpp}
 
 all: ${PROGRAMS}
 
 ${PROGRAMS}: ${SOURCES}
-	g++ ${CCFLAGS} -Wall -I../ -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o $@
+	g++ ${CCFLAGS} -Wall -I../ -lncurses -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o $@
 
 clean:
 	rm -rf $(PROGRAMS)
