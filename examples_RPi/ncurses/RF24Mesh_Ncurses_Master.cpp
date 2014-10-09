@@ -44,6 +44,7 @@ int main()
 
 	initscr();			/* Start curses mode 		  */
 	start_color();
+	curs_set(0);
 	//keypad(stdscr, TRUE); //Enable user interaction
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
 	init_pair(2, COLOR_RED, COLOR_BLACK);
@@ -58,6 +59,7 @@ int main()
 
 while(1)
 {
+
     // Call mesh.update to keep the network updated
     mesh.update();
     // In addition, keep the 'DHCP service' running on the master node so addresses will
@@ -71,7 +73,7 @@ while(1)
 		RF24NetworkHeader header;
 		network.peek(header);
 	
-		uint8_t boldID = 0;	uint32_t mydat=0;
+		uint8_t boldID = 0;
 		
 		// Print the total number of received payloads
 		mvprintw(9,0," Total: %lu\n",totalPayloads++);
@@ -83,28 +85,28 @@ while(1)
 		attroff(A_BOLD | COLOR_PAIR(1));	
 		
 		// Read the network payload
-		network.read(header,&mydat,sizeof(mydat));
+		network.read(header,0,0);
 		
 		// Display the header info
 		mvprintw(3,0," HeaderID: %u \n Type: %c\n From: 0%o\n ",header.id,header.type,header.from_node);
-		//printw("Got %u      \n",mydat); 
-		refresh();
+
+		//refresh();
 		for (std::map<char,uint16_t>::iterator _it=mesh.addrMap.begin(); _it!=mesh.addrMap.end(); _it++){                  
 			if(header.from_node == _it->second){
 				boldID = _it->first;
 			}
 		}
 		printNodes(boldID);		
-		refresh();
+
     }
-  delay(2);
+	//refresh();
   
-  if(millis()-kbTimer > 1000 && kbCount > 0){
+    if(millis()-kbTimer > 1000 && kbCount > 0){
 	kbTimer = millis();
 	attron(A_BOLD | COLOR_PAIR(1));
-	mvprintw(7,0,"[Data Rate (In)]\n");
+	mvprintw(7,0,"[Data Rate (In)]");
     attroff(A_BOLD | COLOR_PAIR(1));
-	printw(" Kbps: %.2f\n",(kbCount * 32 * 8)/1000.00);
+	mvprintw(8,0," Kbps: %.2f",(kbCount * 32 * 8)/1000.00);
     kbCount = 0;
 	
   }
@@ -112,14 +114,24 @@ while(1)
   // Ping each connected node, one per second
   if(millis()-pingTimer>1003 && mesh.addrMap.size() > 0){
     pingTimer=millis();
-	pingNode(it);
-    it++;
 	if(	it == mesh.addrMap.end()){ // if(mesh.addrMap.size() > 1){ it=mesh.addrMap.begin(); } continue;}
 		it=mesh.addrMap.begin();
 	}
+	pingNode(it);
+    it++;	
   }
   
+	/*uint32_t nOK,nFails;
+	network.failures(&nFails,&nOK);
+	attron(A_BOLD | COLOR_PAIR(1));
+    mvprintw(2,24,"[Transmit Results] ");
+    attroff(A_BOLD | COLOR_PAIR(1));
+	mvprintw(3,25," #OK: %u   ",nOK);
+	mvprintw(4,25," #Fail: %u   ",nFails);*/
   
+  
+  refresh();
+  delay(2);
 }//while 1
 	
 	endwin();			/* End curses mode		  */
@@ -131,7 +143,7 @@ void printNodes(uint8_t boldID){
 
    uint8_t xCoord = 2;
    attron(A_BOLD | COLOR_PAIR(1));
-   mvprintw(xCoord++,33,"[Address Assignments]\n");
+   mvprintw(xCoord++,27,"[Address Assignments]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
   for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
     if( failID == it->first){
@@ -140,11 +152,13 @@ void printNodes(uint8_t boldID){
 	if( boldID == it->first ){
 		attron(A_BOLD | COLOR_PAIR(1));
 	}
-	mvprintw(xCoord++,34,"ID: %d  Network: 0%o\n",it->first,it->second);
+	mvprintw(xCoord++,28,"ID: %d  Network: 0%o   ",it->first,it->second);
 	attroff(A_BOLD | COLOR_PAIR(1));
 	attroff(COLOR_PAIR(2));
   }
-
+  mvprintw(xCoord++,28,"                   ");
+  mvprintw(xCoord++,28,"                   ");
+  mvprintw(xCoord++,28,"                   ");
 }
 
 void pingNode(std::map<char,uint16_t>::iterator IT){
@@ -159,7 +173,10 @@ void pingNode(std::map<char,uint16_t>::iterator IT){
 	if(ok && failID == IT->first){ failID = 0; }
 	if(!ok){ failID = IT->first; }
 	pingtime = millis()-pingtime;
-	mvprintw(12,0," ID:%d\n Net:0%o\n Time:%ums\n",IT->first,IT->second,pingtime);
-	if(ok){	printw(" OK\n");
-	} else{ attron(A_BOLD); printw(" FAIL\n"); attron(A_BOLD); }
+	mvprintw(12,0," ID:%d    ",IT->first);
+	mvprintw(13,0," Net:0%o    ",IT->second);
+	mvprintw(14,0," Time:%ums       ",pingtime);
+	
+	if(ok){	mvprintw(15,0," OK  ");
+	} else{ attron(A_BOLD); mvprintw(15,0," FAIL"); attron(A_BOLD); }
 }

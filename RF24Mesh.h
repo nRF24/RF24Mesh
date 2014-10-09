@@ -135,6 +135,11 @@ public:
   void renewAddress();
   
   /**
+   * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
+   */
+  void releaseAddress();
+  
+  /**
    * The assigned RF24Network (Octal) address of this node 
    */
   uint16_t mesh_address; 
