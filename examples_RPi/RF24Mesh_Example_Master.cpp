@@ -57,7 +57,7 @@ while(1)
                 printf("Rcv %u from 0%o\n",dat,header.from_node);
                  break;
       default:  network.read(header,0,0); 
-                printf("Rcv bad type with data %u from 0%o\n",header.type,header.from_node); 
+                printf("Rcv bad type %d from 0%o\n",header.type,header.from_node); 
                 break;
     }
   }

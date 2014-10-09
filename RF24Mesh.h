@@ -214,6 +214,12 @@ public:
   * in a manner similar to DHCP.
   *
   */
+  
+  /**
+  * @example RF24Mesh_Ncurses_Master.cpp
+  * A very limited ncurses interface used for initial monitoring/testing of RF24Mesh
+  * <img src="tmrh20/RF24Mesh_Ncurses.JPG">
+  */
  
 /**
  * @mainpage Mesh Networking Layer for RF24 Radios
@@ -256,8 +262,51 @@ public:
  * @section More How to learn more
  * 
  * @li Try it out!
+ * @li <a href="Setup-Config.html">Setup and Configuration</a>
  * @li <a href="classRF24Mesh.html">RF24Mesh Class Documentation</a>
+ * @li <a href="http://tmrh20.github.io/RF24Network_Dev/">RF24 Network -DEV- Class Documentation</a>
  * @li <a href="https://tmrh20.github.io">Documentation and Downloads</a>
  * @li <a href="https://github.com/TMRh20/RF24Mesh">Source Code</a>
+ *
+ * @page Setup-Config Setup And Config
+ *
+ * The initial testing version of RF24Mesh is built as a simple overlay for RF24Network. Users currently need to be familiar with the basics of sending and receiving data via
+ * RF24Network, but do not need to understand the topology, routing or addressing systems. RF24Mesh will attempt to construct and maintain a mesh network, keeping all nodes
+ * connected together.
+ *
+ * @section Requirements Requirements
+ * <b>Hardware Requirements:</b>  <br>
+ * @li 1 Raspberry Pi or Arduino Due to act as the Master Node  <br>
+ * @li 1 or more Arduino,RPi,etc. (Sensor Nodes)  <br>
+ * @li 1 or more NRF24L01+ radio modules  <br>
+ * @li 1 or more various sensors for your sensor nodes  <br>
  *  
+ * <b>Software Requirements:</b>
+ * @li <a href="https://github.com/TMRh20/RF24/archive/master.zip">RF24 Core Radio Library</a>
+ * @li <a href="https://github.com/TMRh20/RF24Network/archive/Development.zip">RF24Network Development Library</a>
+ * @li <a href="https://github.com/TMRh20/RF24Mesh/archive/master.zip">RF24Mesh - Dynamic Mesh Library</a>
+ *  
+ * @section Installation Installation
+ * 1. If not installed, download and install the RF24, RF24Network DEV, and RF24Mesh libraries per the above links  <br>
+ *  <br>
+ * 2. Configure and test the hardware using examples from RF24 and RF24Network prior to attempting to use RF24Mesh  <br>
+ *    a: <b>In Arduino IDE:</b> File > RF24 > GettingStarted  <br>
+ *    b: <b>RPi:</b> Follow the Quick-Start instructions on <a href="https://github.com/TMRh20/RF24Network/tree/Development/RPi">GitHub</a>  <br>
+ *  <br>
+ * 3. Once testing is complete:  <br>
+ *    a: <b>Arduino IDE:</b> File > RF24Mesh > RF24Mesh_Example  <br>
+ *    b: <b>RPi:</b> Run 'make' from the examples directory. Then 'sudo ./RF24Mesh_Example_Master' to begin as the master node   <br>
+ *    <br>
+ * 4. Once configured and running, the Master Node will begin to assign addresses to the sensor nodes, which will find their way onto the network, and
+ *    display incoming data from the sensor examples. Usage is very much the same as RF24Network, except for address assignment and network management.  
+ *
+ * @section Config Configuration
+ *
+ * As per the examples, nodes are configured with a unique value between 1 and 255. This allows them to change positions on the network, while still being identified. <br>
+ *
+ * For pre-configuration of the mesh, only one main option is available by editing RF24Mesh_config.h prior to compiling: <br>
+ * 
+ * @code #define MESH_MAX_CHILDREN 4 @endcode
+ * This option restricts the maximum number of child nodes/node and limits the number of available addresses on the network. Max: 4
+ *
  */

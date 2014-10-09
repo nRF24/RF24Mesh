@@ -12,6 +12,8 @@ void RF24Mesh::begin(){
   radio.begin();
   if(getNodeID()){ //Not master node
     mesh_address = MESH_DEFAULT_ADDRESS;
+  }else{
+    mesh_address = 0;
   }
   network.begin(MESH_DEFAULT_CHANNEL,mesh_address);
   
@@ -34,12 +36,11 @@ void RF24Mesh::update(){
 
 bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size ){
   RF24NetworkHeader header(00,msg_type);
-
   return network.write(header,data,size);  
 }
 
 bool RF24Mesh::checkConnection(){
-	RF24NetworkHeader header(00,NETWORK_ADDR_CONFIRM);
+	RF24NetworkHeader header(00,NETWORK_PING);
 	uint8_t count = 3;
 	bool ok;
 	while(count--){
@@ -52,9 +53,10 @@ bool RF24Mesh::checkConnection(){
 }
 
 void RF24Mesh::renewAddress(){
-  static const uint16_t requestDelay = 450;
+  static const uint16_t requestDelay = 250;
   uint8_t reqCounter = 0;
-  //network.begin(MESH_DEFAULT_CHANNEL,MESH_DEFAULT_ADDRESS);
+  network.begin(MESH_DEFAULT_CHANNEL,MESH_DEFAULT_ADDRESS);
+  mesh_address = MESH_DEFAULT_ADDRESS;
   
   while(!requestAddress(reqCounter)){
     delay(requestDelay+(mesh_address%(7)*8));   
@@ -137,9 +139,10 @@ bool RF24Mesh::requestAddress(uint8_t level){
     // Request an address via the contact node
     header.type = NETWORK_REQ_ADDRESS;
     header.reserved = getNodeID();
-    header.to_node = header.from_node;    
+    header.to_node = contactNode;    
     
     // Do a direct write (no ack) to the contact node. Include the nodeId and address.
+	
     network.write(header,&mesh_address,sizeof(addrResponse),contactNode);
     #ifdef MESH_DEBUG_SERIAL
 	  Serial.print( millis() ); Serial.println(F(" MSH: Request address "));
@@ -156,8 +159,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	  return 0;
     }
     
-	RF24NetworkHeader origHeader = header;
-	
+		
     while(network.available() ){        
         network.peek(header);
 		#ifdef MESH_DEBUG_SERIAL
@@ -169,7 +171,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 		       
                network.read(header,&addrResponse,sizeof(addrResponse));
 			   
-			   if(!addrResponse.new_address || header.reserved != getNodeID() || !network.is_valid_address(addrResponse.new_address)){
+			   if(!addrResponse.new_address || header.reserved != getNodeID() ){
                  #ifdef MESH_DEBUG_SERIAL
 				   Serial.print(millis()); Serial.println(F(" MSH: Response discarded, wrong node"));
 				 #elif defined MESH_DEBUG_PRINTF
@@ -190,7 +192,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 				 printf("Set address 0%o rcvd 0%o\n",mesh_address,addrResponse.new_address);
 			   #endif
 			     mesh_address = addrResponse.new_address;
-				 radio.begin();
+				 //radio.begin();
 				 network.begin(90,mesh_address);
 				 header.to_node = 00;
 				 header.type = NETWORK_ADDR_CONFIRM;
@@ -339,11 +341,11 @@ void RF24Mesh::DHCP(){
          
         bool found = 0;
         addrResponse.new_address = fwd_by | (i << shiftVal);
-		if(!network.is_valid_address(addrResponse.new_address) || !addrResponse.new_address){ printf("dumped 0%o\n",addrResponse.new_address); continue; }
+		if(!addrResponse.new_address ){ printf("dumped 0%o\n",addrResponse.new_address); continue; }
         //Search through all assigned/stored addresses
         for (std::map<char,uint16_t>::iterator it=addrMap.begin(); it!=addrMap.end(); ++it){                  
           //printf("ID: %d ADDR: 0%o\n", it->first,it->second);
-		  if( it->second == addrResponse.new_address && it->first != from_id ){ //address found in use		  
+		  if( (it->second == addrResponse.new_address && it->first != from_id) || addrResponse.new_address == MESH_DEFAULT_ADDRESS){ //address found in use		  
              found = 1;             
              break;
           }
@@ -352,7 +354,6 @@ void RF24Mesh::DHCP(){
 
           header.type = NETWORK_ADDR_RESPONSE;
           header.to_node = header.from_node;
-          
 		  //This is a routed request to 00
           if(header.from_node != addrResponse.requester){ //Is NOT node 01 to 05
 			delay(2);
@@ -366,7 +367,7 @@ void RF24Mesh::DHCP(){
           }
        		uint32_t timer=millis();
 			while(network.update() != NETWORK_ADDR_CONFIRM){
-				if(millis()-timer>2000){
+				if(millis()-timer>900){
 				    //printf("No addr confirmation from 0%o\n",header.to_node);
 					return;
 				}

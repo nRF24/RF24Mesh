@@ -1,5 +1,5 @@
 
-/**
+/*
 * RF24Mesh Master Node Monitoring Tool
 * This is a generic tool for master nodes running RF24Mesh that will display address
 * assignments, and information regarding incoming data, regardless of the specific
@@ -32,87 +32,95 @@ RF24Mesh mesh(radio,network);
 void printNodes(uint8_t boldID);
 void pingNode(std::map<char,uint16_t>::iterator it);
 
+uint16_t failID = 0;
 
 int main()
 {	
+
+    printf("Establishing mesh...\n");
+	mesh.setNodeID(0);
+    mesh.begin();
+	radio.printDetails();
+
 	initscr();			/* Start curses mode 		  */
 	start_color();
 	//keypad(stdscr, TRUE); //Enable user interaction
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
+	init_pair(2, COLOR_RED, COLOR_BLACK);
 	attron(COLOR_PAIR(1));
 	printw("RF24Mesh Master Node Monitoring Interface by TMRh20 - 2014\n");
 	attroff(COLOR_PAIR(1));
-	// Set the nodeID to 0 for the master node
-	mesh.setNodeID(0);
-	// Connect to the mesh
-	printw("Establishing mesh...");
 	refresh();			/* Print it on to the real screen */
-	mesh.begin();
-	mvprintw(1,0,"                     ");
 	
-	uint32_t kbTimer = 0,kbCount = 0, pingTimer=millis();
+	uint32_t kbTimer = 0,kbCount = 0, pingTimer=millis();	
 	std::map<char,uint16_t>::iterator it = mesh.addrMap.begin();
-	
+    unsigned long totalPayloads = 0;
+
 while(1)
 {
-
-	  // Call network.update as usual to keep the network updated
+    // Call mesh.update to keep the network updated
     mesh.update();
     // In addition, keep the 'DHCP service' running on the master node so addresses will
     // be assigned to the sensor nodes
-    mesh.DHCP();
-  
-    // Check for incoming data from the sensors
-    while(network.available()){
- 
-    RF24NetworkHeader header;
-    //network.peek(header);
-    
-    uint32_t dat=0; uint8_t boldID = 0;
+	mesh.DHCP();
+    // Wait until a sensor node is connected
+	if(mesh.addrMap.size() < 1){continue; }
 	
-    network.read(header,&dat,sizeof(dat));
-	kbCount++;
+	// Check for incoming data from the sensors
+    while(network.available()){    
+		RF24NetworkHeader header;
+		network.peek(header);
 	
-	attron(A_BOLD | COLOR_PAIR(1));
-    mvprintw(2,0,"[Last Payload Info]\n");
-    attroff(A_BOLD | COLOR_PAIR(1));
+		uint8_t boldID = 0;	uint32_t mydat=0;
+		
+		// Print the total number of received payloads
+		mvprintw(9,0," Total: %lu\n",totalPayloads++);
+
+		kbCount++;
 	
-    mvprintw(3,0," HeaderID: %u \n Type: %c\n From: 0%o\n",header.id,header.type,header.from_node);
-	for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){                  
-		//mvprintw(xCoord++,34,"ID: %d  Network: 0%o\n",it->first,it->second);
-		if(header.from_node == it->second){
-			boldID = it->first;
+		attron(A_BOLD | COLOR_PAIR(1));
+		mvprintw(2,0,"[Last Payload Info]\n");
+		attroff(A_BOLD | COLOR_PAIR(1));	
+		
+		// Read the network payload
+		network.read(header,&mydat,sizeof(mydat));
+		
+		// Display the header info
+		mvprintw(3,0," HeaderID: %u \n Type: %c\n From: 0%o\n ",header.id,header.type,header.from_node);
+		//printw("Got %u      \n",mydat); 
+		refresh();
+		for (std::map<char,uint16_t>::iterator _it=mesh.addrMap.begin(); _it!=mesh.addrMap.end(); _it++){                  
+			if(header.from_node == _it->second){
+				boldID = _it->first;
+			}
 		}
-	}
-	printNodes(boldID);		
-	refresh();
-
-
-  }
+		printNodes(boldID);		
+		refresh();
+    }
   delay(2);
   
-  if(millis()-kbTimer > 1000){
+  if(millis()-kbTimer > 1000 && kbCount > 0){
 	kbTimer = millis();
 	attron(A_BOLD | COLOR_PAIR(1));
-	mvprintw(8,0,"[Data Rate (In)]\n");
+	mvprintw(7,0,"[Data Rate (In)]\n");
     attroff(A_BOLD | COLOR_PAIR(1));
-	printw(" Kbps: %.2f",(kbCount * 32 * 8)/1000.00);
-    kbCount = 0;	
+	printw(" Kbps: %.2f\n",(kbCount * 32 * 8)/1000.00);
+    kbCount = 0;
+	
   }
   
-  if(millis()-pingTimer>1000){
+  // Ping each connected node, one per second
+  if(millis()-pingTimer>1003 && mesh.addrMap.size() > 0){
     pingTimer=millis();
 	pingNode(it);
-	  it++;
-    
+    it++;
 	if(	it == mesh.addrMap.end()){ // if(mesh.addrMap.size() > 1){ it=mesh.addrMap.begin(); } continue;}
 		it=mesh.addrMap.begin();
 	}
-	
   }
   
   
-}
+}//while 1
 	
 	endwin();			/* End curses mode		  */
 	return 0;
@@ -126,11 +134,15 @@ void printNodes(uint8_t boldID){
    mvprintw(xCoord++,33,"[Address Assignments]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
   for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
-    if( boldID == it->first ){
+    if( failID == it->first){
+		attron(COLOR_PAIR(2));
+	}else
+	if( boldID == it->first ){
 		attron(A_BOLD | COLOR_PAIR(1));
 	}
 	mvprintw(xCoord++,34,"ID: %d  Network: 0%o\n",it->first,it->second);
 	attroff(A_BOLD | COLOR_PAIR(1));
+	attroff(COLOR_PAIR(2));
   }
 
 }
@@ -140,14 +152,14 @@ void pingNode(std::map<char,uint16_t>::iterator IT){
    attron(A_BOLD | COLOR_PAIR(1));
    mvprintw(11,0,"[Ping Test]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
-  //for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
-    RF24NetworkHeader header(IT->second,NETWORK_ADDR_CONFIRM);
+
+    RF24NetworkHeader headers(IT->second,NETWORK_PING);
 	uint32_t pingtime=millis();
-	bool ok = network.write(header,0,0);
+	bool ok = network.write(headers,0,0);
+	if(ok && failID == IT->first){ failID = 0; }
+	if(!ok){ failID = IT->first; }
 	pingtime = millis()-pingtime;
 	mvprintw(12,0," ID:%d\n Net:0%o\n Time:%ums\n",IT->first,IT->second,pingtime);
 	if(ok){	printw(" OK\n");
 	} else{ attron(A_BOLD); printw(" FAIL\n"); attron(A_BOLD); }
-  //}
-
 }
