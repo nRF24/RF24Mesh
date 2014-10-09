@@ -7,6 +7,8 @@
 
 RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network){}
 
+/*****************************************************/
+
 void RF24Mesh::begin(){
   
   radio.begin();
@@ -19,10 +21,10 @@ void RF24Mesh::begin(){
   
   if(getNodeID()){ //Not master node
     renewAddress();
-  }
-     
-  
+  } 
 }
+
+/*****************************************************/
 
 void RF24Mesh::update(){
 	
@@ -31,13 +33,29 @@ void RF24Mesh::update(){
 	if(type == NETWORK_REQ_ADDRESS){
 	  doDHCP = 1;
 	}
+	#if defined (ARDUINO_SAM_DUE) || defined (__linux)
+	if(type == NETWORK_ADDR_LOOKUP && !getNodeID()) {
+	  uint8_t nodeID;
+	  RF24NetworkHeader header;
+	  memcpy(&header,network.frame_buffer,sizeof(RF24NetworkHeader));
+	  memcpy(&nodeID,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(nodeID));  
+	  header.to_node = header.from_node;
+	  uint16_t returnAddr = getAddress(nodeID);
+	  printf("Returning lookup 0%o to 0%o   \n",returnAddr,header.to_node);
+	  network.write(header,&returnAddr,sizeof(returnAddr));	
+	}
+	#endif
 	
 }
+
+/*****************************************************/
 
 bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size ){
   RF24NetworkHeader header(00,msg_type);
   return network.write(header,data,size);  
 }
+
+/*****************************************************/
 
 bool RF24Mesh::checkConnection(){
 	RF24NetworkHeader header(00,NETWORK_PING);
@@ -52,6 +70,31 @@ bool RF24Mesh::checkConnection(){
 	
 }
 
+/*****************************************************/
+
+uint16_t RF24Mesh::getAddress(uint8_t nodeID){
+
+#if defined (ARDUINO_SAM_DUE) || defined (__linux)
+	if(!getNodeID()){ //Master Node
+		return addrMap.find(nodeID)->second;
+	}
+#endif
+
+	RF24NetworkHeader header( 00, NETWORK_ADDR_LOOKUP );
+	
+	if(network.write(header,&nodeID,sizeof(nodeID)+1) ){
+		uint32_t timer=millis(), timeout = 500;		
+		while(network.update() != NETWORK_ADDR_LOOKUP){
+			if(millis()-timer > timeout){ return 0; }
+		}		
+	}
+	uint16_t address;
+	memcpy(&address,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(address));
+	return address;	
+}
+
+/*****************************************************/
+
 void RF24Mesh::renewAddress(){
   static const uint16_t requestDelay = 250;
   uint8_t reqCounter = 0;
@@ -64,6 +107,7 @@ void RF24Mesh::renewAddress(){
   }
 }
 
+/*****************************************************/
 
 bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *address){
 
@@ -111,7 +155,7 @@ bool RF24Mesh::findNodes(RF24NetworkHeader& header,uint8_t level, uint16_t *addr
 	return 1;
 }
 
-
+/*****************************************************/
 
 bool RF24Mesh::requestAddress(uint8_t level){    
     
@@ -226,6 +270,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
   
 }
 
+/*****************************************************/
 
 bool RF24Mesh::waitForAvailable(uint32_t timeout){
   
@@ -238,8 +283,7 @@ bool RF24Mesh::waitForAvailable(uint32_t timeout){
 	else{  return 0; }
 }
 
-
-
+/*****************************************************/
 
 #if defined (__AVR__) && !defined (RF24_TINY)
 
@@ -250,6 +294,8 @@ uint8_t RF24Mesh::getNodeID(){
   }
   return 0;
 }
+
+/*****************************************************/
 
 void RF24Mesh::setNodeID(uint8_t nodeID){
   
@@ -273,7 +319,12 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
   }
 }
 
+/*****************************************************/
+
 #else
+
+/*****************************************************/
+
 uint8_t RF24Mesh::getNodeID(){
 	return _nodeID;
 }
@@ -282,6 +333,7 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
 }
 #endif
 
+/*****************************************************/
 
 #if defined (ARDUINO_SAM_DUE) || defined (__linux)
 
@@ -394,5 +446,7 @@ void RF24Mesh::DHCP(){
   //}
 
 }
+
+/*****************************************************/
 
 #endif

@@ -100,6 +100,12 @@ public:
    */
   void setNodeID(uint8_t nodeID);
   
+ /**
+  * Only to be used on the master node. Provides automatic configuration for sensor nodes, similar to DHCP.
+  * Call immediately after calling network.update() to ensure address requests are handled appropriately
+  */  
+  void DHCP();
+  
   /**@}*/
   /**
    * @name Advanced Operation
@@ -129,15 +135,19 @@ public:
   void renewAddress();
   
   /**
-  * Only to be used on the master node. Provides automatic configuration for sensor nodes, similar to DHCP.
-  * Call immediately after calling network.update() to ensure address requests are handled appropriately
-  */  
-  void DHCP();
-  
-  /**
    * The assigned RF24Network (Octal) address of this node 
    */
   uint16_t mesh_address; 
+  
+  /**
+   * Convert a nodeID into an RF24Network address
+   * @note If printing or displaying the address, it needs to be converted to octal format.
+   *
+   * When called on any node but the master node, this will result in a name lookup request being sent to the master node, and a response
+   * returned containing the address corresponding to the included nodeID.
+   * @return Returns the RF24Network address of the node or 0 if not found or lookup failed.
+   */
+  uint16_t getAddress(uint8_t nodeID);
   
   private:
   RF24& radio;
