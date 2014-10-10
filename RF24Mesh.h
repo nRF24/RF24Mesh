@@ -7,6 +7,9 @@
 #ifndef __RF24MESH_H__
 #define __RF24MESH_H__
 
+#include <stdio.h>
+#include <stdlib.h>
+
 /**
  * @file RF24Mesh.h
  *
@@ -33,10 +36,6 @@
 
   #include <stddef.h>
   #include <stdint.h>
-  
-#if defined (__linux) || defined (ARDUINO_SAM_DUE)
-  #include <map>
-#endif
 
 
 
@@ -150,6 +149,7 @@ public:
    *
    * When called on any node but the master node, this will result in a name lookup request being sent to the master node, and a response
    * returned containing the address corresponding to the included nodeID.
+   * @param nodeID - The unique identifier (1-255) of the node
    * @return Returns the RF24Network address of the node or 0 if not found or lookup failed.
    */
   uint16_t getAddress(uint8_t nodeID);
@@ -164,9 +164,19 @@ public:
   uint32_t lastSaveTime;
   
   public:
-  #if defined (ARDUINO_SAM_DUE) || defined (__linux)
-	std::map<char,uint16_t> addrMap;	
-  #endif
+
+#if !defined RF24TINY  
+  typedef struct{
+	char nodeID;
+	uint16_t address;  
+  }addrListStruct;
+  
+  // Pointer used for dynamic memory allocation of address list
+  addrListStruct *addrList;
+  
+  uint8_t addrListTop;
+#endif
+  
   #if defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)
 	uint8_t _nodeID;
   #endif

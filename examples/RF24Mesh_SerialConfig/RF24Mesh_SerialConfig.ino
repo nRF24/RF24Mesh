@@ -55,7 +55,7 @@ unsigned long displayTimer=0;
 
 void loop() {
   
-  network.update();
+  mesh.update();
 
   // Send an update in every second
   if(millis() - displayTimer >= 1000){

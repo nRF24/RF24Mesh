@@ -30,7 +30,9 @@ RF24Network network(radio);
 RF24Mesh mesh(radio,network);
 
 void printNodes(uint8_t boldID);
-void pingNode(std::map<char,uint16_t>::iterator it);
+void pingNode(uint8_t listNo);
+
+uint8_t nodeCounter;
 
 uint16_t failID = 0;
 
@@ -54,7 +56,7 @@ int main()
 	refresh();			/* Print it on to the real screen */
 	
 	uint32_t kbTimer = 0,kbCount = 0, pingTimer=millis();	
-	std::map<char,uint16_t>::iterator it = mesh.addrMap.begin();
+	//std::map<char,uint16_t>::iterator it = mesh.addrMap.begin();
     unsigned long totalPayloads = 0;
 
 while(1)
@@ -66,7 +68,7 @@ while(1)
     // be assigned to the sensor nodes
 	mesh.DHCP();
     // Wait until a sensor node is connected
-	if(mesh.addrMap.size() < 1){continue; }
+	if(sizeof(mesh.addrList) < 1){continue; }
 	
 	// Check for incoming data from the sensors
     while(network.available()){    
@@ -88,12 +90,13 @@ while(1)
 		network.read(header,0,0);
 		
 		// Display the header info
-		mvprintw(3,0," HeaderID: %u \n Type: %c\n From: 0%o\n ",header.id,header.type,header.from_node);
+		mvprintw(3,0," HeaderID: %u  \n Type: %d  \n From: 0%o  \n ",header.id,header.type,header.from_node);
 
 		//refresh();
-		for (std::map<char,uint16_t>::iterator _it=mesh.addrMap.begin(); _it!=mesh.addrMap.end(); _it++){                  
-			if(header.from_node == _it->second){
-				boldID = _it->first;
+		//for (std::map<char,uint16_t>::iterator _it=mesh.addrMap.begin(); _it!=mesh.addrMap.end(); _it++){
+		for(uint8_t i=0; i<mesh.addrListTop; i++){
+			if(header.from_node == mesh.addrList[i].address){
+				boldID = mesh.addrList[i].nodeID;
 			}
 		}
 		printNodes(boldID);		
@@ -112,13 +115,13 @@ while(1)
   }
   
   // Ping each connected node, one per second
-  if(millis()-pingTimer>1003 && mesh.addrMap.size() > 0){
+  if(millis()-pingTimer>1003 && sizeof(mesh.addrList) > 0){
     pingTimer=millis();
-	if(	it == mesh.addrMap.end()){ // if(mesh.addrMap.size() > 1){ it=mesh.addrMap.begin(); } continue;}
-		it=mesh.addrMap.begin();
+	if(	nodeCounter == mesh.addrListTop){ // if(mesh.addrMap.size() > 1){ it=mesh.addrMap.begin(); } continue;}
+		nodeCounter = 0;
 	}
-	pingNode(it);
-    it++;	
+	pingNode(nodeCounter);
+    nodeCounter++;	
   }
   
 	/*uint32_t nOK,nFails;
@@ -145,14 +148,16 @@ void printNodes(uint8_t boldID){
    attron(A_BOLD | COLOR_PAIR(1));
    mvprintw(xCoord++,27,"[Address Assignments]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
-  for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
-    if( failID == it->first){
+  //for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
+  for( uint8_t i=0; i<mesh.addrListTop; i++){
+    //if( failID == it->first){
+	if( failID == mesh.addrList[i].nodeID){
 		attron(COLOR_PAIR(2));
 	}else
-	if( boldID == it->first ){
+	if( boldID == mesh.addrList[i].nodeID ){
 		attron(A_BOLD | COLOR_PAIR(1));
 	}
-	mvprintw(xCoord++,28,"ID: %d  Network: 0%o   ",it->first,it->second);
+	mvprintw(xCoord++,28,"ID: %d  Network: 0%o   ",mesh.addrList[i].nodeID,mesh.addrList[i].address);
 	attroff(A_BOLD | COLOR_PAIR(1));
 	attroff(COLOR_PAIR(2));
   }
@@ -161,22 +166,25 @@ void printNodes(uint8_t boldID){
   mvprintw(xCoord++,28,"                   ");
 }
 
-void pingNode(std::map<char,uint16_t>::iterator IT){
+void pingNode(uint8_t listNo){
 
    attron(A_BOLD | COLOR_PAIR(1));
    mvprintw(11,0,"[Ping Test]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
 
-    RF24NetworkHeader headers(IT->second,NETWORK_PING);
+    RF24NetworkHeader headers(mesh.addrList[listNo].address,NETWORK_PING);
 	uint32_t pingtime=millis();
-	bool ok = network.write(headers,0,0);
-	if(ok && failID == IT->first){ failID = 0; }
-	if(!ok){ failID = IT->first; }
+	bool ok;
+	if(headers.to_node){
+		ok = network.write(headers,0,0);
+		if(ok && failID == mesh.addrList[listNo].nodeID){ failID = 0; }
+		if(!ok){ failID = mesh.addrList[listNo].nodeID; }
+	}
 	pingtime = millis()-pingtime;
-	mvprintw(12,0," ID:%d    ",IT->first);
-	mvprintw(13,0," Net:0%o    ",IT->second);
+	mvprintw(12,0," ID:%d    ",mesh.addrList[listNo].nodeID);
+	mvprintw(13,0," Net:0%o    ",mesh.addrList[listNo].address);
 	mvprintw(14,0," Time:%ums       ",pingtime);
 	
-	if(ok){	mvprintw(15,0," OK  ");
+	if(ok || !headers.to_node){	mvprintw(15,0," OK  ");
 	} else{ attron(A_BOLD); mvprintw(15,0," FAIL"); attron(A_BOLD); }
 }

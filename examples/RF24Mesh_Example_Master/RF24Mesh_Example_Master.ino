@@ -18,9 +18,11 @@
 #include "RF24.h"
 #include "RF24Mesh.h"
 #include <SPI.h>
+//Include eeprom.h for AVR (Uno, Nano) etc. except ATTiny
+#include <EEPROM.h>
 
-
-RF24 radio(48,52);
+/***** Configure the chosen CE,CS pins *****/
+RF24 radio(7,8);
 RF24Network network(radio);
 RF24Mesh mesh(radio,network);
 
@@ -31,6 +33,7 @@ void setup() {
 
   // Set the nodeID to 0 for the master node
   mesh.setNodeID(0);
+  Serial.println(mesh.getNodeID());
   // Connect to the mesh
   mesh.begin();
 
@@ -39,8 +42,8 @@ void setup() {
 
 void loop() {    
 
-  // Call network.update as usual to keep the network updated
-  network.update();
+  // Call mesh.update to keep the network updated
+  mesh.update();
   
   // In addition, keep the 'DHCP service' running on the master node so addresses will
   // be assigned to the sensor nodes
