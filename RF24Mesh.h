@@ -10,6 +10,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/** 
+ * Network/Mesh Response Types  
+ * The network will determine whether to automatically acknowledge payloads based on their type 
+ * RF24Mesh uses pre-defined system types for interacting with RF24Network at the system level
+ * 
+ */
+
+// Network ACK types 
+#define MESH_ADDR_CONFIRM 129
+// No Network ACK types
+#define MESH_ADDR_LOOKUP 196
+#define MESH_ADDR_RELEASE 197
+ 
+ 
 /**
  * @file RF24Mesh.h
  *
@@ -153,6 +167,34 @@ public:
    * @return Returns the RF24Network address of the node or 0 if not found or lookup failed.
    */
   uint16_t getAddress(uint8_t nodeID);
+
+  /**
+   * Write to a specific node by RF24Network address.
+   *
+   */
+  bool write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
+  
+  void saveDHCP();
+  void loadDHCP();
+  
+  /**@}*/
+  /**
+   * @name Address list struct
+   *
+   *  See the list struct class reference
+   */
+  /**@{*/
+  
+#if !defined RF24TINY  
+  typedef struct{
+	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
+	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
+  }addrListStruct;
+  
+  // Pointer used for dynamic memory allocation of address list
+  addrListStruct *addrList;  /**< See the addrListStruct class reference */
+  uint8_t addrListTop;       /**< The number of entries in the assigned address list */
+#endif
   
   private:
   RF24& radio;
@@ -162,20 +204,10 @@ public:
   bool waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
   bool doDHCP; /**< Indicator that an address request is available */
   uint32_t lastSaveTime;
+  uint32_t lastFileSave;
   
   public:
 
-#if !defined RF24TINY  
-  typedef struct{
-	char nodeID;
-	uint16_t address;  
-  }addrListStruct;
-  
-  // Pointer used for dynamic memory allocation of address list
-  addrListStruct *addrList;
-  
-  uint8_t addrListTop;
-#endif
   
   #if defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)
 	uint8_t _nodeID;
@@ -259,12 +291,12 @@ public:
  * Provide a simple user interface for creating dynamic sensor networks with the RF24 and RF24Network libraries.
  *
  *
- * What works currently?
- * @li Basic 'mesh' functionality using an RPi or Arduino Due as the master node which will receive the sensor data
+ * <b>What works currently?</b>
+ * @li Basic 'mesh' functionality using an <b>Arduino or RPi</b> as the master node which will generally receive the sensor data
  * @li Simple, dynamic addressing based on a pre-assigned unique identifier
  * @li Dynamic/On-the fly configuration of addresses and network topology
  *  
- * What are the functional limitations?
+ * <b>What are the functional limitations?</b>
  * @li Address assignments are not saved. If the 'master' node goes down, all nodes need to reconnect to the mesh or restart to prevent addressing conflicts. 
  *
  * The layer does not (yet) provide:
@@ -301,7 +333,7 @@ public:
  *
  * @section Requirements Requirements
  * <b>Hardware Requirements:</b>  <br>
- * @li 1 Raspberry Pi or Arduino Due to act as the Master Node  <br>
+ * @li 1 Raspberry Pi or Arduino to act as the Master Node <br>
  * @li 1 or more Arduino,RPi,etc. (Sensor Nodes)  <br>
  * @li 1 or more NRF24L01+ radio modules  <br>
  * @li 1 or more various sensors for your sensor nodes  <br>
@@ -315,11 +347,11 @@ public:
  * 1. If not installed, download and install the RF24, RF24Network DEV, and RF24Mesh libraries per the above links  <br>
  *  <br>
  * 2. Configure and test the hardware using examples from RF24 and RF24Network prior to attempting to use RF24Mesh  <br>
- *    a: <b>In Arduino IDE:</b> File > RF24 > GettingStarted  <br>
+ *    a: <b>In Arduino IDE:</b> File > Examples > RF24 > GettingStarted  <br>
  *    b: <b>RPi:</b> Follow the Quick-Start instructions on <a href="https://github.com/TMRh20/RF24Network/tree/Development/RPi">GitHub</a>  <br>
  *  <br>
  * 3. Once testing is complete:  <br>
- *    a: <b>Arduino IDE:</b> File > RF24Mesh > RF24Mesh_Example  <br>
+ *    a: <b>Arduino IDE:</b> File > Examples > RF24Mesh > RF24Mesh_Example  <br>
  *    b: <b>RPi:</b> Run 'make' from the examples directory. Then 'sudo ./RF24Mesh_Example_Master' to begin as the master node   <br>
  *    <br>
  * 4. Once configured and running, the Master Node will begin to assign addresses to the sensor nodes, which will find their way onto the network, and
@@ -329,9 +361,34 @@ public:
  *
  * As per the examples, nodes are configured with a unique value between 1 and 255. This allows them to change positions on the network, while still being identified. <br>
  *
- * For pre-configuration of the mesh, only one main option is available by editing RF24Mesh_config.h prior to compiling: <br>
+ * For pre-configuration of the mesh, only a few options are available by editing RF24Mesh_config.h prior to compiling: <br>
  * 
- * @code #define MESH_MAX_CHILDREN 4 @endcode
- * This option restricts the maximum number of child nodes/node and limits the number of available addresses on the network. Max: 4
+ * @code  
+ * #define MESH_MAX_CHILDREN 4  
+ * #define MESH_DEFAULT_CHANNEL 90
+ * @endcode
+ * The max_children option restricts the maximum number of child nodes/node and limits the number of available addresses on the network. Max: 4 <br>
+ * The default_channel option defines the radio channel number (1-127 allowed)
  *
+ * @li See <a href="General-Usage.html">General Usage</a> for information on how to work with the mesh once connected.
+ * 
+ * @page General-Usage General Usage
+ * 
+ * One thing to keep in mind is the dynamic nature of RF24Mesh, and the need to verify connectivity to the network. For nodes that are constantly transmitting,
+ * (every few seconds at most) it is suitable to check the connection, and/or renew the address when connectivity fails. Since data is not saved by the master 
+ * node, if the master node goes down, all child nodes must renew their address. In this case, as long as the master node is down for a few seconds, the nodes
+ * will all begin requesting an address.  <br>
+ *  
+ * Nodes that are not actively transmitting, should be configured to test their connection at predefined intervals, to allow them to reconnect as necessary.<br>
+ *  
+ * In the case of sleeping nodes, or nodes that will only be online temporarily, it is generally suitable to release the address prior to going offline, and 
+ * requesting an address upon waking. Keep in mind, address requests can generally take anywhere from 10-15ms, up to few seconds in most cases. <br>
+ *   
+ * One of the recently introduced features is the ability to transmit payloads without the network returning a network-ack response. If solely using this method
+ * of transmission, the node should also be configured to verify its connection via mesh.checkConnection(); periodically, to ensure connectivity.
+ *
+ * Beyond requesting and releasing addresses, usage is as outlined in the RF24Network Development documentation at http://tmrh20.github.io
+ *
+ *
+ * 
  */
