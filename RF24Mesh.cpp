@@ -8,7 +8,7 @@
 #include <fstream>
 #endif
 
-RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network){}
+RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network),radio_channel(MESH_DEFAULT_CHANNEL){}
 
 /*****************************************************/
 
@@ -24,7 +24,7 @@ void RF24Mesh::begin(){
 	#endif
     mesh_address = 0;
   }
-  network.begin(MESH_DEFAULT_CHANNEL,mesh_address);
+  network.begin(radio_channel,mesh_address);
   
   if(getNodeID()){ //Not master node
     renewAddress();
@@ -75,7 +75,7 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
     while ( !network.write(header,data,size) ){
 	  
 	  uint32_t delayTimer = millis();
-	  while(millis() - delayTimer < 55){
+	  while(millis() - delayTimer < 50){
 		network.update();
 	  }
 	  if(millis()-writeTimer > MESH_WRITE_TIMEOUT){
@@ -94,6 +94,12 @@ bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size ){
     
 }
 
+/*****************************************************/
+
+void RF24Mesh::setChannel(uint8_t _channel){
+
+	radio_channel = _channel;
+}
 /*****************************************************/
 
 bool RF24Mesh::checkConnection(){
@@ -142,24 +148,24 @@ uint16_t RF24Mesh::getAddress(uint8_t nodeID){
 
 /*****************************************************/
 
-void RF24Mesh::releaseAddress(){
+bool RF24Mesh::releaseAddress(){
 	RF24NetworkHeader header(00,MESH_ADDR_RELEASE);
-	network.write(header,0,0);
+	return network.write(header,0,0);
 }
 
 /*****************************************************/
 
-void RF24Mesh::renewAddress(){
+uint16_t RF24Mesh::renewAddress(){
   static const uint16_t requestDelay = 250;
   uint8_t reqCounter = 0;
-  network.begin(MESH_DEFAULT_CHANNEL,MESH_DEFAULT_ADDRESS);
+  network.begin(radio_channel,MESH_DEFAULT_ADDRESS);
   mesh_address = MESH_DEFAULT_ADDRESS;
 
   while(!requestAddress(reqCounter)){
     delay(requestDelay+(mesh_address%(7)*8));   
     (++reqCounter) = reqCounter%4;
   }
-
+  return mesh_address;
 }
 
 /*****************************************************/
@@ -191,8 +197,9 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	}
 	}
 
-  uint16_t contactNode;
-  memcpy(&contactNode,&network.frame_buffer,sizeof(contactNode));  
+  uint16_t *contactNode = (uint16_t*)(&network.frame_buffer);
+  //memcpy(&contactNode,&network.frame_buffer,sizeof(contactNode));
+    
     #ifdef MESH_DEBUG_SERIAL
 	Serial.print( millis() ); Serial.print(F(" MSH: Got poll from level ")); Serial.println(level);
 	#elif defined MESH_DEBUG_PRINTF
@@ -202,11 +209,11 @@ bool RF24Mesh::requestAddress(uint8_t level){
     // Request an address via the contact node
     header.type = NETWORK_REQ_ADDRESS;
     header.reserved = getNodeID();
-    header.to_node = contactNode;    
+    header.to_node = *contactNode;    
     
     // Do a direct write (no ack) to the contact node. Include the nodeId and address.
 	
-    network.write(header,&mesh_address,sizeof(addrResponse),contactNode);
+    network.write(header,&mesh_address,sizeof(addrResponse),*contactNode);
     #ifdef MESH_DEBUG_SERIAL
 	  Serial.print( millis() ); Serial.println(F(" MSH: Request address "));
 	#elif defined MESH_DEBUG_PRINTF
@@ -254,7 +261,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	#endif
 	mesh_address = addrResponse.new_address;
 	//radio.begin();
-	network.begin(MESH_DEFAULT_CHANNEL,mesh_address);
+	network.begin(radio_channel,mesh_address);
 	header.to_node = 00;
 	header.type = MESH_ADDR_CONFIRM;
 	//network.write(header,0,0);
@@ -337,28 +344,19 @@ void RF24Mesh::loadDHCP(){
 	std::ifstream infile ("dhcplist.txt",std::ifstream::binary);
 	if(!infile){ return; }
 	
-    //addrList = (addrListStruct*)realloc(addrList,25*sizeof(addrListStruct));
     addrList[addrListTop].nodeID = 255;
-	addrList[addrListTop].address = 01114;
-	
-		//		++addrListTop;
-	//		addrList = (addrListStruct*)realloc(addrList,(addrListTop+1) * sizeof(addrListStruct));	
-	
-	addrListStruct aList;
+	addrList[addrListTop].address = 01114;	
 	
 	infile.seekg(0,infile.end);
 	int length = infile.tellg();
 	infile.seekg(0,infile.beg);
-	//addrList = (addrListStruct*)malloc(length);
+
 	addrList = (addrListStruct*)realloc(addrList,length+sizeof(addrListStruct));
-	//infile.read( (char*)&addrList,length);
+
 	addrListTop = length/sizeof(addrListStruct);
 	for(int i=0; i<addrListTop; i++){
 		infile.read( (char*)&addrList[i],sizeof(addrListStruct));
 	
-	 //addrListTop = length/sizeof(addrListStruct);
-	//for(int i=0; i< addrListTop; i++){
-	//printf("ID: %d  ADDR: 0%o  \n",addrList[i].nodeID,addrList[i].address);
 	}
 	infile.close();
 #endif	

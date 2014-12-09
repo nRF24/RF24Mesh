@@ -5,11 +5,10 @@
 
 /*** User Configuration ***/
 #define MESH_MAX_CHILDREN 4 /** Set 1 to 4 (Default: 4) Restricts the maximum children per node. **/
-#define MESH_DEFAULT_CHANNEL 90  /** Radio channel to operate on 1-127 */
 
 /***Advanced User Config***/
-#define MESH_WRITE_TIMEOUT 550 /** How long mesh.write will retry failed payloads. */
-
+#define MESH_WRITE_TIMEOUT 5550 /** How long mesh.write will retry failed payloads. */
+#define MESH_DEFAULT_CHANNEL 97  /** Radio channel to operate on 1-127. This is normally modified by calling mesh.channel() */
 /**************************/
 /***       Debug        ***/
 //#define MESH_DEBUG_MINIMAL /** Uncomment for the Master Node to print out address assignments as they are assigned */

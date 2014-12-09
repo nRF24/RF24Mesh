@@ -143,17 +143,20 @@ public:
   /**
   * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
   * a routing node goes down.
-  * @note Currently blocks until a connection is established and an address is received.  
+  * @note Currently blocks until a connection is established and an address is received.
+  * @return Returns the newly assigned RF24Network address
   */
-  void renewAddress();
+  uint16_t renewAddress();
   
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
+   * @return Returns 1 if successfully released, 0 if not
    */
-  void releaseAddress();
+  bool releaseAddress();
   
   /**
-   * The assigned RF24Network (Octal) address of this node 
+   * The assigned RF24Network (Octal) address of this node
+   * @return Returns an unsigned 16-bit integer containing the RF24Network address in octal format
    */
   uint16_t mesh_address; 
   
@@ -173,6 +176,13 @@ public:
    *
    */
   bool write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
+  
+  /**
+  * Set the radio channel that RF24Mesh will operate on (default 97)
+  * @warn This does not actively change the radio channel, only stores it for the next time begin() is called or the address is renewed
+  * @note It is important to configure the radio channel this way, instead of directly via RF24
+  */
+  void setChannel(uint8_t _channel);
   
   void saveDHCP();
   void loadDHCP();
@@ -205,6 +215,7 @@ public:
   bool doDHCP; /**< Indicator that an address request is available */
   uint32_t lastSaveTime;
   uint32_t lastFileSave;
+  uint8_t radio_channel;
   
   public:
 
