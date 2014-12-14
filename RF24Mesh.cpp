@@ -33,7 +33,7 @@ void RF24Mesh::begin(){
 
 /*****************************************************/
 
-void RF24Mesh::update(){
+uint8_t RF24Mesh::update(){
 	
 	uint8_t type = network.update();
 	
@@ -65,7 +65,7 @@ void RF24Mesh::update(){
 		
 	}
 	#endif
-	
+	return type;
 }
 
 bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){

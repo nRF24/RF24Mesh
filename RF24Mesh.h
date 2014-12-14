@@ -94,7 +94,7 @@ public:
    * Very similar to network.update(), it needs to be called regularly to keep the network
    * and the mesh going.
    */   
-  void update();
+  uint8_t update();
   
   /**
    * Automatically construct a header and send a payload to the 'master' node.
