@@ -184,6 +184,19 @@ public:
   */
   void setChannel(uint8_t _channel);
   
+  /**
+  * Set a static nodeID/RF24Network Address pair.
+  * Mainly for use with nodes not using RF24Mesh, but RF24Network only.
+  * Set a static address assignment, that will not be updated or re-assigned.
+  * @code
+  * Set a static address for node 02, with nodeID 23, since it will just be a static routing node for example
+  * running on an ATTiny chip.
+  * 
+  * mesh.setStaticAddress(23,02);
+  * @endcode
+  */
+  void setStaticAddress(char nodeID, uint16_t address);
+  
   void saveDHCP();
   void loadDHCP();
   

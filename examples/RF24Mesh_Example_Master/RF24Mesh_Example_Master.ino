@@ -2,7 +2,6 @@
  
  /** RF24Mesh_Example_Master.ino by TMRh20
   * 
-  * Note: This sketch only functions on -Arduino Due-
   *
   * This example sketch shows how to manually configure a node via RF24Mesh as a master node, which
   * will receive all data from sensor nodes.
