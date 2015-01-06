@@ -25,7 +25,7 @@ void RF24Mesh::begin(){
     mesh_address = 0;
   }
   network.begin(radio_channel,mesh_address);
-  
+  network.returnSysMsgs = 1;
   if(getNodeID()){ //Not master node
     renewAddress();
   }  
@@ -34,7 +34,7 @@ void RF24Mesh::begin(){
 /*****************************************************/
 
 uint8_t RF24Mesh::update(){
-	
+
 	uint8_t type = network.update();
 	
 	#if !defined (RF24_TINY)
