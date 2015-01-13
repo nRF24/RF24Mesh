@@ -36,14 +36,14 @@
 
 
 
-#if defined (__linux)
+#if defined (__linux) && !defined(__ARDUINO_X86__)
   #include <RF24/RF24.h>
   #include <RF24Network/RF24Network.h>
 #else
   #include <RF24.h>
   #include <RF24Network.h>
   #include "RF24Mesh_config.h"
-  #if defined (__AVR__) && !defined(RF24_TINY)
+  #if (defined (__AVR__) || defined(__ARDUINO_X86__)) && !defined(RF24_TINY)
     #include <EEPROM.h>
   #endif
 #endif
