@@ -22,7 +22,7 @@
 //#define MESH_ADDRESS_HOLD_TIME 30000 /** How long before a released address becomes available */ 
 
   #if defined (MESH_DEBUG)
-    #if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY
+    #if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY || defined(__ARDUINO_X86__)
 		#define MESH_DEBUG_SERIAL		       
 	#else
 		#define MESH_DEBUG_PRINTF

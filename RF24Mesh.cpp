@@ -320,10 +320,9 @@ bool RF24Mesh::waitForAvailable(uint32_t timeout){
 */
 /*****************************************************/
 
-#if defined (__AVR__) && !defined (RF24_TINY)
+#if (defined (__AVR__) || defined(__ARDUINO_X86__)) && !defined (RF24_TINY)
 
 uint8_t RF24Mesh::getNodeID(){
-
   if(EEPROM.read(509) == 'R' && EEPROM.read(510) == 'F'){
     return EEPROM.read(511);  
   }
