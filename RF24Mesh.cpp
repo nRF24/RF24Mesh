@@ -4,7 +4,7 @@
 
 #include "RF24Mesh.h"
 #include "RF24Mesh_config.h"
-#if defined (__linux)
+#if defined (__linux) && !defined(__ARDUINO_X86__)
 #include <fstream>
 #endif
 
@@ -383,7 +383,7 @@ void RF24Mesh::setStaticAddress(char nodeID, uint16_t address){
 
 void RF24Mesh::loadDHCP(){
 	
-#if defined (__linux)
+#if defined (__linux) && !defined(__ARDUINO_X86__)
 	std::ifstream infile ("dhcplist.txt",std::ifstream::binary);
 	if(!infile){ return; }
 	
@@ -408,7 +408,7 @@ void RF24Mesh::loadDHCP(){
 /*****************************************************/
 
 void RF24Mesh::saveDHCP(){
-#if defined (__linux)
+#if defined (__linux)  && !defined(__ARDUINO_X86__)
 	std::ofstream outfile ("dhcplist.txt",std::ofstream::binary | std::ofstream::trunc);
 
 	//printf("writingToFile %d  0%o size %d\n",addrList[0].nodeID,addrList[0].address,sizeof(addrListStruct));
@@ -494,7 +494,7 @@ void RF24Mesh::DHCP(){
 
 		for(uint8_t i=0; i < addrListTop; i++){
 			#if defined (MESH_DEBUG_MINIMAL)
-			#if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY
+			#if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY || defined(__ARDUINO_X86__)
 			Serial.print("ID: ");Serial.print(addrList[i].nodeID,DEC);Serial.print(" ADDR: ");			
 			uint16_t newAddr = addrList[i].address;
 			char addr[5] = "    ", count=3, mask=7;
@@ -543,7 +543,7 @@ void RF24Mesh::DHCP(){
 			if(  addrList[i].nodeID == from_id  ){
 				addrList[i].address = addrResponse.new_address;
 				found = 1;
-				#if defined (__linux)
+				#if defined (__linux) && !defined(__ARDUINO_X86__)
 				if(millis()-lastFileSave > 300){
 					lastFileSave = millis();
 					saveDHCP();
@@ -555,7 +555,7 @@ void RF24Mesh::DHCP(){
 		  if(!found){
 		    addrList[addrListTop].nodeID = from_id;
 			addrList[addrListTop].address = addrResponse.new_address;
-			#if defined (__linux)
+			#if defined (__linux)  && !defined(__ARDUINO_X86__)
 			if(millis()-lastFileSave > 300){
 				lastFileSave = millis();
 				saveDHCP();
