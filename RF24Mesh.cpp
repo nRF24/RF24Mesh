@@ -142,6 +142,16 @@ uint16_t RF24Mesh::getAddress(uint8_t nodeID){
 	return address;	
 }
 
+uint8_t RF24Mesh::getNodeId(uint16_t address){
+    if(!getNodeID()){ //Master Node
+        for(uint8_t i=0; i<addrListTop; i++){
+            if(addrList[i].address == address){
+                return addrList[i].nodeID;
+            }
+        }   
+    }
+    return 0;
+}
 /*****************************************************/
 
 bool RF24Mesh::releaseAddress(){
