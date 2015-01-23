@@ -132,6 +132,15 @@ public:
    * @return Returns the nodeID saved in memory OR 0 if not found.
    */
   uint8_t getNodeID();
+
+  /**
+   * Convert an RF24Network address into a nodeId.
+   *
+   * When called on any node but the master node, this will return 0.
+   * @param address - The RF24Network address of the node.
+   * @return Returns the unique identifier (1-255) of the node or 0 if not found.
+   */
+  uint8_t getNodeId(uint16_t address);
   
   /**
    * Tests connectivity of this node to the mesh.
