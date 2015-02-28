@@ -22,8 +22,17 @@ LIBNAME_RFN=$(LIB_RFN).so.1.0
 
 HEADER_DIR=${PREFIX}/include/RF24Mesh
 
+# Detection for Raspberry Pi sets CCFLAGS, use RF24_NOFLAGS=1 to prevent loading flags
+ifeq "$(RF24_NOFLAGS)" "1"
+BCMLOC=/opt/vc/include/bcm_host.none
+else
+BCMLOC=/opt/vc/include/bcm_host.h
+endif
+
+ifneq ("$(wildcard $(BCMLOC))","")
 # The recommended compiler flags for the Raspberry Pi
 CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -std=c++0x
+endif
 
 # make all
 # reinstall the library after each recompilation
