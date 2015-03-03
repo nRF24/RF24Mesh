@@ -22,14 +22,14 @@ LIBNAME_RFN=$(LIB_RFN).so.1.0
 
 HEADER_DIR=${PREFIX}/include/RF24Mesh
 
-# Detection for Raspberry Pi sets CCFLAGS, use RF24_NOFLAGS=1 to prevent loading flags
-ifeq "$(RF24_NOFLAGS)" "1"
-BCMLOC=/opt/vc/include/bcm_host.none
-else
-BCMLOC=/opt/vc/include/bcm_host.h
+# Detect the Raspberry Pi from cpuinfo
+#Count the matches for BCM2708 or BCM2709 in cpuinfo
+RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
+ifneq "${RPI}" "1"
+RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2709)
 endif
 
-ifneq ("$(wildcard $(BCMLOC))","")
+ifeq "$(RPI)" "1"
 # The recommended compiler flags for the Raspberry Pi
 CCFLAGS=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -std=c++0x
 endif
