@@ -43,7 +43,6 @@ uint8_t RF24Mesh::update(){
 	}
 	
 	if(type == MESH_ADDR_LOOKUP && !getNodeID()) {
-	  uint8_t nodeID;
 	  RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
 	  header.to_node = header.from_node;
 	  
@@ -64,22 +63,8 @@ uint8_t RF24Mesh::update(){
 }
 
 bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
-	RF24NetworkHeader header(to_node,msg_type);
-	
-	uint32_t writeTimer = millis();
-    while ( !network.write(header,data,size) ){
-	  
-	  uint32_t delayTimer = millis();
-	  while(millis() - delayTimer < 50){
-		network.update();
-		delay(1);
-	  }
-	  if(millis()-writeTimer > MESH_WRITE_TIMEOUT){
-		return 0;
-	  }
-    }
-    return 1;
-	
+	RF24NetworkHeader header(to_node,msg_type);	
+	return network.write(header,data,size);	
 }
 
 /*****************************************************/
@@ -231,9 +216,9 @@ bool RF24Mesh::requestAddress(uint8_t level){
 		      return 0;
 			}else{
               #if defined (MESH_DEBUG_SERIAL)
-              Serial.print( millis() ); Serial.println(F(" MSH: Poll response > -64dbm "));
+              Serial.print( millis() ); Serial.println(F(" MSH: Poll response < -64dbm "));
               #elif defined (MESH_DEBUG_PRINTF)
-	          printf( "%u MSH: Poll response > -64dbm\n", millis() );
+	          printf( "%u MSH: Poll response < -64dbm\n", millis() );
 	          #endif	
 			  break;
 			}
