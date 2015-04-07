@@ -8,11 +8,11 @@
 #include <fstream>
 #endif
 
-RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network),radio_channel(MESH_DEFAULT_CHANNEL){}
+RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network){}
 
 /*****************************************************/
 
-void RF24Mesh::begin(){
+void RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate){
   
   radio.begin();
   if(getNodeID()){ //Not master node
@@ -24,11 +24,14 @@ void RF24Mesh::begin(){
 	#endif
     mesh_address = 0;
   }
-  network.begin(radio_channel,mesh_address);
+  radio_channel = channel;
+  radio.setChannel(radio_channel);
+  radio.setDataRate(data_rate);
+  network.begin(mesh_address);
   network.returnSysMsgs = 1;
   if(getNodeID()){ //Not master node
     renewAddress();
-  }  
+  }
 }
 
 /*****************************************************/
@@ -149,7 +152,7 @@ bool RF24Mesh::releaseAddress(){
 uint16_t RF24Mesh::renewAddress(){
   static const uint16_t requestDelay = 150;
   uint8_t reqCounter = 0;
-  network.begin(radio_channel,MESH_DEFAULT_ADDRESS);
+  network.begin(MESH_DEFAULT_ADDRESS);
   mesh_address = MESH_DEFAULT_ADDRESS;
 
   while(!requestAddress(reqCounter)){
@@ -287,7 +290,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	#endif
 	mesh_address = addrResponse.new_address;
 	//radio.begin();
-	network.begin(radio_channel,mesh_address);
+	network.begin(mesh_address);
 	header.to_node = 00;
 	header.type = MESH_ADDR_CONFIRM;
 	//network.write(header,0,0);
