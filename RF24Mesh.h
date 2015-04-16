@@ -43,9 +43,6 @@
 #else
   #include <RF24.h>
   #include <RF24Network.h>
-  #if (defined (__AVR__) || defined(__ARDUINO_X86__)) && !defined(RF24_TINY)
-    #include <EEPROM.h>
-  #endif
 #endif
 
   #include <stddef.h>
@@ -241,9 +238,9 @@ public:
   public:
 
   
-  #if (defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)) && !defined(__ARDUINO_X86__)
+  //#if (defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)) && !defined(__ARDUINO_X86__)
 	uint8_t _nodeID;
-  #endif
+  //#endif
  };
  
  #endif
