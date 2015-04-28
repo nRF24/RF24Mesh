@@ -8,27 +8,29 @@
 #include <fstream>
 #endif
 
-RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network),radio_channel(MESH_DEFAULT_CHANNEL){}
+RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network){}
 
 /*****************************************************/
 
-void RF24Mesh::begin(){
-  
+void RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate){
   radio.begin();
   if(getNodeID()){ //Not master node
     mesh_address = MESH_DEFAULT_ADDRESS;
   }else{
-    #if !defined (RF24_TINY)
+    #if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
 	addrList = (addrListStruct*)malloc(2 * sizeof(addrListStruct));
 	loadDHCP();
 	#endif
     mesh_address = 0;
   }
-  network.begin(radio_channel,mesh_address);
+  radio_channel = channel;
+  radio.setChannel(radio_channel);
+  radio.setDataRate(data_rate);
+  network.begin(mesh_address);
   network.returnSysMsgs = 1;
   if(getNodeID()){ //Not master node
     renewAddress();
-  }  
+  }
 }
 
 /*****************************************************/
@@ -37,13 +39,12 @@ uint8_t RF24Mesh::update(){
 
 	uint8_t type = network.update();
 	
-	#if !defined (RF24_TINY)
+	#if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
 	if(type == NETWORK_REQ_ADDRESS){
 	  doDHCP = 1;
 	}
 	
 	if(type == MESH_ADDR_LOOKUP && !getNodeID()) {
-	  uint8_t nodeID;
 	  RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
 	  header.to_node = header.from_node;
 	  
@@ -64,22 +65,8 @@ uint8_t RF24Mesh::update(){
 }
 
 bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
-	RF24NetworkHeader header(to_node,msg_type);
-	
-	uint32_t writeTimer = millis();
-    while ( !network.write(header,data,size) ){
-	  
-	  uint32_t delayTimer = millis();
-	  while(millis() - delayTimer < 50){
-		network.update();
-		delay(1);
-	  }
-	  if(millis()-writeTimer > MESH_WRITE_TIMEOUT){
-		return 0;
-	  }
-    }
-    return 1;
-	
+	RF24NetworkHeader header(to_node,msg_type);	
+	return network.write(header,data,size);	
 }
 
 /*****************************************************/
@@ -95,6 +82,8 @@ bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size ){
 void RF24Mesh::setChannel(uint8_t _channel){
 
 	radio_channel = _channel;
+	radio.setChannel(radio_channel);
+	radio.startListening();
 }
 /*****************************************************/
 
@@ -103,9 +92,9 @@ bool RF24Mesh::checkConnection(){
 	uint8_t count = 3;
 	bool ok;
 	while(count--){
-		ok = network.write(header,0,0);
-		delay(153);
+		ok = network.write(header,0,0);		
 		if(ok){break;}
+		delay(153);
 	}
 	return ok;
 	
@@ -116,7 +105,7 @@ bool RF24Mesh::checkConnection(){
 uint16_t RF24Mesh::getAddress(uint8_t nodeID){
 
 //#if defined (ARDUINO_SAM_DUE) || defined (__linux)
-#if !defined RF24_TINY
+#if !defined RF24_TINY && !defined(MESH_NOMASTER)
 	if(!getNodeID()){ //Master Node
 		uint16_t address = 0;
 		for(uint8_t i=0; i<addrListTop; i++){
@@ -135,7 +124,7 @@ uint16_t RF24Mesh::getAddress(uint8_t nodeID){
 		uint32_t timer=millis(), timeout = 500;		
 		while(network.update() != MESH_ADDR_LOOKUP){
 			if(millis()-timer > timeout){ return 0; }
-		}		
+		}
 	}
 	uint16_t address;
 	memcpy(&address,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(address));
@@ -164,11 +153,12 @@ bool RF24Mesh::releaseAddress(){
 uint16_t RF24Mesh::renewAddress(){
   static const uint16_t requestDelay = 150;
   uint8_t reqCounter = 0;
-  network.begin(radio_channel,MESH_DEFAULT_ADDRESS);
+  network.begin(MESH_DEFAULT_ADDRESS);
   mesh_address = MESH_DEFAULT_ADDRESS;
 
   while(!requestAddress(reqCounter)){
-    delay(requestDelay+(mesh_address%(7)*8));   
+    uint8_t small = millis() & ~7;
+    delay(requestDelay+(small*8));   
     (++reqCounter) = reqCounter%4;
   }
   return mesh_address;
@@ -180,34 +170,18 @@ bool RF24Mesh::requestAddress(uint8_t level){
     
 	RF24NetworkHeader header( 0100, NETWORK_POLL );
 
-	struct addrResponseStruct{
-	  uint16_t requester;
-      uint16_t new_address;  
-    }addrResponse;
-
      //Find another radio, starting with level 0 multicast	
 	network.multicast(header,0,0,level);
-
-	// Wait for a response
-	/*uint32_t timr = millis();
-	while( network.update() != NETWORK_POLL){
-
-	if(millis() - timr > 150UL){
-	  #if defined (MESH_DEBUG_SERIAL)
-	  Serial.print( millis() ); Serial.print(F(" MSH: No poll response from level "));Serial.println(level);
-      #elif defined (MESH_DEBUG_PRINTF)
-	  printf( "%u MSH: No poll response from level %d\n", millis(), level);
-	  #endif
-
-	  return 0;
-	}
-	}*/
 	
 	uint32_t timr = millis();
 	uint16_t *contactNode = 0;
-	bool timeout = 0;
 	
-	while(!timeout){
+    struct addrResponseStruct{
+	  uint16_t requester;
+      uint16_t new_address;  
+    }addrResponse;
+	
+	while(1){
 		bool goodSignal = radio.testRPD();
 		if(network.update() == NETWORK_POLL){
 			contactNode = (uint16_t*)(&network.frame_buffer);
@@ -231,9 +205,9 @@ bool RF24Mesh::requestAddress(uint8_t level){
 		      return 0;
 			}else{
               #if defined (MESH_DEBUG_SERIAL)
-              Serial.print( millis() ); Serial.println(F(" MSH: Poll response > -64dbm "));
+              Serial.print( millis() ); Serial.println(F(" MSH: Poll response < -64dbm "));
               #elif defined (MESH_DEBUG_PRINTF)
-	          printf( "%u MSH: Poll response > -64dbm\n", millis() );
+	          printf( "%u MSH: Poll response < -64dbm\n", millis() );
 	          #endif	
 			  break;
 			}
@@ -302,7 +276,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	#endif
 	mesh_address = addrResponse.new_address;
 	//radio.begin();
-	network.begin(radio_channel,mesh_address);
+	network.begin(mesh_address);
 	header.to_node = 00;
 	header.type = MESH_ADDR_CONFIRM;
 	//network.write(header,0,0);
@@ -330,52 +304,12 @@ bool RF24Mesh::waitForAvailable(uint32_t timeout){
 */
 /*****************************************************/
 
-#if (defined (__AVR__) || defined(__ARDUINO_X86__)) && !defined (RF24_TINY)
-
-uint8_t RF24Mesh::getNodeID(){
-  if(EEPROM.read(509) == 'R' && EEPROM.read(510) == 'F'){
-    return EEPROM.read(511);  
-  }
-  return 0;
-}
-
-/*****************************************************/
-
-void RF24Mesh::setNodeID(uint8_t nodeID){
-  
-  if(millis() - lastSaveTime < MESH_MIN_SAVE_TIME && millis() >= MESH_MIN_SAVE_TIME){	
-	#ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.println(F(" MSH: Can't change nodeID that fast")); 
-	#endif	
-	return;
-  }
-  lastSaveTime=millis();
-  
-  if(EEPROM.read(509) != 'R' || EEPROM.read(510) != 'F' || EEPROM.read(511) != nodeID){
-    EEPROM.write(509,'R');  EEPROM.write(510,'F'); EEPROM.write(511, nodeID);  
-    #ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.println(F(" MSH: Wrote data to EEPROM"));
-	#endif  
-  }else{    
-	#ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.println(F(" MSH: Data already stored in EEPROM"));
-	#endif  
-  }
-}
-
-/*****************************************************/
-
-#else
-
-/*****************************************************/
-
 uint8_t RF24Mesh::getNodeID(){
 	return _nodeID;
 }
 void RF24Mesh::setNodeID(uint8_t nodeID){
 	_nodeID = nodeID;
 }
-#endif
 
 /*****************************************************/
 
@@ -385,7 +319,6 @@ void RF24Mesh::setStaticAddress(char nodeID, uint16_t address){
   addrList[addrListTop].address = address;
   ++addrListTop;
   addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
-  
 }
 
 /*****************************************************/
@@ -446,7 +379,7 @@ void RF24Mesh::saveDHCP(){
 
 /*****************************************************/
 
-#if !defined (RF24_TINY)
+#if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
 
 void RF24Mesh::DHCP(){
   
@@ -591,8 +524,6 @@ void RF24Mesh::DHCP(){
    //}else{
 	//break;
    //}
-    
-  //}
 
 }
 

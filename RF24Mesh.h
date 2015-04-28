@@ -35,6 +35,7 @@
 #endif
 
 
+#include "RF24Mesh_config.h"
 
 #if defined (__linux) && !defined(__ARDUINO_X86__)
   #include <RF24/RF24.h>
@@ -42,10 +43,6 @@
 #else
   #include <RF24.h>
   #include <RF24Network.h>
-  #include "RF24Mesh_config.h"
-  #if (defined (__AVR__) || defined(__ARDUINO_X86__)) && !defined(RF24_TINY)
-    #include <EEPROM.h>
-  #endif
 #endif
 
   #include <stddef.h>
@@ -87,8 +84,9 @@ public:
    *  
    * @code mesh.begin(); @endcode
    * This may take a few moments to complete. 
+   * The radio channel and data-rate can be specified optionally as well
    */
-  void begin();
+  void begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS );
   
   /**
    * Very similar to network.update(), it needs to be called regularly to keep the network
@@ -187,9 +185,7 @@ public:
   bool write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
   
   /**
-  * Set the radio channel that RF24Mesh will operate on (default 97)
-  * @warn This does not actively change the radio channel, only stores it for the next time begin() is called or the address is renewed
-  * @note It is important to configure the radio channel this way, instead of directly via RF24
+  * Change the active radio channel after the mesh has been started.
   */
   void setChannel(uint8_t _channel);
   
@@ -242,9 +238,9 @@ public:
   public:
 
   
-  #if (defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)) && !defined(__ARDUINO_X86__)
+  //#if (defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)) && !defined(__ARDUINO_X86__)
 	uint8_t _nodeID;
-  #endif
+  //#endif
  };
  
  #endif
@@ -398,10 +394,8 @@ public:
  * 
  * @code  
  * #define MESH_MAX_CHILDREN 4  
- * #define MESH_DEFAULT_CHANNEL 90
  * @endcode
  * The max_children option restricts the maximum number of child nodes/node and limits the number of available addresses on the network. Max: 4 <br>
- * The default_channel option defines the radio channel number (1-127 allowed)
  *
  * @li See <a href="General-Usage.html">General Usage</a> for information on how to work with the mesh once connected.
  * 
