@@ -84,14 +84,15 @@ void loop() {
   // Display the currently assigned addresses and nodeIDs
   if(millis() - displayTimer > 5000){
     displayTimer = millis();
-     Serial.println(F("****Assigned Addresses****"));
+    Serial.println(" ");
+    Serial.println(F("********Assigned Addresses********"));
      for(int i=0; i<mesh.addrListTop; i++){
        Serial.print("NodeID: ");
        Serial.print(mesh.addrList[i].nodeID);
        Serial.print(" RF24Network Address: 0");
        Serial.println(mesh.addrList[i].address,OCT);
      }
-     Serial.println(F("********"));
+    Serial.println(F("**********************************"));
   }
   
 }
