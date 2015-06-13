@@ -22,6 +22,7 @@
 // No Network ACK types
 #define MESH_ADDR_LOOKUP 196
 #define MESH_ADDR_RELEASE 197
+#define MESH_ID_LOOKUP 198
  
  
 /**
@@ -101,7 +102,7 @@ public:
    * @param msg_type The user-defined (1-127) message header_type to send. Used to distinguish between different types of data being transmitted.
    * @return True if success, False if failed
    */
-  bool write(const void* data, uint8_t msg_type, size_t size);
+  bool write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
   
   /**
    * Set a unique nodeID for this node. This value, if changed, will be written to EEPROM on AVR so it will remain set, even after loss of power or code changes.  
@@ -126,19 +127,12 @@ public:
   /**@{*/
   
   /**
-   * Get the nodeID of this node. The nodeID is linked to the assigned RF24Network address but is unique.
-   * @return Returns the nodeID saved in memory OR 0 if not found.
-   */
-  uint8_t getNodeID();
-
-  /**
    * Convert an RF24Network address into a nodeId.
-   *
-   * When called on any node but the master node, this will return 0.
-   * @param address - The RF24Network address of the node.
-   * @return Returns the unique identifier (1-255) of the node or 0 if not found.
+   * When called on any node but the master node, this will result in a lookup request being sent to the master node
+   * 
+   * @return Returns the unique identifier (1-255) or -1 if not found.
    */
-  uint8_t getNodeId(uint16_t address);
+  int getNodeID(uint16_t address=0);
   
   /**
    * Tests connectivity of this node to the mesh.
@@ -326,10 +320,8 @@ public:
  * @li Dynamic/On-the fly configuration of addresses and network topology
  *  
  * <b>What are the functional limitations?</b>
- * @li Address assignments are not saved. If the 'master' node goes down, all nodes need to reconnect to the mesh or restart to prevent addressing conflicts. 
+ * @li Address assignments are not saved, except on RPi/Linux devices. If the 'master' node goes down, all nodes need to reconnect to the mesh or restart to prevent addressing conflicts. 
  *
- * The layer does not (yet) provide:
- * @li A lot! This code is in the initial stages of development only, and may not function exactly as desired. 
  *
  * @section Overview RF24Mesh Overview
  * The RF24Network library provides a system of addressing and routing for RF24 radio modules, that allows large wireless sensor networks to be constructed. RF24Mesh
@@ -397,6 +389,12 @@ public:
  * @endcode
  * The max_children option restricts the maximum number of child nodes/node and limits the number of available addresses on the network. Max: 4 <br>
  *
+ * @code  
+ * #define MESH_NOMASTER  
+ * @endcode
+ * The nomaster option reduces program space and memory usage. Can be used on any node except for the master (nodeID 0) <br>
+ *
+ * 
  * @li See <a href="General-Usage.html">General Usage</a> for information on how to work with the mesh once connected.
  * 
  * @page General-Usage General Usage
