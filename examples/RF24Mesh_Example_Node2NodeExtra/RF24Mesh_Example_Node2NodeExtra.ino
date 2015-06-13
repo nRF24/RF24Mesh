@@ -81,7 +81,7 @@ if(network.available()){
   
   
   // Send to the master node every second
-  if(millis() - millisTimer >= 333){
+  if(millis() - millisTimer >= 1333){
     millisTimer = millis();
     
     // Send an 'M' type to other Node containing the current millis()
@@ -97,7 +97,7 @@ if(network.available()){
             Serial.print("Send OK: "); Serial.println(millisTimer);
     }
   }
-    if(millis() - stringTimer >= 300){
+    if(millis() - stringTimer >= 1300){
       stringTimer=millis();
       //Copy the current number of characters to the temporary array
       memcpy(tmpStr,dataStr,strCtr);
