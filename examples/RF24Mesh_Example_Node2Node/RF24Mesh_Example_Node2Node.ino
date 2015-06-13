@@ -1,5 +1,5 @@
 
- /** RF24Mesh_Example.ino by TMRh20
+ /** RF24Mesh_Example_Node2NodeExtra.ino by TMRh20
   * 
   * This example sketch shows how to communicate between two (non-master) nodes using
   * RF24Mesh & RF24Network
@@ -39,7 +39,7 @@ void setup() {
   mesh.setNodeID(nodeID);  
   // Connect to the mesh
   Serial.println(F("Connecting to the mesh..."));
-  mesh.begin(7);
+  mesh.begin();
 }
 
 

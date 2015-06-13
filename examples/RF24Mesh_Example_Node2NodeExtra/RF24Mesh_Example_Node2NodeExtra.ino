@@ -44,7 +44,7 @@ void setup() {
   mesh.setNodeID(nodeID);
   // Connect to the mesh
   Serial.println(F("Connecting to the mesh..."));
-  mesh.begin(7);  
+  mesh.begin();  
 }
 
 
@@ -52,7 +52,7 @@ void loop() {
   
   mesh.update();
 
-if(network.available()){
+while(network.available()){
       RF24NetworkHeader hdr;
       size_t dataSize = network.peek(hdr);
       Serial.print("Size Rcv ");
@@ -60,9 +60,13 @@ if(network.available()){
       Serial.print(": "); 
       
       if(hdr.type == 'S'){      
-          char datt[dataSize];
-          network.read(hdr,&datt,dataSize);
-          Serial.println(datt);
+          //char datt[dataSize];
+          network.read(hdr,&tmpStr,dataSize);
+          //Serial.println(tmpStr);
+          for(int i=0; i<dataSize; i++){
+             Serial.print(tmpStr[i]);
+          }
+          Serial.println();
       }else
       if(hdr.type == 'M'){
         uint32_t mills;
@@ -70,7 +74,8 @@ if(network.available()){
         Serial.print("Rcv ");
         Serial.print(mills);
         Serial.print(" from nodeID ");
-        int _ID = mesh.getNodeID(hdr.from_node);
+        int _ID = 0;
+        _ID = mesh.getNodeID(hdr.from_node);
         if( _ID > 0){
            Serial.println(_ID);
         }else{
@@ -107,10 +112,11 @@ if(network.available()){
       // Send the temp string as an 'S' type message
       // Send it to otherNodeID (An RF24Mesh address lookup will be performed)
       if(mesh.write(tmpStr,'S',strCtr+1,otherNodeID)){
+      }
         strCtr++;
         //Set the sending length back to 1 once max size is reached
-        if(strCtr == sizeof(dataStr)+1){ strCtr=1; }
-      }
+        if(strCtr == sizeof(dataStr)){ strCtr=1; }
+      //}
     
     }
 
