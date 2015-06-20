@@ -100,6 +100,8 @@ public:
    * Very similar to the standard network.write() function, which can be used directly.
    * @param data Send any type of data of any length (Very large payloads will be more error prone)
    * @param msg_type The user-defined (1-127) message header_type to send. Used to distinguish between different types of data being transmitted.
+   * @param size The size of the data being sent
+   * @param nodeID Optional: The nodeID of the recipient if not sending to master
    * @return True if success, False if failed
    */
   bool write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
@@ -262,6 +264,16 @@ public:
   * in a manner similar to DHCP.
   *
   */
+
+  /**
+  * @example RF24Mesh_Example_Node2Node.ino
+  * Example of node to node communication using RF24Mesh
+  */
+  
+  /**
+  * @example RF24Mesh_Example_Node2NodeExtra.ino
+  * Extended Example of node to node communication using RF24Mesh
+  */
   
  /**
   * @example RF24Mesh_SerialConfig.ino
@@ -300,7 +312,7 @@ public:
   * A very limited ncurses interface used for initial monitoring/testing of RF24Mesh
   * <img src="tmrh20/RF24Mesh_Ncurses.JPG">
   */
- 
+  
 /**
  * @mainpage Mesh Networking Layer for RF24 Radios
  *
