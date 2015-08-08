@@ -41,6 +41,7 @@
 #if defined (__linux) && !defined(__ARDUINO_X86__)
   #include <RF24/RF24.h>
   #include <RF24Network/RF24Network.h>
+  #define RF24_LINUX
 #else
   #include <RF24.h>
   #include <RF24Network.h>
@@ -87,7 +88,7 @@ public:
    * This may take a few moments to complete. 
    * The radio channel and data-rate can be specified optionally as well
    */
-  void begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS );
+  bool begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS );
   
   /**
    * Very similar to network.update(), it needs to be called regularly to keep the network
@@ -149,7 +150,7 @@ public:
   * @note Currently blocks until a connection is established and an address is received.
   * @return Returns the newly assigned RF24Network address
   */
-  uint16_t renewAddress();
+  uint16_t renewAddress(uint32_t timeout=3000);
   
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
@@ -230,7 +231,7 @@ public:
   uint32_t lastSaveTime;
   uint32_t lastFileSave;
   uint8_t radio_channel;
-  
+
   public:
 
   
