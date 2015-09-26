@@ -24,6 +24,7 @@
 #define MESH_ADDR_RELEASE 197
 #define MESH_ID_LOOKUP 198
  
+#define MESH_BLANK_ID 65535
  
 /**
  * @file RF24Mesh.h
@@ -135,7 +136,7 @@ public:
    * 
    * @return Returns the unique identifier (1-255) or -1 if not found.
    */
-  int getNodeID(uint16_t address=0);
+  int getNodeID(uint16_t address=MESH_BLANK_ID);
   
   /**
    * Tests connectivity of this node to the mesh.

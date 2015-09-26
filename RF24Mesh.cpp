@@ -158,16 +158,19 @@ uint16_t RF24Mesh::getAddress(uint8_t nodeID){
 
 int RF24Mesh::getNodeID(uint16_t address){
 
-    if(!address){
+    if(address == MESH_BLANK_ID){
       return _nodeID;
-    }
+    }else
+    if(address == 0){
+      return 0;
+    }    
     
-    if(!getNodeID()){ //Master Node
+    if(!mesh_address){ //Master Node
         for(uint8_t i=0; i<addrListTop; i++){
             if(addrList[i].address == address){
                 return addrList[i].nodeID;
             }
-        }   
+        }
     }else{
       if(mesh_address == MESH_DEFAULT_ADDRESS){ return -1; }
       RF24NetworkHeader header( 00, MESH_ID_LOOKUP );
@@ -304,7 +307,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	//Serial.print("response took");
 	//Serial.println(millis()-timr);
 	#ifdef MESH_DEBUG_SERIAL
-    uint8_t mask = 7;	char addr[5] = "    ", count=3; uint16_t newAddr;	
+    uint8_t mask = 7;	char addrs[5] = "    ", count=3; uint16_t newAddr;	
 	#endif
 	uint8_t registerAddrCount = 0;
 
@@ -322,11 +325,11 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	  Serial.print( millis() );Serial.print(F(" Set address: "));
 	  newAddr = addrResponse.new_address;
 	  while(newAddr){
-		addr[count] = (newAddr & mask)+48; //get the individual Octal numbers, specified in chunks of 3 bits, convert to ASCII by adding 48
+		addrs[count] = (newAddr & mask)+48; //get the individual Octal numbers, specified in chunks of 3 bits, convert to ASCII by adding 48
 		newAddr >>= 3;
 		count--;
 	  }
-	  Serial.println(addr);
+	  Serial.println(addrs);
 	#elif defined (MESH_DEBUG_PRINTF)
 	  printf("Set address 0%o rcvd 0%o\n",mesh_address,addrResponse.new_address);
 	#endif
