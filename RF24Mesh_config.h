@@ -10,6 +10,7 @@
 /***Advanced User Config***/
 #define MESH_WRITE_TIMEOUT 5550 /** How long mesh.write will retry failed payloads. */
 #define MESH_DEFAULT_CHANNEL 97  /** Radio channel to operate on 1-127. This is normally modified by calling mesh.setChannel() */
+#define MESH_RENEWAL_TIMEOUT 60000 /** How long to attempt address renewal */
 /**************************/
 /***       Debug        ***/
 //#define MESH_DEBUG_MINIMAL /** Uncomment for the Master Node to print out address assignments as they are assigned */

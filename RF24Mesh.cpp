@@ -13,7 +13,7 @@ RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(
 
 /*****************************************************/
 
-bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate){
+bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout){
   radio.begin();
   if(getNodeID()){ //Not master node
     mesh_address = MESH_DEFAULT_ADDRESS;
@@ -29,7 +29,7 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate){
   radio.setDataRate(data_rate);  
   network.returnSysMsgs = 1;
   if(getNodeID()){ //Not master node
-    if(!renewAddress()){
+    if(!renewAddress(timeout)){
       return 0;
     }
   }else{
@@ -189,10 +189,14 @@ int RF24Mesh::getNodeID(uint16_t address){
 bool RF24Mesh::releaseAddress(){
     
     if(mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
-    network.begin(MESH_DEFAULT_ADDRESS);
-    mesh_address=MESH_DEFAULT_ADDRESS;
+
 	RF24NetworkHeader header(00,MESH_ADDR_RELEASE);
-	return network.write(header,0,0);
+    if(network.write(header,0,0)){
+        network.begin(MESH_DEFAULT_ADDRESS);
+        mesh_address=MESH_DEFAULT_ADDRESS;
+        return 1;
+    }
+	return 0;
 }
 
 /*****************************************************/
