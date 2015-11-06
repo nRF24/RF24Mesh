@@ -87,7 +87,11 @@ public:
    *  
    * @code mesh.begin(); @endcode
    * This may take a few moments to complete. 
-   * The radio channel and data-rate can be specified optionally as well
+   * 
+   * The following parameters are optional:
+   * @param channel The radio channel (1-127) default:97
+   * @param data_rate The data rate (RF24_250KBPS,RF24_1MBPS,RF24_2MBPS) default:RF24_1MBPS
+   * @param timeout How long to attempt address renewal in milliseconds default:60000
    */
   bool begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
   
@@ -98,20 +102,26 @@ public:
   uint8_t update();
   
   /**
-   * Automatically construct a header and send a payload to the 'master' node.
+   * Automatically construct a header and send a payload
    * Very similar to the standard network.write() function, which can be used directly.
-   * @param data Send any type of data of any length (Very large payloads will be more error prone)
+   *
+   * @note Including the nodeID parameter will result in an automatic address lookup being performed.
+   * @note Message types 1-64 (decimal) will NOT be acknowledged by the network, types 65-127 will be. Use as appropriate to manage traffic:
+   * if expecting a response, no ack is needed.
+   * 
+   * @param data Send any type of data of any length (Max length determined by RF24Network layer)
    * @param msg_type The user-defined (1-127) message header_type to send. Used to distinguish between different types of data being transmitted.
    * @param size The size of the data being sent
-   * @param nodeID Optional: The nodeID of the recipient if not sending to master
+   * @param nodeID **Optional**: The nodeID of the recipient if not sending to master
    * @return True if success, False if failed
    */
   bool write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
   
   /**
-   * Set a unique nodeID for this node. This value, if changed, will be written to EEPROM on AVR so it will remain set, even after loss of power or code changes.  
-   * Currently not saved on Due or RPi, so should be manually configured.
-   * This can generally be called before mesh.begin(), or set via serial connection or other methods if configuring a large number of nodes...  
+   * Set a unique nodeID for this node. This value is stored in program memory, so is saved after loss of power.  
+   * 
+   * This should be called before mesh.begin(), or set via serial connection or other methods if configuring a large number of nodes...  
+   * @note If using RF24Gateway and/or RF24Ethernet, nodeIDs 0 & 1 are used by the master node.
    * @param nodeID Can be any unique value ranging from 1 to 255. 
    */
   void setNodeID(uint8_t nodeID);
@@ -132,14 +142,14 @@ public:
   
   /**
    * Convert an RF24Network address into a nodeId.
-   * When called on any node but the master node, this will result in a lookup request being sent to the master node
-   * 
+   * @param address If no address is provided, returns the local nodeID, otherwise a lookup request is sent to the master node
    * @return Returns the unique identifier (1-255) or -1 if not found.
    */
-  int getNodeID(uint16_t address=MESH_BLANK_ID);
+  int16_t getNodeID(uint16_t address=MESH_BLANK_ID);
   
   /**
    * Tests connectivity of this node to the mesh.
+   * @note If this function fails, the radio will be put into standby mode, and will not receive payloads until the address is renewed.
    * @return Return 1 if connected, 0 if mesh not responding after up to 1 second
    */
   
@@ -148,13 +158,19 @@ public:
   /**
   * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
   * a routing node goes down.
-  * @note Currently blocks until a connection is established and an address is received.
+  * @note Currently times out after 1 minute if address renewal fails. Network writes should not be attempted if address renewal fails.
+  *
+  * @note If all nodes are set to verify connectivity/reconnect at a specified period, leaving the master offline for this length of time should result
+  * in complete network/mesh reconvergence.
+  * @param timeout How long to attempt address renewal in milliseconds default:60000
+  
   * @return Returns the newly assigned RF24Network address
   */
   uint16_t renewAddress(uint32_t timeout=MESH_RENEWAL_TIMEOUT);
   
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
+   * @note Nodes should ensure that addresses are releases successfully prior to renewal.
    * @return Returns 1 if successfully released, 0 if not
    */
   bool releaseAddress();
@@ -167,14 +183,13 @@ public:
   
   /**
    * Convert a nodeID into an RF24Network address
-   * @note If printing or displaying the address, it needs to be converted to octal format.
+   * @note If printing or displaying the address, it needs to be converted to octal format: Serial.println(address,OCT);
    *
-   * When called on any node but the master node, this will result in a name lookup request being sent to the master node, and a response
-   * returned containing the address corresponding to the included nodeID.
+   * Results in a lookup request being sent to the master node.
    * @param nodeID - The unique identifier (1-255) of the node
-   * @return Returns the RF24Network address of the node or 0 if not found or lookup failed.
+   * @return Returns the RF24Network address of the node or -1 if not found or lookup failed.
    */
-  uint16_t getAddress(uint8_t nodeID);
+  int16_t getAddress(uint8_t nodeID);
 
   /**
    * Write to a specific node by RF24Network address.
@@ -188,9 +203,9 @@ public:
   void setChannel(uint8_t _channel);
   
   /**
-  * Set a static nodeID/RF24Network Address pair.
-  * Mainly for use with nodes not using RF24Mesh, but RF24Network only.
-  * Set a static address assignment, that will not be updated or re-assigned.
+  * Set a static nodeID/RF24Network Address pair on the master node.
+  * Mainly for use with nodes not using RF24Mesh at all, but RF24Network only.
+  *
   * @code
   * Set a static address for node 02, with nodeID 23, since it will just be a static routing node for example
   * running on an ATTiny chip.
@@ -356,7 +371,7 @@ public:
  * @li Try it out!
  * @li <a href="Setup-Config.html">Setup and Configuration</a>
  * @li <a href="classRF24Mesh.html">RF24Mesh Class Documentation</a>
- * @li <a href="http://tmrh20.github.io/RF24Network_Dev/">RF24 Network -DEV- Class Documentation</a>
+ * @li <a href="http://tmrh20.github.io/RF24Network/">RF24 Network Class Documentation</a>
  * @li <a href="https://tmrh20.github.io">Documentation and Downloads</a>
  * @li <a href="https://github.com/TMRh20/RF24Mesh">Source Code</a>
  *
@@ -375,15 +390,15 @@ public:
  *  
  * <b>Software Requirements:</b>
  * @li <a href="https://github.com/TMRh20/RF24/archive/master.zip">RF24 Core Radio Library</a>
- * @li <a href="https://github.com/TMRh20/RF24Network/archive/Development.zip">RF24Network Development Library</a>
+ * @li <a href="https://github.com/TMRh20/RF24Network/archive/master.zip">RF24Network Library</a>
  * @li <a href="https://github.com/TMRh20/RF24Mesh/archive/master.zip">RF24Mesh - Dynamic Mesh Library</a>
  *  
  * @section Installation Installation
- * 1. If not installed, download and install the RF24, RF24Network DEV, and RF24Mesh libraries per the above links  <br>
+ * 1. If not installed, use the Arduino Library Manager, or download and install the RF24, RF24Network, and RF24Mesh libraries per the above links  <br>
  *  <br>
  * 2. Configure and test the hardware using examples from RF24 and RF24Network prior to attempting to use RF24Mesh  <br>
  *    a: <b>In Arduino IDE:</b> File > Examples > RF24 > GettingStarted  <br>
- *    b: <b>RPi:</b> Follow the Quick-Start instructions on <a href="https://github.com/TMRh20/RF24Network/tree/Development/RPi">GitHub</a>  <br>
+ *    b: <b>RPi:</b> Follow the RF24 instructions on <a href="http://tmrh20.github.io/RF24/RPi.html">GitHub</a>  <br>
  *  <br>
  * 3. Once testing is complete:  <br>
  *    a: <b>Arduino IDE:</b> File > Examples > RF24Mesh > RF24Mesh_Example  <br>
@@ -426,7 +441,8 @@ public:
  * One of the recently introduced features is the ability to transmit payloads without the network returning a network-ack response. If solely using this method
  * of transmission, the node should also be configured to verify its connection via mesh.checkConnection(); periodically, to ensure connectivity.
  *
- * Beyond requesting and releasing addresses, usage is as outlined in the RF24Network Development documentation at http://tmrh20.github.io
+ * Beyond requesting and releasing addresses, usage is outlined in the class documentation and further information regarding RF24Network is available at
+ * http://tmrh20.github.io/RF24Network
  *
  *
  * 
