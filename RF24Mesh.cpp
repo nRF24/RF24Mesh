@@ -106,10 +106,17 @@ void RF24Mesh::setChannel(uint8_t _channel){
 	radio.startListening();
 }
 /*****************************************************/
+void RF24Mesh::setChild(bool allow){
+    //Prevent old versions of RF24Network from throwing an error
+    //Note to remove this ""if defined"" after a few releases from 1.0.1
+    #if defined FLAG_NO_POLL
+       network.networkFlags |= FLAG_NO_POLL;
+    #endif
+}
+/*****************************************************/
 
 bool RF24Mesh::checkConnection(){
 
-	RF24NetworkHeader header(00,NETWORK_PING);
 	uint8_t count = 3;
 	bool ok = 0;
 	while(count-- && mesh_address != MESH_DEFAULT_ADDRESS){
@@ -117,9 +124,10 @@ bool RF24Mesh::checkConnection(){
         if(radio.rxFifoFull() || (network.networkFlags & 1)){
           return 1;
         }
+        RF24NetworkHeader header(00,NETWORK_PING);
 		ok = network.write(header,0,0);
 		if(ok){break;}
-		delay(153);
+		delay(103);
 	}
     if(!ok){ radio.stopListening(); }
 	return ok;
@@ -371,11 +379,36 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
 /*****************************************************/
 
 void RF24Mesh::setStaticAddress(char nodeID, uint16_t address){
+    setAddress(nodeID,address);
+}
+
+/*****************************************************/
+
+void RF24Mesh::setAddress(char nodeID, uint16_t address){
   
-  addrList[addrListTop].nodeID = nodeID;
-  addrList[addrListTop].address = address;
-  ++addrListTop;
-  addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
+  uint8_t position = addrListTop;
+  
+  for(uint8_t i=0; i<addrListTop; i++){
+      if( addrList[i].nodeID == nodeID){
+          position = i;
+          break;
+      }
+  }
+  addrList[position].nodeID = nodeID;
+  addrList[position].address = address;
+  
+  if(position == addrListTop){
+      ++addrListTop;  
+      addrList = (addrListStruct*)realloc(addrList,(addrListTop + 1) * sizeof(addrListStruct));
+  }
+  
+   #if defined (__linux)  && !defined(__ARDUINO_X86__)
+		if(millis()-lastFileSave > 300){
+			lastFileSave = millis();
+			saveDHCP();
+		}
+   #endif	  
+  
 }
 
 /*****************************************************/
@@ -393,7 +426,7 @@ void RF24Mesh::loadDHCP(){
 	int length = infile.tellg();
 	infile.seekg(0,infile.beg);
 
-	addrList = (addrListStruct*)realloc(addrList,length+sizeof(addrListStruct));
+	addrList = (addrListStruct*)realloc(addrList,length + sizeof(addrListStruct));
 
 	addrListTop = length/sizeof(addrListStruct);
 	for(int i=0; i<addrListTop; i++){
@@ -531,35 +564,8 @@ void RF24Mesh::DHCP(){
 				
 			}
 		  //printf("Got addr confirmation from 0%o\n",header.to_node);
-          found = 0;
-		  for(uint8_t i=0; i < addrListTop; i++){
-			if(  addrList[i].nodeID == from_id  ){
-				addrList[i].address = newAddress;
-				found = 1;
-				#if defined (__linux) && !defined(__ARDUINO_X86__)
-				if(millis()-lastFileSave > 300){
-					lastFileSave = millis();
-					saveDHCP();
-				}
-				#endif
-				break;
-			}
-		  }		  
-		  if(!found){
-		    addrList[addrListTop].nodeID = from_id;
-			addrList[addrListTop].address = newAddress;
-			#if defined (__linux)  && !defined(__ARDUINO_X86__)
-			if(millis()-lastFileSave > 300){
-				lastFileSave = millis();
-				saveDHCP();
-			}
-			#endif			
-			++addrListTop;
-			addrList = (addrListStruct*)realloc(addrList,(addrListTop+1) * sizeof(addrListStruct));
-			
-		  }
-		  
-		  
+          setAddress(from_id,newAddress);
+          
 		  #ifdef MESH_DEBUG_PRINTF
 		    printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,MESH_DEFAULT_ADDRESS,newAddress,header.reserved);
           #endif
