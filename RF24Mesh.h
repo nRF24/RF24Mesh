@@ -235,6 +235,21 @@ public:
   /**@{*/
 
   /**@}*/
+
+  uint8_t _nodeID;
+
+  
+#if !defined RF24TINY  
+  typedef struct{
+	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
+	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
+  }addrListStruct;
+  
+  // Pointer used for dynamic memory allocation of address list
+  addrListStruct *addrList;  /**< See the addrListStruct class reference */
+  uint8_t addrListTop;       /**< The number of entries in the assigned address list */
+#endif
+
   /**
    * @name Deprecated
    *
@@ -247,17 +262,6 @@ public:
    */
   void setStaticAddress(char nodeID, uint16_t address);
   
-#if !defined RF24TINY  
-  typedef struct{
-	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
-	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
-  }addrListStruct;
-  
-  // Pointer used for dynamic memory allocation of address list
-  addrListStruct *addrList;  /**< See the addrListStruct class reference */
-  uint8_t addrListTop;       /**< The number of entries in the assigned address list */
-#endif
-  
   private:
   RF24& radio;
   RF24Network& network;  
@@ -269,12 +273,7 @@ public:
   uint32_t lastFileSave;
   uint8_t radio_channel;
 
-  public:
 
-  
-  //#if (defined (ARDUINO_SAM_DUE) || defined (__linux) || defined(RF24_TINY) || defined (CORE_TEENSY)) && !defined(__ARDUINO_X86__)
-	uint8_t _nodeID;
-  //#endif
  };
  
  #endif

@@ -241,7 +241,10 @@ bool RF24Mesh::requestAddress(uint8_t level){
     
 	RF24NetworkHeader header( 0100, NETWORK_POLL );
      //Find another radio, starting with level 0 multicast	
-	network.multicast(header,0,0,level);
+	#if defined (MESH_DEBUG_SERIAL)
+        Serial.print( millis() ); Serial.println(F(" MSH: Poll "));
+    #endif    
+    network.multicast(header,0,0,level);
 	
 	uint32_t timr = millis();
 	uint16_t *contactNode = 0;
@@ -258,7 +261,13 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	            printf( "%u MSH: Poll > -64dbm\n", millis() );
 	            #endif
 				break;
-			}
+			}else{
+                #if defined (MESH_DEBUG_SERIAL)
+	            Serial.print( millis() ); Serial.println(F(" MSH: Poll < -64dbm "));
+                #elif defined (MESH_DEBUG_PRINTF)
+	            printf( "%u MSH: Poll < -64dbm\n", millis() );
+	            #endif                
+            }
 		}
 		if(millis() - timr > 25 ){
 			if(!contactNode){
@@ -556,14 +565,13 @@ void RF24Mesh::DHCP(){
 			//addrMap[from_id] = newAddress;
           }
        		uint32_t timer=millis();
-			while(network.update() != MESH_ADDR_CONFIRM){
-				if(millis()-timer>900){
+            while(network.update() != MESH_ADDR_CONFIRM){
+				if(millis()-timer>45){
 				    //printf("No addr confirmation from 0%o\n",header.to_node);
 					return;
 				}
 				
 			}
-		  //printf("Got addr confirmation from 0%o\n",header.to_node);
           setAddress(from_id,newAddress);
           
 		  #ifdef MESH_DEBUG_PRINTF
