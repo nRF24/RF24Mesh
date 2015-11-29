@@ -110,7 +110,7 @@ void RF24Mesh::setChild(bool allow){
     //Prevent old versions of RF24Network from throwing an error
     //Note to remove this ""if defined"" after a few releases from 1.0.1
     #if defined FLAG_NO_POLL
-       network.networkFlags |= FLAG_NO_POLL;
+      networkFlags = allow ? networkFlags & ~FLAG_NO_POLL : networkFlags | FLAG_NO_POLL; 
     #endif
 }
 /*****************************************************/
