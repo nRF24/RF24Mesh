@@ -57,10 +57,10 @@ uint8_t RF24Mesh::update(){
 	  header.to_node = header.from_node;
 	  
       if(type==MESH_ADDR_LOOKUP){
-	    uint16_t returnAddr = getAddress(network.frame_buffer[sizeof(RF24NetworkHeader)]);
+	    int16_t returnAddr = getAddress(network.frame_buffer[sizeof(RF24NetworkHeader)]);
         network.write(header,&returnAddr,sizeof(returnAddr)); 
       }else{
-        uint8_t returnAddr = getNodeID(network.frame_buffer[sizeof(RF24NetworkHeader)]);
+        int16_t returnAddr = getNodeID(network.frame_buffer[sizeof(RF24NetworkHeader)]);
         network.write(header,&returnAddr,sizeof(returnAddr));        
       }      
 	  //printf("Returning lookup 0%o to 0%o   \n",returnAddr,header.to_node);
@@ -88,13 +88,22 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
 
 bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID){
   if(mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
-  uint16_t toNode = 0;
+  
+  int16_t toNode = 0;
+  uint32_t lookupTimeout = millis()+ MESH_LOOKUP_TIMEOUT;
+  uint32_t retryDelay = 50;
+  
   if(nodeID){
-    toNode = getAddress(nodeID);
-    if(!toNode){return 0;}
+    
+    while( (toNode=getAddress(nodeID)) < 0 ){
+        if(millis() > lookupTimeout || toNode == -2){
+          return 0;
+        }
+        retryDelay+=50;
+        delay(retryDelay);
+    }  
   }
   return write(toNode,data,msg_type,size);
-
 }
 
 /*****************************************************/
@@ -155,14 +164,16 @@ int16_t RF24Mesh::getAddress(uint8_t nodeID){
     if(!nodeID){return 0;}
 	RF24NetworkHeader header( 00, MESH_ADDR_LOOKUP );
 	if(network.write(header,&nodeID,sizeof(nodeID)+1) ){
-		uint32_t timer=millis(), timeout = 500;		
+		uint32_t timer=millis(), timeout = 150;		
 		while(network.update() != MESH_ADDR_LOOKUP){
 			if(millis()-timer > timeout){ return -1; }
 		}
-	}
-	uint16_t address;
+	}else{
+      return -1;
+    }
+	int16_t address = 0;
 	memcpy(&address,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(address));
-	return address;	
+	return address >= 0 ? address: -2;	
 }
 
 int16_t RF24Mesh::getNodeID(uint16_t address){
@@ -188,7 +199,9 @@ int16_t RF24Mesh::getNodeID(uint16_t address){
 		while(network.update() != MESH_ID_LOOKUP){            
 			if(millis()-timer > timeout){ return -1; }
 		}
-        return network.frame_buffer[sizeof(RF24NetworkHeader)];
+        int16_t ID;
+        memcpy(&ID,&network.frame_buffer[sizeof(RF24NetworkHeader)],sizeof(ID));
+        return ID;
       }
     }
     return -1;
