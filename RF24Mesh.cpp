@@ -260,12 +260,20 @@ bool RF24Mesh::requestAddress(uint8_t level){
     network.multicast(header,0,0,level);
 	
 	uint32_t timr = millis();
-	uint16_t *contactNode = 0;
-	
+     #define MESH_MAXPOLLS 4
+    uint16_t contactNode[MESH_MAXPOLLS];
+    uint8_t pollCount=0;
+   
+    
     while(1){
+        #if defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)
 		bool goodSignal = radio.testRPD();
+        #endif
 		if(network.update() == NETWORK_POLL){
-			contactNode = (uint16_t*)(&network.frame_buffer);
+            memcpy(&contactNode[pollCount],&network.frame_buffer[0],sizeof(contactNode));
+            ++pollCount;
+            
+            #if defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)    
 			if(goodSignal){
 			    // This response was better than -64dBm
                 #if defined (MESH_DEBUG_SERIAL)
@@ -273,7 +281,6 @@ bool RF24Mesh::requestAddress(uint8_t level){
                 #elif defined (MESH_DEBUG_PRINTF)
 	            printf( "%u MSH: Poll > -64dbm\n", millis() );
 	            #endif
-				break;
 			}else{
                 #if defined (MESH_DEBUG_SERIAL)
 	            Serial.print( millis() ); Serial.println(F(" MSH: Poll < -64dbm "));
@@ -281,9 +288,11 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	            printf( "%u MSH: Poll < -64dbm\n", millis() );
 	            #endif                
             }
+            #endif
 		}
-		if(millis() - timr > 25 ){
-			if(!contactNode){
+        
+		if(millis() - timr > 55 || pollCount >=  MESH_MAXPOLLS ){
+			if(!pollCount){
               #if defined (MESH_DEBUG_SERIAL)
 	          Serial.print( millis() ); Serial.print(F(" MSH: No poll from level "));Serial.println(level);
               #elif defined (MESH_DEBUG_PRINTF)
@@ -293,9 +302,9 @@ bool RF24Mesh::requestAddress(uint8_t level){
 			}else{
               
               #if defined (MESH_DEBUG_SERIAL)
-              Serial.print( millis() ); Serial.println(F(" MSH: Poll < -64dbm "));
+              Serial.print( millis() ); Serial.println(F(" MSH: Poll OK "));
               #elif defined (MESH_DEBUG_PRINTF)
-	          printf( "%u MSH: Poll < -64dbm\n", millis() );
+	          printf( "%u MSH: Poll OK\n", millis() );
 	          #endif	
 			  break;
 			}
@@ -304,35 +313,41 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	
    
     #ifdef MESH_DEBUG_SERIAL
-	Serial.print( millis() ); Serial.print(F(" MSH: Got poll from level ")); Serial.println(level);
+	Serial.print( millis() ); Serial.print(F(" MSH: Got poll from level ")); Serial.print(level);
+    Serial.print(F(" count "));Serial.println(pollCount);
 	#elif defined MESH_DEBUG_PRINTF
-	printf("%u MSH: Got poll from level %d\n",millis(),level);
+	printf("%u MSH: Got poll from level %d count %d\n",millis(),level,pollCount);
     #endif	
 
+  uint8_t type=0;
+  for(uint8_t i=0; i<pollCount; i++){
     // Request an address via the contact node
     header.type = NETWORK_REQ_ADDRESS;
     header.reserved = getNodeID();
-    header.to_node = *contactNode;    
+    header.to_node = contactNode[i];    
     
     // Do a direct write (no ack) to the contact node. Include the nodeId and address.	
-    network.write(header,0,0,*contactNode);
+    network.write(header,0,0,contactNode[i]);
     #ifdef MESH_DEBUG_SERIAL
-	  Serial.print( millis() ); Serial.println(F(" MSH: Request address "));
+	  Serial.print( millis() ); Serial.print(F(" MSH: Req addr from ")); Serial.println(contactNode[i],OCT);
 	#elif defined MESH_DEBUG_PRINTF
-	  printf("%u  MSH: Request address this node: 0%o\n",millis(),mesh_address);
+	  printf("%u MSH: Request address from: 0%o\n",millis(),contactNode[i]);
 	#endif
 	
-	timr = millis();
-	while(network.update() != NETWORK_ADDR_RESPONSE){
-		if(millis() - timr > 25){
-		#ifdef MESH_DEBUG_SERIAL
-          Serial.print( millis() ); Serial.print(F(" MSH: No address response from level ")); Serial.println( level );
-		#elif defined MESH_DEBUG_PRINTF
-		  printf("%u MSH: No address response from level %d\n",millis(),level );
-		#endif
-	    return 0;
-		}
-	}
+	timr = millis();    
+    
+    while(millis()-timr<225){
+      if( (type = network.update()) == NETWORK_ADDR_RESPONSE){
+        i=pollCount;
+        break;
+      }
+    }
+    delay(5);
+  }
+  if(type != NETWORK_ADDR_RESPONSE){
+      return 0;
+  }
+    
 	//Serial.print("response took");
 	//Serial.println(millis()-timr);
 	#ifdef MESH_DEBUG_SERIAL
@@ -346,9 +361,10 @@ bool RF24Mesh::requestAddress(uint8_t level){
 
 	if(!newAddress || network.frame_buffer[7] != getNodeID() ){
 		#ifdef MESH_DEBUG_SERIAL
-		  Serial.print(millis()); Serial.println(F(" MSH: Response discarded, wrong node"));
+		  Serial.print(millis()); Serial.print(F(" MSH: Attempt Failed ")); Serial.println(network.frame_buffer[7]);
+          Serial.print("My NodeID ");Serial.println(getNodeID());
 		#elif defined MESH_DEBUG_PRINTF
-		  printf("%u Response discarded, wrong node 0%o from node 0%o sending node 0%o\n",millis(),newAddress,header.from_node,MESH_DEFAULT_ADDRESS);
+		  printf("%u Response discarded, wrong node 0%o from node 0%o sending node 0%o id %d\n",millis(),newAddress,header.from_node,MESH_DEFAULT_ADDRESS,network.frame_buffer[7]);
         #endif
 		return 0;
 	}
