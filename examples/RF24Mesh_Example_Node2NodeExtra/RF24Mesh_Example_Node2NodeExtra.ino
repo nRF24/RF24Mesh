@@ -86,15 +86,20 @@ void loop() {
     } else if (hdr.type == 'M') {
       uint32_t mills;
       network.read(hdr, &mills, sizeof(mills));
-      Serial.print(F("Rcv "));
+      Serial.print(F("Received "));
       Serial.print(mills);
-      Serial.print(F(" from nodeID "));
       int _ID = 0;
       _ID = mesh.getNodeID(hdr.from_node);
       if ( _ID > 0) {
-        Serial.println(_ID);
+        if (_ID == nodeID) {
+          Serial.println(F(" from master."));
+        } else {
+          Serial.print(F(" from node(ID) "));
+          Serial.print(_ID);
+          Serial.println('.');
+        }
       } else {
-        Serial.println("Mesh ID Lookup Failed");
+        Serial.println(F("Mesh ID Lookup Failed"));
       }
       Serial.print(F("Total Data Received: "));
       Serial.print(totalData);
