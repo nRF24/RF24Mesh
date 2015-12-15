@@ -389,7 +389,12 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	header.type = MESH_ADDR_CONFIRM;
 
 	while( !network.write(header,0,0) ){
-		if(registerAddrCount++ >= 6 ){ return 0; }
+		if(registerAddrCount++ >= 6 ){ 
+          network.begin(MESH_DEFAULT_ADDRESS);
+          mesh_address = MESH_DEFAULT_ADDRESS;
+          return 0;
+        }
+        delay(3);
 	}
     
     return 1;  
@@ -416,13 +421,13 @@ void RF24Mesh::setNodeID(uint8_t nodeID){
 
 /*****************************************************/
 
-void RF24Mesh::setStaticAddress(char nodeID, uint16_t address){
+void RF24Mesh::setStaticAddress(uint8_t nodeID, uint16_t address){
     setAddress(nodeID,address);
 }
 
 /*****************************************************/
 
-void RF24Mesh::setAddress(char nodeID, uint16_t address){
+void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address){
   
   uint8_t position = addrListTop;
   

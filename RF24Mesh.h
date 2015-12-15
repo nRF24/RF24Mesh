@@ -221,7 +221,7 @@ public:
   * @param address The octal RF24Network address to assign
   * @return If the nodeID exists in the list, 
   */
-  void setAddress(char nodeID, uint16_t address);
+  void setAddress(uint8_t nodeID, uint16_t address);
   
   void saveDHCP();
   void loadDHCP();
@@ -260,7 +260,7 @@ public:
   /**
    * Calls setAddress()
    */
-  void setStaticAddress(char nodeID, uint16_t address);
+  void setStaticAddress(uint8_t nodeID, uint16_t address);
   
   private:
   RF24& radio;
