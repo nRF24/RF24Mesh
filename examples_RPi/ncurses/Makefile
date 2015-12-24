@@ -12,6 +12,11 @@
 #
 prefix := /usr/local
 
+ARCH=armv6zk
+ifeq "$(shell uname -m)" "armv7l"
+ARCH=armv7-a
+endif
+
 # Detect the Raspberry Pi from cpuinfo
 #Count the matches for BCM2708 or BCM2709 in cpuinfo
 RPI=$(shell cat /proc/cpuinfo | grep Hardware | grep -c BCM2708)
@@ -21,7 +26,7 @@ endif
 
 ifeq "$(RPI)" "1"
 # The recommended compiler flags for the Raspberry Pi
-CCFLAGS+=-Ofast -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s
+CCFLAGS+=-Ofast -mfpu=vfp -mfloat-abi=hard -march=$(ARCH) -mtune=arm1176jzf-s
 endif
 
 # define all programs
