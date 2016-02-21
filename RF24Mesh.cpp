@@ -20,6 +20,7 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
   }else{
     #if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
 	addrList = (addrListStruct*)malloc(2 * sizeof(addrListStruct));
+	addrListTop = 0;
 	loadDHCP();
 	#endif
     mesh_address = 0;
