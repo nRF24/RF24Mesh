@@ -17,8 +17,7 @@
     "*.cpp",
     "arch/ATTiny/*",
     "arch/Due/*",
-    "arch/Teensy/*",
-    "examples/*/*.ino"
+    "arch/Teensy/*"
   ],
   "frameworks": "arduino",
   "platforms": [
