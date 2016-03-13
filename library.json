@@ -1,0 +1,25 @@
+{
+  "name": "RF24Mesh",
+  "keywords": "rf, radio, wireless, spi, mesh, network",
+  "description": "A simple and seamless 'mesh' layer for sensor networks. Designed to interface directly with with the RF24Network Development library, an OSI Network Layer using nRF24L01(+) radios driven by the newly optimized RF24 library fork.",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/TMRh20/RF24Mesh.git"
+  },
+  "include": [
+    "*.h",
+    "*.c",
+    "*.cpp",
+    "arch/ATTiny/*",
+    "arch/Due/*",
+    "arch/Teensy/*",
+    "examples/*/*.ino"
+  ],
+  "frameworks": "arduino",
+  "platforms": [
+    "atmelavr",
+    "atmelsam",
+    "teensy"
+  ]
+}
