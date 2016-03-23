@@ -14,6 +14,7 @@ RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(
 /*****************************************************/
 
 bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout){
+  delay(1); // Found problems w/SPIDEV & ncurses. Without this, getch() returns a stream of garbage
   radio.begin();
   if(getNodeID()){ //Not master node
     mesh_address = MESH_DEFAULT_ADDRESS;
@@ -91,7 +92,7 @@ bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size, uint8_t no
   if(mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
   
   int16_t toNode = 0;
-  uint32_t lookupTimeout = millis()+ MESH_LOOKUP_TIMEOUT;
+  int32_t lookupTimeout = millis()+ MESH_LOOKUP_TIMEOUT;
   uint32_t retryDelay = 50;
   
   if(nodeID){
@@ -536,6 +537,7 @@ void RF24Mesh::DHCP(){
      
      uint16_t fwd_by = 0;
      uint8_t shiftVal = 0;
+     bool extraChild = 0;
      
      if( header.from_node != MESH_DEFAULT_ADDRESS){
        fwd_by = header.from_node;
@@ -547,13 +549,16 @@ void RF24Mesh::DHCP(){
          count++; 
        }
        shiftVal = count*3; //Now we know how many bits to shift when adding a child node 1-5 (B001 to B101) to any address         
+     }else{
+         //If request is coming from level 1, add an extra child to the master
+         extraChild = 1;
      }
 
        #ifdef MESH_DEBUG_PRINTF
 	   //  printf("%u MSH: Rcv addr req from_id %d \n",millis(),from_id);
 	   #endif
        
-	   for(int i=MESH_MAX_CHILDREN; i> 0; i--){ // For each of the possible addresses (5 max)
+	   for(int i=MESH_MAX_CHILDREN+extraChild; i> 0; i--){ // For each of the possible addresses (5 max)
          
         bool found = 0;
         newAddress = fwd_by | (i << shiftVal);
