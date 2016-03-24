@@ -272,7 +272,7 @@ public:
   uint32_t lastSaveTime;
   uint32_t lastFileSave;
   uint8_t radio_channel;
-
+  uint16_t lastID,lastAddress;
 
  };
  

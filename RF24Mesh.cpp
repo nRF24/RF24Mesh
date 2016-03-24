@@ -75,7 +75,14 @@ uint8_t RF24Mesh::update(){
 				addrList[i].address = 0;
 			}
 		}		
-	}
+	}else
+	if(type == MESH_ADDR_CONFIRM){
+        RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
+        if(header.from_node == lastAddress){
+            setAddress(lastID,lastAddress);
+        }        
+    }
+    
 	#endif
 	return type;
 }
@@ -605,9 +612,10 @@ void RF24Mesh::DHCP(){
 			//addrMap[from_id] = newAddress;
           }
        		uint32_t timer=millis();
+            lastAddress = newAddress;
+            lastID = from_id;
             while(network.update() != MESH_ADDR_CONFIRM){
-				if(millis()-timer>45){
-				    //printf("No addr confirmation from 0%o\n",header.to_node);
+				if(millis()-timer > network.routeTimeout){
 					return;
 				}
 				
