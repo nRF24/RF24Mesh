@@ -54,7 +54,8 @@ uint8_t RF24Mesh::update(){
 	  doDHCP = 1;
 	}
 
-	if( (type == MESH_ADDR_LOOKUP || type == MESH_ID_LOOKUP) && !getNodeID()) {
+  if(!getNodeID()){
+	if( (type == MESH_ADDR_LOOKUP || type == MESH_ID_LOOKUP)) {
 	  RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
 	  header.to_node = header.from_node;
 	  
@@ -68,20 +69,24 @@ uint8_t RF24Mesh::update(){
 	  //printf("Returning lookup 0%o to 0%o   \n",returnAddr,header.to_node);
 	  //network.write(header,&returnAddr,sizeof(returnAddr));	
 	}else
-	if(type == MESH_ADDR_RELEASE && !getNodeID() ){
+	if(type == MESH_ADDR_RELEASE ){
 		uint16_t *fromAddr = (uint16_t*)network.frame_buffer;
 		for(uint8_t i=0; i<addrListTop; i++){
 			if(addrList[i].address == *fromAddr){
 				addrList[i].address = 0;
 			}
 		}		
-	}else
-	if(type == MESH_ADDR_CONFIRM){
+	}
+    #if !defined (ARDUINO_ARCH_AVR)
+    else 
+	if(type == MESH_ADDR_CONFIRM ){
         RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
         if(header.from_node == lastAddress){
             setAddress(lastID,lastAddress);
         }        
     }
+    #endif
+  }
     
 	#endif
 	return type;
