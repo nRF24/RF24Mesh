@@ -284,7 +284,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 		bool goodSignal = radio.testRPD();
         #endif
 		if(network.update() == NETWORK_POLL){
-            memcpy(&contactNode[pollCount],&network.frame_buffer[0],sizeof(contactNode));
+            memcpy(&contactNode[pollCount],&network.frame_buffer[0],sizeof(uint16_t));
             ++pollCount;
             
             #if defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)    
@@ -460,10 +460,10 @@ void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address){
   }
   
    #if defined (__linux)  && !defined(__ARDUINO_X86__)
-		if(millis()-lastFileSave > 300){
-			lastFileSave = millis();
+		//if(millis()-lastFileSave > 300){
+		//	lastFileSave = millis();
 			saveDHCP();
-		}
+		//}
    #endif	  
   
 }
