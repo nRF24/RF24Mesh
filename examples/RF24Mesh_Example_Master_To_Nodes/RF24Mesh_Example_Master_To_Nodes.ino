@@ -84,7 +84,12 @@ void loop() {
         payload = {ctr%3,ctr};
       }
       RF24NetworkHeader header(mesh.addrList[i].address, OCT); //Constructing a header
-      Serial.println( F(network.write(header, &payload, sizeof(payload)) == 1 ? "Send OK" : "Send Fail")); //Sending an message
+      if (network.write(header, &payload, sizeof(payload))){	  //Sending an message
+	    Serial.println(F("Send Ok"));
+	  }
+	  else {
+        Serial.println(F("Send Fail"));
+      }
       
     }
     displayTimer = millis();
