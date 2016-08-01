@@ -16,8 +16,16 @@ RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(
 bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout){
   //delay(1); // Found problems w/SPIDEV & ncurses. Without this, getch() returns a stream of garbage
   radio.begin();
+  radio_channel = channel;
+  radio.setChannel(radio_channel);
+  radio.setDataRate(data_rate);  
+  network.returnSysMsgs = 1;
+  
   if(getNodeID()){ //Not master node
     mesh_address = MESH_DEFAULT_ADDRESS;
+    if(!renewAddress(timeout)){
+      return 0;
+    }
   }else{
     #if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
 	addrList = (addrListStruct*)malloc(2 * sizeof(addrListStruct));
@@ -25,18 +33,9 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
 	loadDHCP();
 	#endif
     mesh_address = 0;
-  }
-  radio_channel = channel;
-  radio.setChannel(radio_channel);
-  radio.setDataRate(data_rate);  
-  network.returnSysMsgs = 1;
-  if(getNodeID()){ //Not master node
-    if(!renewAddress(timeout)){
-      return 0;
-    }
-  }else{
     network.begin(mesh_address);
   }
+  
   return 1;
 }
 
