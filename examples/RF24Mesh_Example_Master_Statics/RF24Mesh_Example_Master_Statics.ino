@@ -1,16 +1,16 @@
 
 /** RF24Mesh_Example_Master.ino by TMRh20
-
-
-   This example sketch shows how to manually configure a node via RF24Mesh as a master node, which
-   will receive all data from sensor nodes. In addition, this sketch demonstrates how to reserve
-   addresses for static nodes, that will not be using RF24Mesh, or are not using the dynamic addressing
-   functionality of RF24Mesh.
-
-   The nodes can change physical or logical position in the network, and reconnect through different
-   routing nodes as required. The master node manages the address assignments for the individual nodes
-   in a manner similar to DHCP.
-
+ *
+ *
+ * This example sketch shows how to manually configure a node via RF24Mesh as a master node, which
+ * will receive all data from sensor nodes. In addition, this sketch demonstrates how to reserve
+ * addresses for static nodes, that will not be using RF24Mesh, or are not using the dynamic addressing
+ * functionality of RF24Mesh.
+ *
+ * The nodes can change physical or logical position in the network, and reconnect through different
+ * routing nodes as required. The master node manages the address assignments for the individual nodes
+ * in a manner similar to DHCP.
+ *
  **/
 
 
@@ -18,6 +18,8 @@
 #include "RF24.h"
 #include "RF24Mesh.h"
 #include <SPI.h>
+//Include eeprom.h for AVR (Uno, Nano) etc. except ATTiny
+#include <EEPROM.h>
 
 /***** Configure the chosen CE,CS pins *****/
 RF24 radio(7, 8);

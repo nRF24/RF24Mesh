@@ -100,6 +100,9 @@ public:
    * and the mesh going.
    */   
   uint8_t update();
+
+/* Remove a nodeID from the meshlist*/
+  void remove(uint8_t _nodeID);
   
   /**
    * Automatically construct a header and send a payload
@@ -243,6 +246,7 @@ public:
   typedef struct{
 	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
 	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
+	bool IsSleep;  		/**< is it a sleeping node? */
   }addrListStruct;
   
   // Pointer used for dynamic memory allocation of address list
