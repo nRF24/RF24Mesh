@@ -1,9 +1,3 @@
-
-
-
-
-
-
 #ifndef __RF24MESH_H__
 #define __RF24MESH_H__
 
@@ -98,11 +92,12 @@ public:
   /**
    * Very similar to network.update(), it needs to be called regularly to keep the network
    * and the mesh going.
+   * now it updates the lastTime field of the mesh addrList (works only on master node)	
    */   
   uint8_t update();
 
 /* Remove a nodeID from the meshlist*/
-  void remove(uint8_t _nodeID);
+  bool remove(int16_t nodeID);
   
   /**
    * Automatically construct a header and send a payload
@@ -244,9 +239,9 @@ public:
   
 #if !defined RF24TINY  
   typedef struct{
-	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
-	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
-	bool IsSleep;  		/**< is it a sleeping node? */
+	uint8_t nodeID;       	/**< NodeIDs and addresses are stored in the addrList array using this structure */
+	uint16_t address;  	/**< NodeIDs and addresses are stored in the addrList array using this structure */
+	uint32_t lastTime; 	/**< Time in millis of last node activity */
   }addrListStruct;
   
   // Pointer used for dynamic memory allocation of address list
@@ -273,6 +268,7 @@ public:
   bool requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
   bool waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
   bool doDHCP; /**< Indicator that an address request is available */
+  bool updateNodeTime(int16_t nodeID);
   uint32_t lastSaveTime;
   uint32_t lastFileSave;
   uint8_t radio_channel;

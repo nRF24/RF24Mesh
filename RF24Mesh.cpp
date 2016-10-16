@@ -1,7 +1,3 @@
-
-
-
-
 #include "RF24Mesh.h"
 #include "RF24Mesh_config.h"
 #if defined (__linux) && !defined(__ARDUINO_X86__)
@@ -40,22 +36,41 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
   return 1;
 }
 
-/*****************************************************/
-void RF24Mesh::remove(uint8_t _nodeID){
-
-	if(addrListTop>0){
-		//The element must be put at the end of array
-		for(uint8_t i=0; i<addrListTop; i++){
-			if(addrList[i].nodeID==_nodeID){
-				//Save the last (good) element at position
-				addrList[i]=addrList[addrListTop-1];
-				//Now delete the last (bad) element
-				--addrListTop;
-				addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
-				break;
-			}
+/////////////////////////////////////////////////////////////
+//WARNING: _nodeID is a global variable! do not use as input!
+/////////////////////////////////////////////////////////////
+bool RF24Mesh::updateNodeTime(int16_t nodeID){
+	bool res=false;
+	for(uint8_t i=0; i<addrListTop; i++){
+		if(addrList[i].nodeID==nodeID && nodeID>0){
+			uint32_t _lastTime=millis();
+			addrList[i].lastTime=_lastTime;
+			res=true;
+			//Serial.println(F(" nodeID updated time"));
+			break;
 		}
 	}
+	return res;
+}
+
+/*****************************************************/
+bool RF24Mesh::remove(int16_t nodeID){
+	bool res=false;
+	//The element must be put at the end of array
+	for(uint8_t i=0; i<addrListTop; i++){
+		if(addrList[i].nodeID==nodeID && nodeID>0){
+			//Save the last (good) element at position
+			addrList[i]=addrList[addrListTop-1];
+			//Now delete the last (bad) element
+			--addrListTop;
+			addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
+			res=true;
+			//Serial.print(nodeID);
+			//Serial.println(F(" nodeID removed"));
+			break;
+		}
+	}
+	return res;
 }
 
 
@@ -63,8 +78,6 @@ void RF24Mesh::remove(uint8_t _nodeID){
 
 uint8_t RF24Mesh::update(){
 
-    
-    
 	uint8_t type = network.update();
     if(mesh_address == MESH_DEFAULT_ADDRESS){ return type; }
     
@@ -73,41 +86,47 @@ uint8_t RF24Mesh::update(){
 	  doDHCP = 1;
 	}
 
-  if(!getNodeID()){
-	if( (type == MESH_ADDR_LOOKUP || type == MESH_ID_LOOKUP)) {
-	  RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
-	  header.to_node = header.from_node;
-	  
-      if(type==MESH_ADDR_LOOKUP){
-	    int16_t returnAddr = getAddress(network.frame_buffer[sizeof(RF24NetworkHeader)]);
-        network.write(header,&returnAddr,sizeof(returnAddr)); 
-      }else{
-        int16_t returnAddr = getNodeID(network.frame_buffer[sizeof(RF24NetworkHeader)]);
-        network.write(header,&returnAddr,sizeof(returnAddr));        
-      }      
-	  //printf("Returning lookup 0%o to 0%o   \n",returnAddr,header.to_node);
-	  //network.write(header,&returnAddr,sizeof(returnAddr));	
-	}else
-	if(type == MESH_ADDR_RELEASE ){
-		uint16_t *fromAddr = (uint16_t*)network.frame_buffer;
-		for(uint8_t i=0; i<addrListTop; i++){
-			if(addrList[i].address == *fromAddr){
-				addrList[i].address = 0;
+	if(!getNodeID()){	//This is the MASTER
+		if( (type == MESH_ADDR_LOOKUP || type == MESH_ID_LOOKUP)) {
+	  		RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
+	  		header.to_node = header.from_node;
+	  		
+			if(type==MESH_ADDR_LOOKUP){
+		    		int16_t returnAddr = getAddress(network.frame_buffer[sizeof(RF24NetworkHeader)]);
+				network.write(header,&returnAddr,sizeof(returnAddr)); 
+      			}else{
+				int16_t returnAddr = getNodeID(network.frame_buffer[sizeof(RF24NetworkHeader)]);
+				network.write(header,&returnAddr,sizeof(returnAddr));        
+      			}
+	  		//printf("Returning lookup 0%o to 0%o   \n",returnAddr,header.to_node);
+	  		//network.write(header,&returnAddr,sizeof(returnAddr));	
+		}else
+			if(type == MESH_ADDR_RELEASE ){
+				uint16_t *fromAddr = (uint16_t*)network.frame_buffer;
+				for(uint8_t i=0; i<addrListTop; i++){
+					if(addrList[i].address == *fromAddr){
+						addrList[i].address = 0;
+					}
+				}		
 			}
-		}		
+    			#if !defined (ARDUINO_ARCH_AVR)
+    			else 
+				if(type == MESH_ADDR_CONFIRM ){
+					RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
+					if(header.from_node == lastAddress){
+						setAddress(lastID,lastAddress);
+					}        
+				}
+				#endif
 	}
-    #if !defined (ARDUINO_ARCH_AVR)
-    else 
-	if(type == MESH_ADDR_CONFIRM ){
-        RF24NetworkHeader& header = *(RF24NetworkHeader*)network.frame_buffer;
-        if(header.from_node == lastAddress){
-            setAddress(lastID,lastAddress);
-        }        
-    }
-    #endif
-  }
     
 	#endif
+
+	//Save the lastTimeSeen info each time mesh.update is called
+	uint16_t *currAddr = (uint16_t*)network.frame_buffer;
+	int16_t currNodeID=getNodeID(*currAddr); //to access the value use *currAddr!
+	if(!getNodeID() && currNodeID)
+		updateNodeTime(currNodeID);
 	return type;
 }
 
