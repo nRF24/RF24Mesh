@@ -125,15 +125,24 @@ uint8_t RF24Mesh::update(){
 	//Save the lastTimeSeen info each time mesh.update is called
 	uint16_t *currAddr = (uint16_t*)network.frame_buffer;
 	int16_t currNodeID=getNodeID(*currAddr); //to access the value use *currAddr!
-	if(!getNodeID() && currNodeID)
+	if(!getNodeID() && currNodeID>0)
 		updateNodeTime(currNodeID);
 	return type;
 }
 
 bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
-    if(mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
+   	if(mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
+
+	bool _success=false;
 	RF24NetworkHeader header(to_node,msg_type);	
-	return network.write(header,data,size);	
+	uint32_t ltime = millis();
+	while(millis()-ltime<MESH_WRITE_TIMEOUT){
+		_success=network.write(header,data,size);
+		delay(50);
+		if(_success) break;
+	}
+
+	return _success;	
 }
 
 /*****************************************************/
