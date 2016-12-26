@@ -51,9 +51,9 @@ bool write_wrap2(RF24Mesh& ref, bp::object buf, uint8_t msg_type, uint8_t nodeID
 	return ref.write(get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf), nodeID);
 }
 
-bool write_to_node_wrap(RF24Mesh& ref, uint16_t to_node,  bp::object data, uint8_t msg_type)
+bool write_to_node_wrap(RF24Mesh& ref, uint16_t to_node,  bp::object buf, uint8_t msg_type)
 {
-	return ref.write(to_node, get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf), nodeID);
+	return ref.write(to_node, get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf));
 }
 
 // ******************** overload wrappers **************************
