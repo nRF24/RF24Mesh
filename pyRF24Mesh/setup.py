@@ -14,5 +14,4 @@ module_RF24Mesh = Extension('RF24Mesh',
 
 setup(name='RF24Mesh',
     version='1.0',
-    ext_modules=[module_RF24Mesh]
-      )
+    ext_modules=[module_RF24Mesh])
