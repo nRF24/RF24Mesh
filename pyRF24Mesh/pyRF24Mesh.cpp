@@ -7,7 +7,7 @@ namespace bp = boost::python;
 
 // ******************** overload wrappers **************************
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(begin_overload, RF24Mesh::begin, 0, 3)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(write_overload, RF24Mesh::write, 3, 4)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(write_overload, RF24Mesh::write, 3, 4)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getNodeID_overload, RF24Mesh::getNodeID, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(renewAddress_overload, RF24Mesh::renewAddress, 0, 1)
 
@@ -15,13 +15,18 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(renewAddress_overload, RF24Mesh::renewAdd
 //
 BOOST_PYTHON_MODULE(RF24Mesh){
     { //::RF24Mesh
+        bool (RF24Mesh::*write1)(const void*, uint8_t, size_t) = &RF24Mesh::write;
+        bool (RF24Mesh::*write2)(const void*, uint8_t, size_t, uint8_t) = &RF24Mesh::write;
+
         bp::class_<RF24Mesh>("RF24Mesh", bp::init<RF24&, RF24Network&>((bp::arg("_radio"), bp::arg("_network"))))
             //bool begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
             .def("begin", &RF24Mesh::begin, begin_overload(bp::args("channel", "data_rate", "timeout")))
             //uint8_t update();
             .def("update", &RF24Mesh::update)
             //bool write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
-            .def("write", &RF24Mesh::write, write_overload(bp::args("data", "msg_type", "size", "nodeID")))
+            //.def("write", &RF24Mesh::write, write_overload(bp::args("data", "msg_type", "size", "nodeID")))
+            .def("write", write1)
+            .def("write", write2)
             //void setNodeID(uint8_t nodeID);
             .def("setNodeId", &RF24Mesh::setNodeID, (bp::arg("nodeID")))
             //void DHCP();
