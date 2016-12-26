@@ -3,22 +3,20 @@ from RF24Network import *
 from RF24Mesh import *
 
 
-class Mesh(object):
-    def __init__(self):
-        # radio setup for RPi B Rev2: CS0=Pin 24
-        self.radio = RF24(RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_8MHZ)
-        self.network = RF24Network(self.radio)
-        self.mesh = RF24Mesh(self.radio, self.network)
-        
-        self.mesh.setNodeID(0)
-        self.mesh.begin(108, RF24_250KBPS)
-        self.radio.setPALevel(RF24_PA_MAX) # Power Amplifier
-        self.radio.printDetails()
+# radio setup for RPi B Rev2: CS0=Pin 24
+radio = RF24(RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_8MHZ)
+network = RF24Network(radio)
+mesh = RF24Mesh(radio, network)
 
-        while 1:
-            self.mesh.update()
-            self.mesh.DHCP()
+mesh.setNodeID(0)
+mesh.begin(108, RF24_250KBPS)
+radio.setPALevel(RF24_PA_MAX) # Power Amplifier
+radio.printDetails()
 
-            while self.network.available():
-                print("Received message")
-                header, payload = self.network.read(10)
+while 1:
+    mesh.update()
+    mesh.DHCP()
+
+    while network.available():
+        print("Received message")
+        header, payload = network.read(10)
