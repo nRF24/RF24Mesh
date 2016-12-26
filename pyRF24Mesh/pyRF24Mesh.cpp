@@ -9,6 +9,12 @@ namespace bp = boost::python;
 // **************** expicit wrappers *****************
 // where needed, especially where buffer is involved
 
+void throw_ba_exception(void)
+{
+    PyErr_SetString(PyExc_TypeError, "buf parameter must be bytes or bytearray");
+    bp::throw_error_already_set();
+}
+
 char *get_bytes_or_bytearray_str(bp::object buf)
 {
     PyObject *py_ba;
