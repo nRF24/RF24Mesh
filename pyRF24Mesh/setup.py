@@ -9,7 +9,7 @@ else:
     BOOST_LIB = 'boost_python' 
 
 module_RF24Mesh = Extension('RF24Mesh',
-            libraries = ['rf24mesh', BOOST_LIB],
+            libraries = ['rf24mesh', 'rf24network', BOOST_LIB],
             sources = ['pyRF24Mesh.cpp'])
 
 setup(name='RF24Mesh',
