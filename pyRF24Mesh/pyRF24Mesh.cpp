@@ -17,21 +17,21 @@ BOOST_PYTHON_MODULE(RF24Mesh){
     { //::RF24Mesh
         bp::class_<RF24Mesh>("RF24Mesh", bp::init<RF24&, RF24Network&>((bp::arg("_radio"), bp::arg("_network"))))
             //bool begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
-            .def("begin", &RF24Mesh::begin, begin_overload(bp::args("channel", "data_rate", "timeout"))[bp::return_internal_reference<>()])
+            .def("begin", &RF24Mesh::begin, begin_overload(bp::args("channel", "data_rate", "timeout")))
             //uint8_t update();
             .def("update", &RF24Mesh::update)
             //bool write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
-            .def("write", &RF24Mesh::write, write_overload(bp::args("data", "msg_type", "size", "nodeID"))[bp::return_internal_reference<>()])
+            .def("write", &RF24Mesh::write, write_overload(bp::args("data", "msg_type", "size", "nodeID")))
             //void setNodeID(uint8_t nodeID);
             .def("setNodeId", &RF24Mesh::setNodeID, (bp::arg("nodeID")))
             //void DHCP();
             .def("DHCP", &RF24Mesh::DHCP)
             //int16_t getNodeID(uint16_t address=MESH_BLANK_ID);
-            .def("getNodeID", &RF24Mesh::getNodeID, getNodeID_overload(bp::args("address"))[bp::return_internal_reference<>()])
+            .def("getNodeID", &RF24Mesh::getNodeID, getNodeID_overload(bp::args("address")))
             //bool checkConnection();
             .def("checkConnection", &RF24Mesh::checkConnection)
             //uint16_t renewAddress(uint32_t timeout=MESH_RENEWAL_TIMEOUT);
-            .def("renewAddress", &RF24Mesh::renewAddress, getNodeID_overload(bp::args("timeout"))[bp::return_internal_reference<>()])
+            .def("renewAddress", &RF24Mesh::renewAddress, getNodeID_overload(bp::args("timeout")))
             //bool releaseAddress();
             .def("releaseAddress", &RF24Mesh::releaseAddress)
             //int16_t getAddress(uint8_t nodeID);
