@@ -6,7 +6,7 @@
 namespace bp = boost::python;
 
 
-// ******************** expicit wrappers **************************
+// ******************** explicit wrappers **************************
 // where needed, especially where buffer is involved
 
 void throw_ba_exception(void)
