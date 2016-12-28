@@ -56,21 +56,36 @@ bool RF24Mesh::updateNodeTime(int16_t nodeID){
 /*****************************************************/
 bool RF24Mesh::remove(int16_t nodeID){
 	bool res=false;
-	//The element must be put at the end of array
-	for(uint8_t i=0; i<addrListTop; i++){
-		if(addrList[i].nodeID==nodeID && nodeID>0){
-			//Save the last (good) element at position
-			addrList[i]=addrList[addrListTop-1];
-			//Now delete the last (bad) element
-			--addrListTop;
-			addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
-			res=true;
-			//Serial.print(nodeID);
-			//Serial.println(F(" nodeID removed"));
-			break;
+	//only the master can perform this action
+	if(!getNodeID() && nodeID>0){
+		//The element must be put at the end of array
+		for(uint8_t i=0; i<addrListTop; i++){
+			if(addrList[i].nodeID==nodeID){
+				//Save the last (good) element at position
+				addrList[i]=addrList[addrListTop-1];
+				//Now delete the last (bad) element
+				--addrListTop;
+				addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
+				res=true;
+				//Serial.print(nodeID);
+				//Serial.println(F(" nodeID removed"));
+				break;
+			}
 		}
 	}
 	return res;
+}
+
+void RF24Mesh::removeDeadNodes(uint32_t maxTime){
+	for(uint8_t i=0; i<addrListTop; i++){
+		uint32_t lastTime=millis();
+		uint32_t nodeTime=addrList[i].lastTime;
+		if(nodeTime>lastTime){//it means millis() restarted from 0
+			addrList[i].lastTime=lastTime;
+		} else{
+			if(lastTime-nodeTime>maxTime) remove(addrList[i].nodeID);
+		}
+	}
 }
 
 
@@ -138,7 +153,7 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
 	uint32_t ltime = millis();
 	while(millis()-ltime<MESH_WRITE_TIMEOUT){
 		_success=network.write(header,data,size);
-		delay(50);
+		delay(50); //delaymust be AFTER the write!
 		if(_success) break;
 	}
 

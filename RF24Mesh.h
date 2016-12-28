@@ -98,6 +98,9 @@ public:
 
 /* Remove a nodeID from the meshlist*/
   bool remove(int16_t nodeID);
+
+/* Remove all nodeIDs from the meshlist after a certain maxTime*/
+  void removeDeadNodes(uint32_t maxTime);
   
   /**
    * Automatically construct a header and send a payload

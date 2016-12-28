@@ -9,7 +9,7 @@
 
 /***Advanced User Config***/
 #define MESH_LOOKUP_TIMEOUT 3000  /** How long mesh write will retry address lookups before giving up. This is not used when sending to or from the master node. **/
-#define MESH_WRITE_TIMEOUT 5550 /** UNUSED - How long mesh.write will retry failed payloads. */
+#define MESH_WRITE_TIMEOUT 5550 /** How long mesh.write will retry failed payloads. */
 #define MESH_DEFAULT_CHANNEL 97  /** Radio channel to operate on 1-127. This is normally modified by calling mesh.setChannel() */
 #define MESH_RENEWAL_TIMEOUT 60000 /** How long to attempt address renewal */
 /**************************/
