@@ -1,3 +1,9 @@
+
+
+
+
+
+
 #ifndef __RF24MESH_H__
 #define __RF24MESH_H__
 
@@ -92,7 +98,6 @@ public:
   /**
    * Very similar to network.update(), it needs to be called regularly to keep the network
    * and the mesh going.
-   * now it updates the lastTime field of the mesh addrList (works only on master node)	
    */   
   uint8_t update();
 
@@ -242,8 +247,8 @@ public:
   
 #if !defined RF24TINY  
   typedef struct{
-	uint8_t nodeID;       	/**< NodeIDs and addresses are stored in the addrList array using this structure */
-	uint16_t address;  	/**< NodeIDs and addresses are stored in the addrList array using this structure */
+	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
+	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
 	uint32_t lastTime; 	/**< Time in millis of last node activity */
   }addrListStruct;
   
