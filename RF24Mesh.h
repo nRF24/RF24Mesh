@@ -247,9 +247,11 @@ public:
   
 #if !defined RF24TINY  
   typedef struct{
-	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
-	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
-	uint32_t lastTime; 	/**< Time in millis of last node activity */
+	uint8_t nodeID;     /**< NodeIDs and addresses are stored in the addrList array using this structure */
+	uint16_t address;   /**< NodeIDs and addresses are stored in the addrList array using this structure */
+#if defined (MESH_WRITE_RETRY)	  
+	uint32_t lastTime;  /**< Time in millis of last node activity */
+#endif	 
   }addrListStruct;
   
   // Pointer used for dynamic memory allocation of address list
