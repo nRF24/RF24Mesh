@@ -161,9 +161,19 @@ void RF24Mesh::removeDeadNodes(uint32_t maxTime){
 bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
     if(mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
 	
-	bool _success=false;
-	RF24NetworkHeader header(to_node,msg_type);	
-	return network.write(header,data,size);	
+	bool _success = false;
+	RF24NetworkHeader header(to_node, msg_type);	
+#if !defined (MESH_WRITE_RETRY)
+	return network.write(header, data, size);
+#elif defined (MESH_WRITE_RETRY)
+ 	uint32_t ltime = millis();		
+ 	while(millis()-ltime < MESH_WRITE_TIMEOUT){		
+ 		_success=network.write(header, data,size);		
+ 		delay(50); //delay must be AFTER the write!		
+ 		if(_success) break;		
+ 	}		
+ 	return _success;
+#endif
 }
 
 /*****************************************************/
