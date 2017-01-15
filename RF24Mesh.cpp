@@ -163,14 +163,7 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
 	
 	bool _success=false;
 	RF24NetworkHeader header(to_node,msg_type);	
-	//return network.write(header,data,size);	
-	uint32_t ltime = millis();
-	while(millis()-ltime<MESH_WRITE_TIMEOUT){
-		_success=network.write(header,data,size);
-		delay(50); //delay must be AFTER the write!
-		if(_success) break;
-	}
-	return _success;	
+	return network.write(header,data,size);	
 }
 
 /*****************************************************/
