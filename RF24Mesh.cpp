@@ -39,64 +39,9 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
   return 1;
 }
 
-/////////////////////////////////////////////////////////////
-//WARNING: _nodeID is a global variable! do not use as input!
-/////////////////////////////////////////////////////////////
-bool RF24Mesh::updateNodeTime(int16_t nodeID){
-	bool res=false;
-	for(uint8_t i=0; i<addrListTop; i++){
-		if(addrList[i].nodeID==nodeID && nodeID>0){
-			uint32_t _lastTime=millis();
-			addrList[i].lastTime=_lastTime;
-			res=true;
-			//Serial.println(F(" nodeID updated time"));
-			break;
-		}
-	}
-	return res;
-}
-
-/*****************************************************/
-bool RF24Mesh::remove(int16_t nodeID){
-	bool res=false;
-	//only the master can perform this action
-	if(!getNodeID() && nodeID>0){
-		//The element must be put at the end of array
-		for(uint8_t i=0; i<addrListTop; i++){
-			if(addrList[i].nodeID==nodeID){
-				//Save the last (good) element at position
-				addrList[i]=addrList[addrListTop-1];
-				//Now delete the last (bad) element
-				--addrListTop;
-				addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
-				res=true;
-				//Serial.print(nodeID);
-				//Serial.println(F(" nodeID removed"));
-				break;
-			}
-		}
-	}
-	return res;
-}
-
-void RF24Mesh::removeDeadNodes(uint32_t maxTime){
-	for(uint8_t i=0; i<addrListTop; i++){
-		uint32_t lastTime=millis();
-		uint32_t nodeTime=addrList[i].lastTime;
-		if(nodeTime>lastTime){//it means millis() restarted from 0
-			addrList[i].lastTime=lastTime;
-		} else{
-			if(lastTime-nodeTime>maxTime) remove(addrList[i].nodeID);
-		}
-	}
-}
-
-
 /*****************************************************/
 
 uint8_t RF24Mesh::update(){
-
-    
     
 	uint8_t type = network.update();
     if(mesh_address == MESH_DEFAULT_ADDRESS){ return type; }
@@ -142,13 +87,76 @@ uint8_t RF24Mesh::update(){
     
 	#endif
 
-	//Save the lastTimeSeen info each time mesh.update is called
-	uint16_t *currAddr = (uint16_t*)network.frame_buffer;
-	int16_t currNodeID=getNodeID(*currAddr); //to access the value use *currAddr!
-	if(!getNodeID() && currNodeID>0) updateNodeTime(currNodeID);
+	#ifndef MESH_NOMASTER
+	//Save the lastTimeSeen info each time mesh.update is called on MASTER. No action is required if this is a node
+	if(!mesh_address && type>0){//this is master and a message has been received
+		uint16_t *currAddr = (uint16_t*)network.frame_buffer;
+		int16_t currNodeID=getNodeID(*currAddr); //to access the value use *currAddr!
+		updateNodeTime(currNodeID);
+	}
+	#endif
 
 	return type;
 }
+
+/////////////////////////////////////////////////////////////
+//WARNING: _nodeID is a global variable! do not use as input!
+/////////////////////////////////////////////////////////////
+
+#ifndef MESH_NOMASTER
+bool RF24Mesh::updateNodeTime(int16_t nodeID){//this is a private function
+	bool res=false;
+	if(nodeID>0){
+		for(uint8_t i=0; i<addrListTop; i++){
+			if(addrList[i].nodeID==nodeID){
+				uint32_t _lastTime=millis();
+				addrList[i].lastTime=_lastTime;
+				res=true;
+				//Serial.println(F(" nodeID updated time"));
+				break;
+			}
+		}
+	}
+	return res;
+}
+
+/*****************************************************/
+bool RF24Mesh::remove(int16_t nodeID){
+	bool res=false;
+	//only the master can perform this action
+	if(!mesh_address && nodeID>0){
+		//The element must be put at the end of array
+		for(uint8_t i=0; i<addrListTop; i++){
+			if(addrList[i].nodeID==nodeID){
+				//Save the last (good) element at position
+				addrList[i]=addrList[addrListTop-1];
+				//Now delete the last (bad) element
+				--addrListTop;
+				addrList = (addrListStruct*)realloc(addrList,(addrListTop) * sizeof(addrListStruct));
+				res=true;
+				//Serial.print(nodeID);
+				//Serial.println(F(" nodeID removed"));
+				break;
+			}
+		}
+	}
+	return res;
+}
+
+void RF24Mesh::removeDeadNodes(uint32_t maxTime){
+	if(!mesh_address){
+		for(uint8_t i=0; i<addrListTop; i++){
+			uint32_t lastTime=millis();
+			uint32_t nodeTime=addrList[i].lastTime;
+			if(nodeTime>lastTime){//it means millis() restarted from 0
+				addrList[i].lastTime=lastTime;
+			} else{
+				if(lastTime-nodeTime>maxTime) remove(addrList[i].nodeID);
+			}
+		}
+	}
+}
+#endif
 
 bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size ){
     if(mesh_address == MESH_DEFAULT_ADDRESS){ return 0; }
@@ -158,8 +166,8 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
 	//return network.write(header,data,size);	
 	uint32_t ltime = millis();
 	while(millis()-ltime<MESH_WRITE_TIMEOUT){
-	_success=network.write(header,data,size);
-		delay(50); //delaymust be AFTER the write!
+		_success=network.write(header,data,size);
+		delay(50); //delay must be AFTER the write!
 		if(_success) break;
 	}
 	return _success;	
