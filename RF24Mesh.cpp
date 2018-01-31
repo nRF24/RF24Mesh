@@ -602,7 +602,7 @@ void RF24Mesh::DHCP(){
         header.type = NETWORK_ADDR_RESPONSE;
         header.to_node = header.from_node;
         //This is a routed request to 00
-        //delay(10);
+        delay(10); // ML: without this delay, address renewal fails
         if(header.from_node != MESH_DEFAULT_ADDRESS){ //Is NOT node 01 to 05
           delay(2);
           if( network.write(header,&newAddress,sizeof(newAddress)) ){
