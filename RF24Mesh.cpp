@@ -327,7 +327,8 @@ bool RF24Mesh::requestAddress(uint8_t level){
    
     #ifdef MESH_DEBUG_SERIAL
 	Serial.print( millis() ); Serial.print(F(" MSH: Got poll from level ")); Serial.print(level);
-    Serial.print(F(" count "));Serial.println(pollCount);
+    Serial.print(F(" count "));Serial.print(pollCount);
+    Serial.print(F(" node "));Serial.println(contactNode[pollCount]); // #ML#
 	#elif defined MESH_DEBUG_PRINTF
 	printf("%u MSH: Got poll from level %d count %d\n",millis(),level,pollCount);
     #endif	
@@ -601,6 +602,7 @@ void RF24Mesh::DHCP(){
         header.type = NETWORK_ADDR_RESPONSE;
         header.to_node = header.from_node;
         //This is a routed request to 00
+        delay(10); // ML: without this delay, address renewal fails
         if(header.from_node != MESH_DEFAULT_ADDRESS){ //Is NOT node 01 to 05
           delay(2);
           if( network.write(header,&newAddress,sizeof(newAddress)) ){
