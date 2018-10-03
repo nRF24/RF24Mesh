@@ -15,7 +15,8 @@ RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(
 
 bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout){
   //delay(1); // Found problems w/SPIDEV & ncurses. Without this, getch() returns a stream of garbage
-  radio.begin();
+  if(!radio.begin())
+    return 0;
   radio_channel = channel;
   radio.setChannel(radio_channel);
   radio.setDataRate(data_rate);  
