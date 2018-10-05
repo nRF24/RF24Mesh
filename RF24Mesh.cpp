@@ -253,8 +253,10 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout){
   while(!requestAddress(reqCounter)){
     if(millis()-start > timeout){ return 0; }
     delay(50 + ( (totalReqs+1)*(reqCounter+1)) * 2);
-    (++reqCounter) = reqCounter%4;
-    (++totalReqs) = totalReqs%10;
+    reqCounter++;
+    reqCounter = reqCounter%4;
+    totalReqs++;
+    totalReqs = totalReqs%10;
     
   }
   network.networkFlags &= ~2;
