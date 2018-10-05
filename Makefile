@@ -22,6 +22,9 @@ LIBNAME_RFN=$(LIB_RFN).so.1.0
 
 HEADER_DIR=${PREFIX}/include/RF24Mesh
 
+# Which compiler to use
+CC=g++
+
 ARCH=armv6zk
 ifeq "$(shell uname -m)" "armv7l"
 ARCH=armv7-a
@@ -45,11 +48,11 @@ all: librf24mesh
 
 # Make the library
 librf24mesh: RF24Mesh.o
-	g++ -shared -Wl,-soname,$@.so.1 ${CCFLAGS} -o ${LIBNAME_RFN} $^ 
+	$(CC) -shared -Wl,-soname,$@.so.1 ${CCFLAGS} -o ${LIBNAME_RFN} $^ 
 
 # Library parts
 RF24Mesh.o: RF24Mesh.cpp
-	g++ -Wall -fPIC ${CCFLAGS} -c $^
+	$(CC) -Wall -fPIC ${CCFLAGS} -c $^
 
 # clear build files
 clean:
