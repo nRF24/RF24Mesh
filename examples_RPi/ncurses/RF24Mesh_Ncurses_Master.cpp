@@ -174,7 +174,7 @@ void pingNode(uint8_t listNo){
 
     RF24NetworkHeader headers(mesh.addrList[listNo].address,NETWORK_PING);
 	uint32_t pingtime=millis();
-	bool ok;
+	bool ok = false;
 	if(headers.to_node){
 		ok = network.write(headers,0,0);
 		if(ok && failID == mesh.addrList[listNo].nodeID){ failID = 0; }

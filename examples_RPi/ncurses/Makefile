@@ -12,6 +12,9 @@
 #
 prefix := /usr/local
 
+# Which compiler to use
+CC=g++
+
 ARCH=armv6zk
 ifeq "$(shell uname -m)" "armv7l"
 ARCH=armv7-a
@@ -36,7 +39,8 @@ SOURCES = ${PROGRAMS2:=.cpp}
 all: ${PROGRAMS}
 
 ${PROGRAMS}: ${SOURCES}
-	g++ ${CCFLAGS} -Wall -I../ -lncurses -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o $@
+	mkdir -p bin
+	$(CC) ${CCFLAGS} -Wall -I../ -lncurses -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o bin/$@
 
 clean:
 	rm -rf $(PROGRAMS)
