@@ -1,22 +1,35 @@
 {
-  "name": "RF24Mesh",
-  "keywords": "rf, radio, wireless, spi, mesh, network",
-  "description": "A simple and seamless 'mesh' layer for sensor networks. Designed to interface directly with with the RF24Network Development library, an OSI Network Layer using nRF24L01(+) radios driven by the newly optimized RF24 library fork.",
-  "repository":
-  {
-    "type": "git",
-    "url": "https://github.com/TMRh20/RF24Mesh.git"
-  },
-  "version": "1.0.4",
-  "dependencies": [
-    { "name": "RF24", "authors": "TMRh20", "frameworks": "arduino" },
-    { "name": "RF24Network", "authors": "TMRh20", "frameworks": "arduino" }
-  ],
-  "exclude": "examples_RPi",
-  "frameworks": "arduino",
-  "platforms": [
-    "atmelavr",
-    "atmelsam",
-    "teensy"
-  ]
+	"name": "RF24Network",
+	"version": "1.0.8",
+	"keywords": "rf, radio, wireless, spi",
+	"description": "Optimized Network Layer for nRF24L01(+) Radios",
+	"license": "GPL-2.0-only",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/TMRh20/RF24Network.git"
+	},
+	"dependencies": {
+		"name": "RF24",
+		"authors": "RF24",
+		"frameworks": "arduino"
+	},
+	"exclude": [
+		"examples/*",
+		"examples_RPi/*",
+		"RPi/*",
+		"tests/*"
+	],
+	"frameworks": "arduino",
+	"platforms": [
+		"atmelavr",
+		"atmelsam",
+		"teensy"
+	],
+	"requires": [{
+			"name": "RF24"
+		},
+		{
+			"name": "RF24Network"
+		}
+	]
 }
