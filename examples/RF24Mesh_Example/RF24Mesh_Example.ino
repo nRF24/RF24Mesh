@@ -1,4 +1,3 @@
-
 /** RF24Mesh_Example.ino by TMRh20
 
    This example sketch shows how to manually configure a node via RF24Mesh, and send data to the
@@ -67,7 +66,11 @@ void loop() {
       if ( ! mesh.checkConnection() ) {
         //refresh the network address
         Serial.println("Renewing Address");
-        mesh.renewAddress();
+        if(!mesh.renewAddress()){
+          //If address renewal fails, reconfigure the radio and restart the mesh
+          //This allows recovery from most if not all radio errors
+          mesh.begin();
+        }
       } else {
         Serial.println("Send fail, Test OK");
       }
