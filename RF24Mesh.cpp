@@ -330,7 +330,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
     #ifdef MESH_DEBUG_SERIAL
 	Serial.print( millis() ); Serial.print(F(" MSH: Got poll from level ")); Serial.print(level);
     Serial.print(F(" count "));Serial.print(pollCount);
-    Serial.print(F(" node "));Serial.println(contactNode[pollCount]); // #ML#
+    Serial.print(F(" node "));Serial.println(contactNode[pollCount-1],OCT); // #ML#
 	#elif defined MESH_DEBUG_PRINTF
 	printf("%u MSH: Got poll from level %d count %d\n",millis(),level,pollCount);
     #endif	
