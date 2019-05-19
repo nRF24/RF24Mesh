@@ -413,6 +413,12 @@ bool RF24Mesh::requestAddress(uint8_t level){
         delay(3);
 	}
     
+    if(getNodeID(mesh_address) != getNodeID()){
+      network.begin(MESH_DEFAULT_ADDRESS);
+      mesh_address = MESH_DEFAULT_ADDRESS;
+      return 0;
+    }
+    
     return 1;  
 }
 
