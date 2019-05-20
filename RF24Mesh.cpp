@@ -208,7 +208,7 @@ int16_t RF24Mesh::getNodeID(uint16_t address){
       if(mesh_address == MESH_DEFAULT_ADDRESS){ return -1; }
       RF24NetworkHeader header( 00, MESH_ID_LOOKUP );
       if(network.write(header,&address,sizeof(address)) ){
-        uint32_t timer=millis(), timeout = 500;	
+        uint32_t timer=millis(), timeout = 150;	
 		while(network.update() != MESH_ID_LOOKUP){            
 			if(millis()-timer > timeout){ return -1; }
 		}
