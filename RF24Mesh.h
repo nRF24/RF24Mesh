@@ -381,9 +381,6 @@ public:
  * @li Dynamic/On-the fly configuration of addresses and network topology
  * @li Automatic routing and handling of data - Nodes will join together to extend the range of radio links by routing data as required.
  *  
- * <b>Status (Dec 2015)</b>
- * @li RF24Mesh is mostly complete and stable, but is being actively utilized & tested with development ongoing.
- * @li Address assignments are not saved, except on RPi/Linux devices. If the 'master' node goes down, all nodes need to reconnect to the mesh or restart to prevent addressing conflicts. 
  *
  *
  * @section More How to learn more
