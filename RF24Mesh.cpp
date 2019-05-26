@@ -208,7 +208,7 @@ int16_t RF24Mesh::getNodeID(uint16_t address){
       if(mesh_address == MESH_DEFAULT_ADDRESS){ return -1; }
       RF24NetworkHeader header( 00, MESH_ID_LOOKUP );
       if(network.write(header,&address,sizeof(address)) ){
-        uint32_t timer=millis(), timeout = 150;	
+        uint32_t timer=millis(), timeout = 125;	
 		while(network.update() != MESH_ID_LOOKUP){            
 			if(millis()-timer > timeout){ return -1; }
 		}
@@ -401,17 +401,17 @@ bool RF24Mesh::requestAddress(uint8_t level){
     radio.stopListening();
     delay(10);
 	network.begin(mesh_address);
-	header.to_node = 00;
-	header.type = MESH_ADDR_CONFIRM;
+	//header.to_node = 00;
+	//header.type = MESH_ADDR_CONFIRM;
 
-	while( !network.write(header,0,0) ){
+	/*while( !network.write(header,0,0) ){
 		if(registerAddrCount++ >= 6 ){ 
           network.begin(MESH_DEFAULT_ADDRESS);
           mesh_address = MESH_DEFAULT_ADDRESS;
           return 0;
         }
         delay(3);
-	}
+	}*/
     
     if(getNodeID(mesh_address) != getNodeID()){
       if(getNodeID(mesh_address) != getNodeID()){
@@ -625,15 +625,15 @@ void RF24Mesh::DHCP(){
             network.write(header,&newAddress,sizeof(newAddress),header.to_node);
             //addrMap[from_id] = newAddress;
           }
-          uint32_t timer=millis();
+          //uint32_t timer=millis();
           lastAddress = newAddress;
           lastID = from_id;
-          while(network.update() != MESH_ADDR_CONFIRM){
-            if(millis()-timer > network.routeTimeout){
-              return;
-            }
-          
-          }
+          //while(network.update() != MESH_ADDR_CONFIRM){
+          //  if(millis()-timer > network.routeTimeout){
+          //    return;
+          //  }
+          //
+          //}
           setAddress(from_id,newAddress);
         #ifdef MESH_DEBUG_PRINTF
           printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,MESH_DEFAULT_ADDRESS,newAddress,header.reserved);
