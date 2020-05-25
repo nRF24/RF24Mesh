@@ -138,21 +138,8 @@ void RF24Mesh::setChild(bool allow){
 /*****************************************************/
 
 bool RF24Mesh::checkConnection(){
-
-	uint8_t count = 3;
-	bool ok = 0;
-	while(count-- && mesh_address != MESH_DEFAULT_ADDRESS){
-        update();
-        if(radio.rxFifoFull() || (network.networkFlags & 1)){
-          return 1;
-        }
-        RF24NetworkHeader header(00,NETWORK_PING);
-		ok = network.write(header,0,0);
-		if(ok){break;}
-		delay(103);
-	}
-    if(!ok){ radio.stopListening(); }
-	return ok;
+    
+    return (getAddress(_nodeID) >= 0 ? true : false);    
 	
 }
 
