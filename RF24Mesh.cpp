@@ -225,7 +225,7 @@ bool RF24Mesh::releaseAddress(){
 
 uint16_t RF24Mesh::renewAddress(uint32_t timeout){
 
-  if(radio.available()){ return 0; }
+  if(radio.available()){ network.update(); }
   uint8_t reqCounter = 0;
   uint8_t totalReqs = 0;
   radio.stopListening();
