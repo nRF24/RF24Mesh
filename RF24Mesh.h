@@ -239,7 +239,7 @@ public:
   uint8_t _nodeID;
 
   
-#if !defined RF24TINY  
+#if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
   typedef struct{
 	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
 	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
@@ -273,6 +273,7 @@ public:
   uint32_t lastFileSave;
   uint8_t radio_channel;
   uint16_t lastID,lastAddress;
+  bool addrMemAllocated; /**<Just ensures we don't re-allocate the memory buffer if restarting the mesh on master **/
 
  };
  
