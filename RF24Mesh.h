@@ -18,7 +18,8 @@
  */
 
 // Network ACK types 
-#define MESH_ADDR_CONFIRM 129
+// None defined
+
 // No Network ACK types
 #define MESH_ADDR_LOOKUP 196
 #define MESH_ADDR_RELEASE 197
@@ -126,11 +127,14 @@ public:
    */
   void setNodeID(uint8_t nodeID);
   
+  #if !defined(MESH_NOMASTER)
  /**
   * Only to be used on the master node. Provides automatic configuration for sensor nodes, similar to DHCP.
   * Call immediately after calling network.update() to ensure address requests are handled appropriately
   */  
   void DHCP();
+  
+  #endif
   
   /**@}*/
   /**
@@ -208,6 +212,7 @@ public:
   */
   void setChild(bool allow);
   
+  #if !defined(MESH_NOMASTER)
   /**
   * Set/change a nodeID/RF24Network Address pair manually on the master node.
   *
@@ -221,10 +226,24 @@ public:
   * @param address The octal RF24Network address to assign
   * @return If the nodeID exists in the list, 
   */
-  void setAddress(uint8_t nodeID, uint16_t address);
+  void setAddress(uint8_t nodeID, uint16_t address);  
   
   void saveDHCP();
   void loadDHCP();
+  
+  /**
+   * @name Deprecated
+   *
+   *  Methods provided for backwards compabibility with old/testing code.
+   */
+  /**@{*/
+  
+  /**
+   * Calls setAddress()
+   */
+  void setStaticAddress(uint8_t nodeID, uint16_t address);
+  
+  #endif
   
   /**@}*/
   /**
@@ -239,7 +258,7 @@ public:
   uint8_t _nodeID;
 
   
-#if !defined (RF24_TINY) && !defined(MESH_NOMASTER)
+#if !defined(MESH_NOMASTER)
   typedef struct{
 	uint8_t nodeID;       /**< NodeIDs and addresses are stored in the addrList array using this structure */
 	uint16_t address;  /**< NodeIDs and addresses are stored in the addrList array using this structure */
@@ -249,31 +268,18 @@ public:
   addrListStruct *addrList;  /**< See the addrListStruct class reference */
   uint8_t addrListTop;       /**< The number of entries in the assigned address list */
 #endif
-
-  /**
-   * @name Deprecated
-   *
-   *  Methods provided for backwards compabibility with old/testing code.
-   */
-  /**@{*/
-  
-  /**
-   * Calls setAddress()
-   */
-  void setStaticAddress(uint8_t nodeID, uint16_t address);
   
   private:
   RF24& radio;
   RF24Network& network;  
-  bool findNodes(RF24NetworkHeader& header, uint8_t level, uint16_t *address); /**< Broadcasts to all multicast levels to find available nodes **/
+
   bool requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
   bool waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
+
+  #if !defined(MESH_NOMASTER)
   bool doDHCP; /**< Indicator that an address request is available */
-  uint32_t lastSaveTime;
-  uint32_t lastFileSave;
-  uint8_t radio_channel;
-  uint16_t lastID,lastAddress;
   bool addrMemAllocated; /**<Just ensures we don't re-allocate the memory buffer if restarting the mesh on master **/
+  #endif
 
  };
  
