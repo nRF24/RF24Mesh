@@ -321,6 +321,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	printf("%u MSH: Got poll from level %d count %d\n",millis(),level,pollCount);
     #endif	
 
+  bool gotResponse = 0;
   uint8_t type=0;
   for(uint8_t i=0; i<pollCount; i++){
     // Request an address via the contact node
@@ -340,13 +341,16 @@ bool RF24Mesh::requestAddress(uint8_t level){
     
     while(millis()-timr<225){
       if( (type = network.update()) == NETWORK_ADDR_RESPONSE){
-        i=pollCount;
-        break;
+        if(network.frame_buffer[7] == getNodeID()){
+          i=pollCount;
+          gotResponse = 1;
+          break;
+        }
       }
     }
     delay(5);
   }
-  if(type != NETWORK_ADDR_RESPONSE){
+  if(!gotResponse){
       return 0;
   }
     
@@ -360,15 +364,6 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	//memcpy(&addrResponse,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(addrResponse));
     memcpy(&newAddress,network.frame_buffer+sizeof(RF24NetworkHeader),sizeof(newAddress));
 
-	if(!newAddress || network.frame_buffer[7] != getNodeID() ){
-		#ifdef MESH_DEBUG_SERIAL
-		  Serial.print(millis()); Serial.print(F(" MSH: Attempt Failed ")); Serial.println(network.frame_buffer[7]);
-          Serial.print("My NodeID ");Serial.println(getNodeID());
-		#elif defined MESH_DEBUG_PRINTF
-		  printf("%u Response discarded, wrong node 0%o from node 0%o sending node 0%o id %d\n",millis(),newAddress,header.from_node,MESH_DEFAULT_ADDRESS,network.frame_buffer[7]);
-        #endif
-		return 0;
-	}
 	#ifdef MESH_DEBUG_SERIAL
 	  Serial.print( millis() );Serial.print(F(" Set address: "));
 	  newAddr = newAddress;
