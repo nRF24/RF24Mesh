@@ -500,11 +500,10 @@ void RF24Mesh::DHCP(){
     
     uint16_t newAddress;
     
-    // Get the unique id of the requester
-    uint8_t from_id = header.reserved;
-    if(!from_id){
+    // Get the unique id of the requester (ID is in header.reserved)
+    if(!header.reserved || header.type != NETWORK_REQ_ADDRESS){
     #ifdef MESH_DEBUG_PRINTF
-      printf("MSH: Invalid id 0 rcvd\n");
+      printf("MSH: Invalid id or type rcvd\n");
     #endif
       return;
     }
@@ -529,7 +528,7 @@ void RF24Mesh::DHCP(){
     }
 
     #ifdef MESH_DEBUG_PRINTF
-    //  printf("%u MSH: Rcv addr req from_id %d \n",millis(),from_id);
+    //  printf("%u MSH: Rcv addr req from_id %d \n",millis(),header.reserved);
     #endif
        
     for(int i=MESH_MAX_CHILDREN+extraChild; i> 0; i--){ // For each of the possible addresses (5 max)
@@ -555,7 +554,7 @@ void RF24Mesh::DHCP(){
           printf("ID: %d ADDR: 0%o\n", addrList[i].nodeID,addrList[i].address);
         #endif
       #endif
-        if(  (addrList[i].address == newAddress && addrList[i].nodeID != from_id ) || newAddress == MESH_DEFAULT_ADDRESS){
+        if(  (addrList[i].address == newAddress && addrList[i].nodeID != header.reserved ) || newAddress == MESH_DEFAULT_ADDRESS){
           found = 1;
           break;
         }
@@ -577,7 +576,7 @@ void RF24Mesh::DHCP(){
           network.write(header,&newAddress,sizeof(newAddress),header.to_node);
         }
 
-        setAddress(from_id,newAddress);
+        setAddress(header.reserved,newAddress);
         #ifdef MESH_DEBUG_PRINTF
           printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,MESH_DEFAULT_ADDRESS,newAddress,header.reserved);
         #endif
