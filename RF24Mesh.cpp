@@ -21,7 +21,6 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
   network.returnSysMsgs = 1;
   
   if(getNodeID() > 0){ //Not master node
-    mesh_address = MESH_DEFAULT_ADDRESS;
     if(!renewAddress(timeout)){
       return 0;
     }
@@ -330,7 +329,6 @@ bool RF24Mesh::requestAddress(uint8_t level){
     #endif	
 
   bool gotResponse = 0;
-  uint8_t type=0;
   for(uint8_t i=0; i<pollCount; i++){
     // Request an address via the contact node
     header.type = NETWORK_REQ_ADDRESS;
@@ -348,7 +346,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 	timr = millis();    
     
     while(millis()-timr<225){
-      if( (type = network.update()) == NETWORK_ADDR_RESPONSE){
+      if( network.update() == NETWORK_ADDR_RESPONSE ){
         if(network.frame_buffer[7] == getNodeID()){
           i=pollCount;
           gotResponse = 1;
@@ -567,16 +565,15 @@ void RF24Mesh::DHCP(){
         delay(10); // ML: without this delay, address renewal fails
         if(header.from_node != MESH_DEFAULT_ADDRESS){ //Is NOT node 01 to 05
           delay(2);
-          if( network.write(header,&newAddress,sizeof(newAddress)) ){
-          }else{
-              network.write(header,&newAddress,sizeof(newAddress));
+          if( !network.write(header,&newAddress,sizeof(newAddress)) ){
+            network.write(header,&newAddress,sizeof(newAddress));
           }
         }else{
           delay(2);
           network.write(header,&newAddress,sizeof(newAddress),header.to_node);
         }
-
         setAddress(header.reserved,newAddress);
+        
         #ifdef MESH_DEBUG_PRINTF
           printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,MESH_DEFAULT_ADDRESS,newAddress,header.reserved);
         #endif
