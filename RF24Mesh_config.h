@@ -35,7 +35,7 @@
  * For Level 1 nodes a response typically takes 2-3ms in good conditions.
  * For Level 2 nodes: 4-5ms, Level 3: 6-15ms, Level 4: 10-25ms 
  **/
-#define MESH_LOOKUP_TIMEOUT 55  
+#define MESH_LOOKUP_TIMEOUT 135  
 
 #define MESH_WRITE_TIMEOUT 115 /** How long mesh.write retries address lookups before timing out. Allows multiple attempts */
 #define MESH_DEFAULT_ADDRESS NETWORK_DEFAULT_ADDRESS
