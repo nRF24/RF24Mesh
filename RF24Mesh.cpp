@@ -122,11 +122,8 @@ void RF24Mesh::setChannel(uint8_t _channel){
 /*****************************************************/
 
 void RF24Mesh::setChild(bool allow){
-    //Prevent old versions of RF24Network from throwing an error
-    //Note to remove this ""if defined"" after a few releases from 1.0.1
-    #if defined FLAG_NO_POLL
-      network.networkFlags = allow ? network.networkFlags & ~FLAG_NO_POLL : network.networkFlags | FLAG_NO_POLL; 
-    #endif
+
+    network.networkFlags = allow ? network.networkFlags & ~FLAG_NO_POLL : network.networkFlags | FLAG_NO_POLL; 
 }
 
 /*****************************************************/
@@ -240,11 +237,10 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout){
   uint8_t totalReqs = 0;
   
   beginDefault();
-  network.networkFlags |= 2;  
   
   uint32_t start = millis();
   while(!requestAddress(reqCounter)){
-    if(millis()-start > timeout){ network.networkFlags &= ~2; return 0; }
+    if(millis()-start > timeout){ return 0; }
     delay(50 + ( (totalReqs+1)*(reqCounter+1)) * 2);
     reqCounter++;
     reqCounter = reqCounter%4;
@@ -252,7 +248,6 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout){
     totalReqs = totalReqs%10;
     
   }
-  network.networkFlags &= ~2;
   return mesh_address;
 }
 
