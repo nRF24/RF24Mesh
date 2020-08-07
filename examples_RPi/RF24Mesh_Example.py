@@ -18,7 +18,7 @@ def delay(ms):
     sleep(ms/1000.0)
 
 # radio setup for RPi B Rev2: CS0=Pin 24
-radio = RF24(RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_8MHZ)
+radio = RF24(22,0);
 network = RF24Network(radio)
 mesh = RF24Mesh(radio, network)
 

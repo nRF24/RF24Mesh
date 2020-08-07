@@ -281,6 +281,7 @@ public:
   bool addrMemAllocated; /**<Just ensures we don't re-allocate the memory buffer if restarting the mesh on master **/
   #endif
   void beginDefault(); /**< Starts up the network layer with default address **/
+  bool meshStarted;
 
  };
  
