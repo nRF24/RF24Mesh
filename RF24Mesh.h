@@ -92,7 +92,7 @@ public:
    * The following parameters are optional:
    * @param channel The radio channel (1-127) default:97
    * @param data_rate The data rate (RF24_250KBPS,RF24_1MBPS,RF24_2MBPS) default:RF24_1MBPS
-   * @param timeout How long to attempt address renewal in milliseconds default:60000
+   * @param timeout How long to attempt address renewal in milliseconds default:7500
    */
   bool begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
   
@@ -119,11 +119,11 @@ public:
   bool write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID=0);
   
   /**
-   * Set a unique nodeID for this node. This value is stored in program memory, so is saved after loss of power.  
+   * Set a unique nodeID for this node.  
    * 
-   * This should be called before mesh.begin(), or set via serial connection or other methods if configuring a large number of nodes...  
+   * This needs to be called before mesh.begin(), can be via serial connection, eeprom etc if configuring a large number of nodes...  
    * @note If using RF24Gateway and/or RF24Ethernet, nodeIDs 0 & 1 are used by the master node.
-   * @param nodeID Can be any unique value ranging from 1 to 255. 
+   * @param nodeID Can be any unique value ranging from 1 to 253 
    */
   void setNodeID(uint8_t nodeID);
   
@@ -153,8 +153,8 @@ public:
   
   /**
    * Tests connectivity of this node to the mesh.
-   * @note If this function fails, the radio will be put into standby mode, and will not receive payloads until the address is renewed.
-   * @return Return 1 if connected, 0 if mesh not responding after up to 1 second
+   * @note If this function fails, address renewal should typically be done.
+   * @return Return 1 if connected, 0 if mesh not responding
    */
   
   bool checkConnection();
@@ -162,11 +162,11 @@ public:
   /**
   * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
   * a routing node goes down.
-  * @note Currently times out after 1 minute if address renewal fails. Network writes should not be attempted if address renewal fails.
+  * @note Currently times out after 7.5 seconds if address renewal fails.
   *
-  * @note If all nodes are set to verify connectivity/reconnect at a specified period, leaving the master offline for this length of time should result
+  * @note If all nodes are set to verify connectivity/reconnect at a specified period, restarting the master (and deleting dhcplist.txt on Linux) will result
   * in complete network/mesh reconvergence.
-  * @param timeout How long to attempt address renewal in milliseconds default:60000
+  * @param timeout How long to attempt address renewal in milliseconds default:7500
   
   * @return Returns the newly assigned RF24Network address
   */
@@ -174,7 +174,7 @@ public:
   
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
-   * @note Nodes should ensure that addresses are releases successfully prior to renewal.
+   * @note Nodes should ensure that addresses are released successfully prior to going offline.
    * @return Returns 1 if successfully released, 0 if not
    */
   bool releaseAddress();
@@ -190,8 +190,8 @@ public:
    * @note If printing or displaying the address, it needs to be converted to octal format: Serial.println(address,OCT);
    *
    * Results in a lookup request being sent to the master node.
-   * @param nodeID - The unique identifier (1-255) of the node
-   * @return Returns the RF24Network address of the node or -1 if not found or lookup failed.
+   * @param nodeID - The unique identifier (1-253) of the node
+   * @return Returns the RF24Network address of the node, -2 if successful but not in list, -1 if failed
    */
   int16_t getAddress(uint8_t nodeID);
 
@@ -364,33 +364,38 @@ public:
  *
  * This class intends to provide a simple and seamless 'mesh' layer for sensor networks, allowing automatic and dynamic configuration
  * that can be customized to suit many scenarios. It is currently designed to interface directly with with the
- * <a href="http://tmrh20.github.com/RF24Network/">RF24Network Development library</a>, an <a href="http://en.wikipedia.org/wiki/Network_layer">OSI Network Layer</a> using nRF24L01(+) radios driven
+ * <a href="http://tmrh20.github.com/RF24Network/">RF24Network library</a>, an <a href="http://en.wikipedia.org/wiki/Network_layer">OSI Network Layer</a> using nRF24L01(+) radios driven
  * by the newly optimized <a href="http://tmrh20.github.com/RF24/">RF24</a> library fork.
  *
- * @section Purpose Purpose/Goal
+ * @section Purpose Purpose/Goals
  *
- * Provide a simple user interface for creating dynamic sensor networks with the RF24 and RF24Network libraries.
+ * - Provide a simple user interface for creating dynamic sensor networks with the RF24 and RF24Network libraries.
+ * - Create stable, fully automated/self-managed networks 
  *
  * @section Overview RF24Mesh Overview
- * The RF24Network library provides a system of addressing and routing for RF24 radio modules, that allows large wireless sensor networks to be constructed. <br> RF24Mesh
+ * The RF24Network library provides a system of addressing and routing for RF24 radio modules that allows large wireless sensor networks to be constructed. <br> RF24Mesh
  * provides extended features, including automatic addressing and dynamic configuration of wireless sensors. 
  * 
  * **How does it work?**<br>
+ *
+ * Nodes are assigned a unique number ranging from 1 to 253, and just about everything else, addressing, routing, etc. is managed by the library.
+ *
+ * The unique identifier is like an IP address, used to communicate at a high level within the RF24 communication stack and will generally remain static. At the network layer,
+ * the physical radio addresses, similar to MAC addresses, are allocated as nodes move around and establish connections within the network.
+ *
  * The 'master' node keeps track of the unique nodeIDs and the assigned RF24Network addresses. When a node is moved physically, or just loses its connection to the network,
- * it can be set to automatically re-join the mesh, and reconfigure itself within the network.
+ * it can automatically re-join the mesh and reconfigure itself within the network.
+ 
+ * In the mesh configuration sensors/nodes can move around physically, far from the 'master node' using other nodes to route traffic over extended distances. Addressing and
+ * topology is reconfigured as connections are broken and re-established within different areas of the network.
  *
- * Nodes are assigned a unique number ranging from 1 to 255, and just about everything else, addressing, routing, etc. is managed by the library.
- * 
- * In the 'mesh' configuration sensors/nodes can move around physically, far from the 'master node' using other nodes to route traffic over extended distances. Addressing and
- * topology can be reconfigured as connections are broken and re-established within different areas of the network.
+ * RF24Mesh takes advantage of functionality and features within the RF24 and RF24Network libraries, so everything from addressing, routing, fragmentation/re-assembly
+ * (very large payloads) are handled automatically with processes designed to support a multi-node radio network.
  *
- * <b>What works currently? </b>
- * @li Basic 'mesh' functionality using an <b>Arduino or RPi</b> as the master node which will generally send or received data to/from nodes.
- * @li Simple, dynamic addressing based on a pre-assigned unique identifier
- * @li Dynamic/On-the fly configuration of addresses and network topology
- * @li Automatic routing and handling of data - Nodes will join together to extend the range of radio links by routing data as required.
- *  
- *
+ * <b>Update: Aug 2020 </b>
+ * @li Quite a few bug fixes and cleanup for RF24Mesh and the RF24 libraries recently, updates are recommended
+ * @li Updates mainly addresses stability and reliability issues
+ * @li Improvements to address renewal, connection verification and lookups
  *
  * @section More How to learn more
  * 
@@ -400,6 +405,7 @@ public:
  * @li <a href="classRF24Mesh.html">RF24Mesh Class Documentation</a>
  * @li <a href="http://tmrh20.github.io/RF24Network/">RF24 Network Class Documentation</a>
  * @li <a href="http://tmrh20.github.io/RF24Ethernet/">RF24Ethernet: TCP/IP based Mesh over RF24</a>
+ * @li <a href="http://tmrh20.github.io/RF24Gateway/">RF24Gateway: A TCP/IP and RF24 Gateway for RF24 nodes</a>
  * @li <a href="https://tmrh20.github.io">All Documentation and Downloads</a>
  * @li <a href="https://github.com/TMRh20/RF24Mesh">Source Code</a>
  *
@@ -413,7 +419,7 @@ public:
  * <b>Hardware Requirements:</b>  <br>
  * @li 1 Raspberry Pi or Arduino to act as the Master Node <br>
  * @li 1 or more Arduino,RPi,etc. (Sensor Nodes)  <br>
- * @li 1 or more NRF24L01+ radio modules  <br>
+ * @li 2 or more NRF24L01+ radio modules  <br>
  * @li 1 or more various sensors for your sensor nodes  <br>
  *  
  * <b>Software Requirements:</b>
@@ -422,11 +428,11 @@ public:
  * @li <a href="https://github.com/TMRh20/RF24Mesh/archive/master.zip">RF24Mesh - Dynamic Mesh Library</a>
  *  
  * @section Installation Installation
- * 1. If not installed, use the Arduino Library Manager, or download and install the RF24, RF24Network, and RF24Mesh libraries per the above links  <br>
+ * 1. Use the Arduino Library Manager. Selecting RF24Mesh should also install RF24Network and RF24 Core libraries  <br>
  *  <br>
  * 2. Configure and test the hardware using examples from RF24 and RF24Network prior to attempting to use RF24Mesh  <br>
- *    a: <b>In Arduino IDE:</b> File > Examples > RF24 > GettingStarted  <br>
- *    b: <b>RPi:</b> Follow the RF24 instructions on <a href="http://tmrh20.github.io/RF24/RPi.html">GitHub</a>  <br>
+ *    a: <b>In Arduino IDE:</b> File > Examples > RF24 > GettingStarted  see: <a href="http://tmrh20.github.io/RF24/Arduino.html"> Arduino</a> <br>
+ *    b: <b>RPi:</b> An installer is provided: <a href="http://tmrh20.github.io/RF24/Linux.html">Linux</a> <a href="http://tmrh20.github.io/RF24/RPi.html">RPi</a>  <br>
  *  <br>
  * 3. Once testing is complete:  <br>
  *    a: <b>Arduino IDE:</b> File > Examples > RF24Mesh > RF24Mesh_Example  <br>
@@ -437,9 +443,9 @@ public:
  *
  * @section Config Configuration
  *
- * As per the examples, nodes are configured with a unique value between 1 and 255. This allows them to change positions on the network, while still being identified. <br>
+ * As per the examples, nodes are configured with a unique value between 1 and 253. This allows them to change positions on the network while still being identified. <br>
  *
- * For pre-configuration of the mesh, only a few options are available by editing RF24Mesh_config.h prior to compiling: <br>
+ * For pre-configuration of the mesh, some options are available by editing RF24Mesh_config.h prior to compiling: <br>
  * 
  * @code  
  * #define MESH_MAX_CHILDREN 4  
@@ -466,7 +472,7 @@ public:
  * the network would be addressed manually, by adding, removing, or resetting nodes. Users can choose to use RF24Network functions directly, or use RF24Mesh. <br><br>
  *
  * 3. **Dynamic Network & Assignment:** 
- * Nodes join the mesh automatically and re-attach as required. <br><br>
+ * Nodes join the mesh automatically and re-attach as required. This is the default and how the examples work. <br><br>
  *
  * 4. **Hybrid Network**:
  * Utilizes a combination of static & dynamic nodes. Requires initial planning and deployment, but can result in a more stable network, easing
@@ -479,12 +485,12 @@ public:
  *
  * **Raspberry Pi/Linux:** On Linux devices, the RF24Gateway will save address assignments to file (dhcplist.txt) so they will be restored, even if the
  * gateway is restarted. To force network re-convergence, delete the dhcplist.txt file and restart the gateway. If nodes are configured to verify their connection at a set
- * interval, the gateway should be left offline for at least that period of time. 
+ * interval, they will come back online in time. 
  *
  * **Arduino/AVR:** On all other devices, the address list is not saved. To force network re-convergence, restart the gateway. If nodes are configured to verify their
- * connection at a set interval, the gateway should be left offline for at least that period of time.
+ * connection at a set interval, they will come back online in time.
  *
- * If a node/nodeID is removed from the network permanently, the address should be released prior to removal. If it is not, the assigned RF24Network address should be 
+ * If a node/nodeID is removed from the network permanently, the address should be released prior to removal. If it is not, the assigned RF24Network address can be 
  * written to 0 in the RF24Mesh address list.
  * 
  * @section MeshComm Mesh Communication
