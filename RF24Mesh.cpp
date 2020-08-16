@@ -8,7 +8,7 @@
 #include <fstream>
 #endif
 
-RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network){}
+RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network){ setCallback(NULL); }
 
 
 /*****************************************************/
@@ -169,6 +169,7 @@ int16_t RF24Mesh::getAddress(uint8_t nodeID){ // Master will return and send 00 
     if(network.write(header,&nodeID,sizeof(nodeID)) ){
       uint32_t timer = millis();	
       while(network.update() != MESH_ADDR_LOOKUP){
+        MESH_CALLBACK
         if(millis()-timer > MESH_LOOKUP_TIMEOUT){ return -1; }
       }
       int16_t address = 0;
@@ -203,6 +204,7 @@ int16_t RF24Mesh::getNodeID(uint16_t address){
     if(network.write(header,&address,sizeof(address)) ){
       uint32_t timer=millis();	
       while(network.update() != MESH_ID_LOOKUP){
+        MESH_CALLBACK
         if(millis()-timer > MESH_LOOKUP_TIMEOUT){ return -1; }
       }
       int16_t ID = 0;
@@ -334,6 +336,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
 			  break;
 			}
 		}
+        MESH_CALLBACK
 	}
 	
    
@@ -376,6 +379,7 @@ bool RF24Mesh::requestAddress(uint8_t level){
           }
         }
       }
+      MESH_CALLBACK
     }
   }
   if(!gotResponse){
@@ -616,3 +620,11 @@ void RF24Mesh::DHCP(){
 /*****************************************************/
 
 #endif // !MESH_NOMASTER
+
+void RF24Mesh::setCallback( void (*meshCallback)(void) ){
+    
+    this->meshCallback = meshCallback;
+
+}
+
+/*****************************************************/

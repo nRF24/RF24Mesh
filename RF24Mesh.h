@@ -126,6 +126,20 @@ public:
    * @param nodeID Can be any unique value ranging from 1 to 253 
    */
   void setNodeID(uint8_t nodeID);
+
+  
+  /**
+  * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
+  * a routing node goes down.
+  * @note Currently times out after 7.5 seconds if address renewal fails.
+  *
+  * @note If all nodes are set to verify connectivity/reconnect at a specified period, restarting the master (and deleting dhcplist.txt on Linux) will result
+  * in complete network/mesh reconvergence.
+  * @param timeout How long to attempt address renewal in milliseconds default:7500
+  
+  * @return Returns the newly assigned RF24Network address
+  */
+  uint16_t renewAddress(uint32_t timeout=MESH_RENEWAL_TIMEOUT);
   
   #if !defined(MESH_NOMASTER)
  /**
@@ -158,19 +172,6 @@ public:
    */
   
   bool checkConnection();
-  
-  /**
-  * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
-  * a routing node goes down.
-  * @note Currently times out after 7.5 seconds if address renewal fails.
-  *
-  * @note If all nodes are set to verify connectivity/reconnect at a specified period, restarting the master (and deleting dhcplist.txt on Linux) will result
-  * in complete network/mesh reconvergence.
-  * @param timeout How long to attempt address renewal in milliseconds default:7500
-  
-  * @return Returns the newly assigned RF24Network address
-  */
-  uint16_t renewAddress(uint32_t timeout=MESH_RENEWAL_TIMEOUT);
   
   /**
    * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
@@ -211,6 +212,23 @@ public:
   * @param allow True to allow children, False to prevent children from attaching automatically.
   */
   void setChild(bool allow);
+  
+  /**
+  * RF24Mesh ID and Address lookups as well as address renewal can take some time.
+  * Set a callback function to enable additional processing while the mesh is working
+  * 
+  * @code 
+  * void myCallbackFunction(){
+  *   someValue = someOtherValue
+  * }
+  * mesh.setCallback(myCallbackFunction);
+  * @endcode
+  *
+  * @param meshCallback Then name of a function to call
+  */
+  void setCallback( void (*meshCallback)(void) );
+  
+  #define MESH_CALLBACK if(meshCallback){ meshCallback(); }
   
   #if !defined(MESH_NOMASTER)
   /**
@@ -256,7 +274,6 @@ public:
   /**@}*/
 
   uint8_t _nodeID;
-
   
 #if !defined(MESH_NOMASTER)
   typedef struct{
@@ -273,6 +290,7 @@ public:
   RF24& radio;
   RF24Network& network;  
 
+  void (*meshCallback)(void);
   bool requestAddress(uint8_t level); /**< Actual requesting of the address once a contact node is discovered or supplied **/
   bool waitForAvailable(uint32_t timeout); /**< Waits for data to become available */
 
