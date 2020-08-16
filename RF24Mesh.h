@@ -282,6 +282,7 @@ public:
   #endif
   void beginDefault(); /**< Starts up the network layer with default address **/
   bool meshStarted;
+  uint8_t getLevel(uint16_t address); /**< Returns the number of digits in the specified address **/
 
  };
  
