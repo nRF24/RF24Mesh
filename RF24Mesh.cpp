@@ -444,27 +444,28 @@ void RF24Mesh::setStaticAddress(uint8_t nodeID, uint16_t address){
 
 /*****************************************************/
 
-void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address){
-  
+void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy){
   
   //Look for the node in the list
   for(uint8_t i=0; i<addrListTop; i++){
+    if(searchBy == false){
       if( addrList[i].nodeID == nodeID){
           addrList[i].address = address;
           #if defined (__linux)  && !defined(__ARDUINO_X86__)
             saveDHCP();
           #endif
           return; //Found & set, complete
-      }else
+      }
+    }else{ // Search by address, set the nodeID
       if( addrList[i].address == address){
           //printf("*** Addr 0%o Found, reassign fr ID %d to ID %d ***\n", addrList[i].address,addrList[i].nodeID,nodeID);
           addrList[i].nodeID = nodeID;
           #if defined (__linux)  && !defined(__ARDUINO_X86__)
             saveDHCP();
-          #endif
-          
+          #endif          
           return;
-      }          
+      }
+    }
   }
   
   if(addrListTop > 0 && addrListTop % MESH_MEM_ALLOC_SIZE == 0){

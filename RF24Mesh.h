@@ -219,12 +219,12 @@ public:
   * 
   * @code 
   * void myCallbackFunction(){
-  *   someValue = someOtherValue
+  *   someValue = someOtherValue;
   * }
   * mesh.setCallback(myCallbackFunction);
   * @endcode
   *
-  * @param meshCallback Then name of a function to call
+  * @param meshCallback The name of a function to call
   */
   void setCallback( void (*meshCallback)(void) );
   
@@ -238,13 +238,22 @@ public:
   * Set a static address for node 02, with nodeID 23, since it will just be a static routing node for example
   * running on an ATTiny chip.
   * 
-  * mesh.setStaticAddress(23,02);
+  * mesh.setAddress(23,02);
   * @endcode
+  *
+  * @code
+  * Change/set the nodeID for an existing address
+  * 
+  * uint16_t address = 012;
+  * mesh.setAddress(3,address,true);
+  * @endcode
+  *
   * @param nodeID The nodeID to assign
   * @param address The octal RF24Network address to assign
+  * @param searchBy Optional parameter. Default is search by nodeID and set the address. True allows searching by address and setting nodeID.
   * @return If the nodeID exists in the list, 
   */
-  void setAddress(uint8_t nodeID, uint16_t address);  
+  void setAddress(uint8_t nodeID, uint16_t address, bool searchBy = false);  
   
   void saveDHCP();
   void loadDHCP();
