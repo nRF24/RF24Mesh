@@ -420,7 +420,11 @@ public:
  * RF24Mesh takes advantage of functionality and features within the RF24 and RF24Network libraries, so everything from addressing, routing, fragmentation/re-assembly
  * (very large payloads) are handled automatically with processes designed to support a multi-node radio network.
  *
- * <b>Update: Aug 2020 </b>
+ * <b>Update: Aug 2020 </b><br>
+ * v1.1.3
+ * @li More bug fixes, mostly affecting functionality
+ *
+ * v1.1.2
  * @li Quite a few bug fixes and cleanup for RF24Mesh and the RF24 libraries recently, updates are recommended
  * @li Updates mainly addresses stability and reliability issues
  * @li Improvements to address renewal, connection verification and lookups

@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/TMRh20/RF24Mesh.git"
   },
-  "version": "1.1.2",
+  "version": "1.1.3",
   "dependencies": [
     { "name": "RF24", "authors": "TMRh20", "frameworks": "arduino" },
     { "name": "RF24Network", "authors": "TMRh20", "frameworks": "arduino" }
