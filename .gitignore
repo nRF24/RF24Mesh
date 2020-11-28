@@ -4,3 +4,6 @@
 # Generated library files
 *.so
 *.so.1
+
+# ignore docs folder
+docs/
