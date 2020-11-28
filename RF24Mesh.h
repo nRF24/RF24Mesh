@@ -434,9 +434,9 @@ public:
  * @li <a href="Setup-Config.html">Setup and Configuration</a>
  * @li <a href="General-Usage.html">Usage & Overview </a>
  * @li <a href="classRF24Mesh.html">RF24Mesh Class Documentation</a>
- * @li <a href="http://tmrh20.github.io/RF24Network/">RF24 Network Class Documentation</a>
- * @li <a href="http://tmrh20.github.io/RF24Ethernet/">RF24Ethernet: TCP/IP based Mesh over RF24</a>
- * @li <a href="http://tmrh20.github.io/RF24Gateway/">RF24Gateway: A TCP/IP and RF24 Gateway for RF24 nodes</a>
+ * @li <a href="http://nRF24.github.io/RF24Network/">RF24 Network Class Documentation</a>
+ * @li <a href="http://nRF24.github.io/RF24Ethernet/">RF24Ethernet: TCP/IP based Mesh over RF24</a>
+ * @li <a href="http://nRF24.github.io/RF24Gateway/">RF24Gateway: A TCP/IP and RF24 Gateway for RF24 nodes</a>
  * @li <a href="https://tmrh20.github.io">All Documentation and Downloads</a>
  * @li <a href="https://github.com/TMRh20/RF24Mesh">Source Code</a>
  *
@@ -462,8 +462,8 @@ public:
  * 1. Use the Arduino Library Manager. Selecting RF24Mesh should also install RF24Network and RF24 Core libraries  <br>
  *  <br>
  * 2. Configure and test the hardware using examples from RF24 and RF24Network prior to attempting to use RF24Mesh  <br>
- *    a: <b>In Arduino IDE:</b> File > Examples > RF24 > GettingStarted  see: <a href="http://tmrh20.github.io/RF24/Arduino.html"> Arduino</a> <br>
- *    b: <b>RPi:</b> An installer is provided: <a href="http://tmrh20.github.io/RF24/Linux.html">Linux</a> <a href="http://tmrh20.github.io/RF24/RPi.html">RPi</a>  <br>
+ *    a: <b>In Arduino IDE:</b> File > Examples > RF24 > GettingStarted  see: <a href="http://nRF24.github.io/RF24/Arduino.html"> Arduino</a> <br>
+ *    b: <b>RPi:</b> An installer is provided: <a href="http://nRF24.github.io/RF24/Linux.html">Linux</a> <a href="http://nRF24.github.io/RF24/RPi.html">RPi</a>  <br>
  *  <br>
  * 3. Once testing is complete:  <br>
  *    a: <b>Arduino IDE:</b> File > Examples > RF24Mesh > RF24Mesh_Example  <br>
@@ -496,7 +496,7 @@ public:
  * @section Net_Design Network Design Options
  *
  * 1. **Static Network** (No Mesh):
- * RF24Network can be configured manually, with a static design. RF24Mesh is not used at all. See http://tmrh20.github.io/RF24Network/Addressing.html <br><br>
+ * RF24Network can be configured manually, with a static design. RF24Mesh is not used at all. See http://nRF24.github.io/RF24Network/Addressing.html <br><br>
  *
  * 2. **Static Network w/Dynamic Assignment:**
  * RF24Mesh is only used to acquire an address on startup. Nodes are generally expected to remain stationary. Changes to
@@ -551,7 +551,7 @@ public:
  * @section RF24Network RF24Network
  *
  * Beyond requesting and releasing addresses, usage is outlined in the class documentation, and further information regarding RF24Network is available at
- * http://tmrh20.github.io/RF24Network
+ * http://nRF24.github.io/RF24Network
  *
  *
  *
