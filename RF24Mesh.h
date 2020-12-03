@@ -383,7 +383,7 @@ public:
   /**
   * @example RF24Mesh_Ncurses_Master.cpp
   * A very limited ncurses interface used for initial monitoring/testing of RF24Mesh
-  * <img src="tmrh20/RF24Mesh_Ncurses.JPG">
+  * @image html "images/RF24Mesh_Ncurses.JPG"
   */
 
 /**
