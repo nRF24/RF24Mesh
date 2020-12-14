@@ -19,7 +19,8 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
     radio.stopListening();
   }
   meshStarted = true;
-  radio.begin();
+  if(!radio.begin())
+    return 0;
   radio.setChannel(channel);
   radio.setDataRate(data_rate);  
   network.returnSysMsgs = true;
