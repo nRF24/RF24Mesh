@@ -10,7 +10,7 @@
 #include <fstream>
 #endif
 
-RF24Mesh::RF24Mesh( RF24& _radio,RF24Network& _network ): radio(_radio),network(_network) { setCallback(NULL); }
+RF24Mesh::RF24Mesh(RF24& _radio, RF24Network& _network): radio(_radio), network(_network) { setCallback(NULL); }
 
 
 /*****************************************************/
