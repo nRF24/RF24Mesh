@@ -13,7 +13,9 @@
  *
  * The master node supports MESH_MAX_CHILDREN + 1 nodes
  */
-#define MESH_MAX_CHILDREN 4
+#ifndef MESH_MAX_CHILDREN
+    #define MESH_MAX_CHILDREN 4
+#endif // MESH_MAX_CHILDREN
 #if defined (RF24_TINY) || defined (DOXYGEN_FORCED)
     /**
      * @brief Save on resources for non-master nodes
@@ -33,13 +35,17 @@
  *
  * This is normally modified by calling RF24Mesh::setChannel()
  */
-#define MESH_DEFAULT_CHANNEL 97
+#ifndef MESH_DEFAULT_CHANNEL
+    #define MESH_DEFAULT_CHANNEL 97
+#endif // MESH_DEFAULT_CHANNEL
 
 /**
  * @brief How long to attempt address renewal in milliseconds
  * @see RF24Mesh::renewAddress()
  */
-#define MESH_RENEWAL_TIMEOUT 7500
+#ifndef MESH_RENEWAL_TIMEOUT
+    #define MESH_RENEWAL_TIMEOUT 7500
+#endif // MESH_RENEWAL_TIMEOUT
 
 /**
  * @brief master node memory allocation
@@ -50,7 +56,9 @@
  *
  * On 8-bit AVRs (Arduino Uno, Nano etc) each entry uses 3-bytes of memory space. Minimize this value to save memory. Allocate enough to prevent memory fragmentation.
  */
-#define MESH_MEM_ALLOC_SIZE 10
+#ifndef MESH_MEM_ALLOC_SIZE
+    #define MESH_MEM_ALLOC_SIZE 10
+#endif // MESH_MEM_ALLOC_SIZE
 
 /**************************/
 /***       Debug        ***/
@@ -68,11 +76,19 @@
  * For Level 1 nodes a response typically takes 2-3ms in good conditions.
  * For Level 2 nodes: 4-5ms, Level 3: 6-15ms, Level 4: 10-25ms
  **/
-#define MESH_LOOKUP_TIMEOUT 135
+#ifndef MESH_LOOKUP_TIMEOUT
+    #define MESH_LOOKUP_TIMEOUT 135
+#endif // MESH_LOOKUP_TIMEOUT
 
 /** @brief How long RF24Mesh::write retries address lookups before timing out. Allows multiple attempts */
-#define MESH_WRITE_TIMEOUT 115
-#define MESH_DEFAULT_ADDRESS NETWORK_DEFAULT_ADDRESS
+#ifndef MESH_WRITE_TIMEOUT
+    #define MESH_WRITE_TIMEOUT 115
+#endif // MESH_WRITE_TIMEOUT
+
+#ifndef MESH_DEFAULT_ADDRESS
+    #define MESH_DEFAULT_ADDRESS NETWORK_DEFAULT_ADDRESS
+#endif // MESH_DEFAULT_ADDRESS
+
 //#define MESH_MAX_ADDRESSES 255 /** UNUSED Determines the max size of the array used for storing addresses on the Master Node */
 //#define MESH_ADDRESS_HOLD_TIME 30000 /**UNUSED How long before a released address becomes available */
 
