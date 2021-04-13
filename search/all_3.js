@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['checkconnection_6',['checkConnection',['../classRF24Mesh.html#a6330a2502e680f13e6ded3ff07d71087',1,'RF24Mesh']]],
-  ['contributing_2emd_7',['CONTRIBUTING.md',['../CONTRIBUTING_8md.html',1,'']]],
-  ['contributing_8',['CONTRIBUTING',['../md_CONTRIBUTING.html',1,'']]]
+  ['general_20usage_5',['General Usage',['../md_docs_general_usage.html',1,'']]],
+  ['general_5fusage_2emd_6',['general_usage.md',['../general__usage_8md.html',1,'']]],
+  ['getaddress_7',['getAddress',['../classRF24Mesh.html#a895f444dcc0cb175faf845c5bdd7a7d0',1,'RF24Mesh']]],
+  ['getnodeid_8',['getNodeID',['../classRF24Mesh.html#a38be0ba49fea6986dedd976f18865912',1,'RF24Mesh']]]
 ];

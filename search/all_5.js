@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['general_20usage_10',['General Usage',['../General-Usage.html',1,'']]],
-  ['getaddress_11',['getAddress',['../classRF24Mesh.html#a895f444dcc0cb175faf845c5bdd7a7d0',1,'RF24Mesh']]],
-  ['getnodeid_12',['getNodeID',['../classRF24Mesh.html#a38be0ba49fea6986dedd976f18865912',1,'RF24Mesh']]]
+  ['releaseaddress_27',['releaseAddress',['../classRF24Mesh.html#a70e5a2a2a393bc13d63c97a62bf311b1',1,'RF24Mesh']]],
+  ['renewaddress_28',['renewAddress',['../classRF24Mesh.html#a01e3844c6f04bf81bac6e45c3d75116e',1,'RF24Mesh']]],
+  ['rf24mesh_29',['RF24Mesh',['../classRF24Mesh.html',1,'RF24Mesh'],['../classRF24Mesh.html#a8b2bde3730c955d28a269f35b610a562',1,'RF24Mesh::RF24Mesh()']]],
+  ['rf24mesh_2ecpp_30',['RF24Mesh.cpp',['../RF24Mesh_8cpp.html',1,'']]],
+  ['rf24mesh_2eh_31',['RF24Mesh.h',['../RF24Mesh_8h.html',1,'']]],
+  ['rf24mesh_5fconfig_2eh_32',['RF24Mesh_config.h',['../RF24Mesh__config_8h.html',1,'']]]
 ];
