@@ -1,19 +1,9 @@
-## Include this file if you want to use the RF24Mesh library
-## in YOUR (Pico) project.
-## See examples_pico/CMakeLists.txt to see how it could be done
+# Check if we are building a pico-sdk based project
+# (or more exactly: if we just got included in a pico-sdk based project)
+if (PICO_SDK_PATH)
+    # If so, load the relevant CMakeLists-file but don't do anything else
+    include(${CMAKE_CURRENT_LIST_DIR}/CMakeLists-PicoSDK.txt)
+    return()
+endif()
 
-cmake_minimum_required(VERSION 3.12)
-
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
-
-# Define the RF24Mesh library
-add_library(RF24Mesh INTERFACE)
-
-target_sources(RF24Mesh INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}/RF24Mesh.cpp
-    )
-
-target_include_directories(RF24Mesh INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}/
-    )
+## TODO: Non-PicoSDK builds
