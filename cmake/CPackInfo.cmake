@@ -26,7 +26,7 @@ endif()
 # assemble a debian package filename from known info
 include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_FILE_NAME "lib${LibTargetName}_${${LibName}_VERSION_STRING}-${PKG_REV}_${TARGET_ARCH}")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_VERSION_MAJOR "${${LibName}_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${${LibName}_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${${LibName}_VERSION_PATCH}")

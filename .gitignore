@@ -8,3 +8,6 @@
 # ignore docs folder
 docs/html/
 docs/xml/
+
+# ignore build folders
+build/

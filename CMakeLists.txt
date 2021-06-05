@@ -47,6 +47,12 @@ include(cmake/GetLibInfo.cmake) # sets the variable LibTargetName
 # setup CPack options
 include(cmake/CPackInfo.cmake)
 
+find_library(RF24 rf24 REQUIRED)
+message(STATUS "using RF24 library: ${RF24}")
+
+find_library(RF24Network rf24network REQUIRED)
+message(STATUS "using RF24Network library: ${RF24Network}")
+
 ###########################
 # create target for bulding the RF24Log lib
 ###########################
@@ -60,6 +66,8 @@ target_include_directories(${LibTargetName} PUBLIC
 target_link_libraries(${LibTargetName} INTERFACE
     project_options
     project_warnings
+    SHARED ${RF24}
+    SHARED ${RF24Network}
     )
 
 set_target_properties(

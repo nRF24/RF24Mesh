@@ -32,7 +32,6 @@ jobs:
             usr_dir: "local"
 
     steps:
-      - uses: actions/checkout@v1
       - name: install rpmbuild
         run: sudo apt-get install rpm
 
@@ -66,15 +65,7 @@ jobs:
           repository: nRF24/RF24
           ref: rp2xxx
 
-      - name: checkout RF24Network
-        uses: actions/checkout@v2
-        with:
-          repository: nRF24/RF24Network
-          ref: CMake-4-Linux
-
       - name: build & install RF24
-        if: ${{ matrix.toolchain.compiler == 'default' }}
-        working-directory: ${{ github.workspace }}/RF24
         run: |
           mkdir build
           cd build
@@ -83,9 +74,13 @@ jobs:
           -D CMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
           sudo make install
 
+      - name: checkout RF24Network
+        uses: actions/checkout@v2
+        with:
+          repository: nRF24/RF24Network
+          ref: CMake-4-Linux
+
       - name: build & install RF24Network
-        if: ${{ matrix.toolchain.compiler == 'default' }}
-        working-directory: ${{ github.workspace }}/RF24RF24Network
         run: |
           mkdir build
           cd build
@@ -94,13 +89,16 @@ jobs:
           -D CMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
           sudo make install
 
+      - name: checkout RF24Mesh repo
+        uses: actions/checkout@v2
+
       - name: create CMake build environment
         run: cmake -E make_directory ${{ github.workspace }}/build
 
       - name: configure lib
         if: ${{ matrix.toolchain.compiler == 'default' }}
         working-directory: ${{ github.workspace }}/build
-        run: cmake .. -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D RF24_DRIVER=${{ matrix.driver }}
+        run: cmake .. -D CMAKE_BUILD_TYPE=$BUILD_TYPE
 
       - name: configure lib (with toolchain compilers)
         if: ${{ matrix.toolchain.compiler != 'default' }}
@@ -152,23 +150,3 @@ jobs:
         run: |
           cmake --build .
           file ./RF24Mesh_Example
-
-      # Apparently we need python3 for ARM installed (or at least the Python-C API for arm)
-      - name: provide python wrapper prerequisites
-        if: ${{ matrix.toolchain.compiler == 'default' }}
-        # python3-rpi.gpio is only required for physical hardware
-        run: sudo apt-get install python3-dev libboost-python-dev python3-setuptools
-
-      - name: create alias symlink to libboost_python3*.so
-        if: ${{ matrix.toolchain.compiler == 'default' }}
-        run: sudo ln -s $(ls /usr/lib/$(ls /usr/lib/gcc | tail -1)/libboost_python3*.so | tail -1) /usr/lib/$(ls /usr/lib/gcc | tail -1)/libboost_python3.so
-
-      - name: build python wrapper
-        if: ${{ matrix.toolchain.compiler == 'default' }}
-        working-directory: ${{ github.workspace }}/pyRF24Mesh
-        run: python3 setup.py build
-
-      - name: install python wrapper
-        if: ${{ matrix.toolchain.compiler == 'default' }}
-        working-directory: ${{ github.workspace }}/pyRF24Mesh
-        run: sudo python3 setup.py install
