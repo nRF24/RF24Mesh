@@ -11,3 +11,6 @@ docs/xml/
 
 # ignore build folders
 build/
+
+# ignore local vscode folder
+.vscode/
