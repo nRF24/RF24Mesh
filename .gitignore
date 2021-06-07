@@ -9,8 +9,9 @@
 docs/html/
 docs/xml/
 
-# ignore build folders
+# ignore CMake stuff
 build/
+*CMakeUserPresets.json
 
 # ignore local vscode folder
 .vscode/
