@@ -4,28 +4,28 @@ on:
   pull_request:
     types: [opened, reopened]
     paths:
-      - '*.h'
-      - '*.cpp'
-      - 'CMakeLists.txt'
-      - 'cmake/**'
-      - 'library.properties' # CMake gets lib info from here
-      - 'examples_RPi/**'
-      - '!examples_RPi/*.py'
-      - '!**Makefile' # old build system is not tested in this workflow
-      - 'pyRF24Mesh/*'
-      - '.github/workflows/build_linux.yml'
+      - "*.h"
+      - "*.cpp"
+      - "CMakeLists.txt"
+      - "cmake/**"
+      - "library.properties" # CMake gets lib info from here
+      - "examples_RPi/**"
+      - "!examples_RPi/*.py"
+      - "!**Makefile" # old build system is not tested in this workflow
+      - "pyRF24Mesh/*"
+      - ".github/workflows/build_linux.yml"
   push:
     paths:
-      - '*.h'
-      - '*.cpp'
-      - 'CMakeLists.txt'
-      - 'cmake/**'
-      - 'library.properties' # CMake gets lib info from here
-      - 'examples_RPi/**'
-      - '!examples_RPi/*.py'
-      - '!**Makefile' # old build system is not tested in this workflow
-      - 'pyRF24Mesh/*'
-      - '.github/workflows/build_linux.yml'
+      - "*.h"
+      - "*.cpp"
+      - "CMakeLists.txt"
+      - "cmake/**"
+      - "library.properties" # CMake gets lib info from here
+      - "examples_RPi/**"
+      - "!examples_RPi/*.py"
+      - "!**Makefile" # old build system is not tested in this workflow
+      - "pyRF24Mesh/*"
+      - ".github/workflows/build_linux.yml"
   release:
     types: [published, edited]
 

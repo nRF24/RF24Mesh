@@ -5,29 +5,29 @@ on:
     branches: [master]
     types: [opened, reopened]
     paths:
-      - '*.h'
-      - 'docs/**'
-      - '!docs/README.md'
-      - '*.md'
-      - 'examples**.cpp'
-      - 'examples**.ino'
-      - 'images/**'
-      - '.github/workflows/doxygen.yml'
-      - 'Doxyfile'
-      - 'library.properties' # get lib version from here
+      - "*.h"
+      - "docs/**"
+      - "!docs/README.md"
+      - "*.md"
+      - "examples**.cpp"
+      - "examples**.ino"
+      - "images/**"
+      - ".github/workflows/doxygen.yml"
+      - "Doxyfile"
+      - "library.properties" # get lib version from here
   push:
     branches: [master]
     paths:
-      - '*.h'
-      - 'docs/**'
-      - '!docs/README.md'
-      - '*.md'
-      - 'examples**.cpp'
-      - 'examples**.ino'
-      - 'images/**'
-      - '.github/workflows/doxygen.yml'
-      - 'Doxyfile'
-      - 'library.properties' # get lib version from here
+      - "*.h"
+      - "docs/**"
+      - "!docs/README.md"
+      - "*.md"
+      - "examples**.cpp"
+      - "examples**.ino"
+      - "images/**"
+      - ".github/workflows/doxygen.yml"
+      - "Doxyfile"
+      - "library.properties" # get lib version from here
   release:
     branches: [master]
     types: [published, edited]
