@@ -162,7 +162,7 @@ jobs:
         working-directory: ${{ github.workspace }}/build
         # doesn't build the RF24Mesh_Ncurses_Master example because we haven't cross-compiled it in this workflow
         run: |
-          make RF24Mesh_Example RF24Mesh_Example_Master
+          cmake --build .
           file ./RF24Mesh_Example
 
       # cross-compiling a python C extension is better done with pypa/cibuildwheel action

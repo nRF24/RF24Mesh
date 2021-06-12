@@ -29,4 +29,7 @@ foreach(example ${EXAMPLES_LIST})
     target_link_libraries(${example} PUBLIC ${RF24} pthread ${RF24Network} ${RF24Mesh})
 endforeach()
 
-add_subdirectory(ncurses)
+include(../cmake/enableNcursesExample.cmake)
+if(BUILD_NCURSES_EXAMPLE)
+    add_subdirectory(ncurses)
+endif()
