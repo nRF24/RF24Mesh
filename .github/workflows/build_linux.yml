@@ -3,7 +3,29 @@ name: Linux build
 on:
   pull_request:
     types: [opened, reopened]
+    paths:
+      - '*.h'
+      - '*.cpp'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'library.properties' # CMake gets lib info from here
+      - 'examples_RPi/**'
+      - '!examples_RPi/*.py'
+      - '!**Makefile' # old build system is not tested in this workflow
+      - 'pyRF24Mesh/*'
+      - '.github/workflows/build_linux.yml'
   push:
+    paths:
+      - '*.h'
+      - '*.cpp'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'library.properties' # CMake gets lib info from here
+      - 'examples_RPi/**'
+      - '!examples_RPi/*.py'
+      - '!**Makefile' # old build system is not tested in this workflow
+      - 'pyRF24Mesh/*'
+      - '.github/workflows/build_linux.yml'
   release:
     types: [published, edited]
 
@@ -32,9 +54,6 @@ jobs:
             usr_dir: "local"
 
     steps:
-      - name: install rpmbuild
-        run: sudo apt-get install rpm
-
       # - name: provide toolchain (for x86_64)
       #   if: ${{ matrix.toolchain.compiler == 'x86_64' }}
       #   run: |
@@ -96,12 +115,6 @@ jobs:
         run: cmake -E make_directory ${{ github.workspace }}/build
 
       - name: configure lib
-        if: ${{ matrix.toolchain.compiler == 'default' }}
-        working-directory: ${{ github.workspace }}/build
-        run: cmake .. -D CMAKE_BUILD_TYPE=$BUILD_TYPE
-
-      - name: configure lib (with toolchain compilers)
-        if: ${{ matrix.toolchain.compiler != 'default' }}
         working-directory: ${{ github.workspace }}/build
         run: |
           cmake .. -D CMAKE_BUILD_TYPE=$BUILD_TYPE \
@@ -147,6 +160,27 @@ jobs:
 
       - name: build examples
         working-directory: ${{ github.workspace }}/build
+        # doesn't build the RF24Mesh_Ncurses_Master example because we haven't cross-compiled it in this workflow
         run: |
-          cmake --build .
+          make --target RF24Mesh_Example --target RF24Mesh_Example_Master
           file ./RF24Mesh_Example
+
+      # cross-compiling a python C extension is better done with pypa/cibuildwheel action
+      - name: provide python wrapper prerequisites
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        # python3-rpi.gpio is only required for physical hardware (namely the IRQ example)
+        run: sudo apt-get install python3-dev libboost-python-dev python3-setuptools
+
+      - name: create alias symlink to libboost_python3*.so
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        run: sudo ln -s $(ls /usr/lib/$(ls /usr/lib/gcc | tail -1)/libboost_python3*.so | tail -1) /usr/lib/$(ls /usr/lib/gcc | tail -1)/libboost_python3.so
+
+      - name: build python wrapper
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        working-directory: ${{ github.workspace }}/pyRF24Mesh
+        run: python3 setup.py build
+
+      - name: install python wrapper
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        working-directory: ${{ github.workspace }}/pyRF24Mesh
+        run: sudo python3 setup.py install
