@@ -87,6 +87,15 @@ jobs:
       - name: Compile examples
         uses: arduino/compile-sketches@main
         with:
+          sketch-paths: |
+            - examples/RF24Mesh_Example
+            - examples/RF24Mesh_Example_Master_Statics
+            - examples/RF24Mesh_Example_Master_To_Nodes
+            - examples/RF24Mesh_Example_Node2Node
+            - examples/RF24Mesh_Example_Node2NodeExtra
+            - examples/RF24Mesh_SerialConfig
+          # The following is incompatible with non-AVR boards due to use of EEPROM.h
+          # - examples/RF24Mesh_Example_Master
           libraries: |
             - name: RF24
             - name: RF24Network
