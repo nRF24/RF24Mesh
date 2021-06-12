@@ -1,5 +1,6 @@
 # Executables from examples
 */bin/*
+*.exe
 
 # Generated library files
 *.so
