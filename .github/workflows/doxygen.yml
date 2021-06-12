@@ -2,7 +2,6 @@ name: DoxyGen build
 
 on:
   pull_request:
-    branches: [master]
     types: [opened, reopened]
     paths:
       - "*.h"
@@ -16,7 +15,6 @@ on:
       - "Doxyfile"
       - "library.properties" # get lib version from here
   push:
-    branches: [master]
     paths:
       - "*.h"
       - "docs/**"
