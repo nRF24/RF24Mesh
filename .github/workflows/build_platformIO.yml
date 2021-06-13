@@ -39,13 +39,12 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: "PIO_pkg_RF24Mesh"
-          path: |
-            ${{ github.workspace }}PlatformIO*.tar.gz
+          path: PlatformIO*.tar.gz
       - name: Upload Release assets
         if: github.event_name == 'release'
         uses: csexton/release-asset-action@master
         with:
-          pattern: "${{ github.workspace }}/build/pkgs/librf24*"
+          pattern: "PlatformIO*.tar.gz"
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   check_formatting:
