@@ -16,3 +16,6 @@ build/
 
 # ignore local vscode folder
 .vscode/
+
+# ignore PlatformIO packages
+*.tar.gz
