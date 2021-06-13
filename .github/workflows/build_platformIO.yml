@@ -1,0 +1,93 @@
+name: PlatformIO build
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - ".github/workflows/build_platformIO.yml"
+      - "library.json"
+      - "examples/**"
+      - "!examples/old_backups/**"
+      - "!examples/rf24_ATTiny/**"
+  push:
+    paths:
+      - ".github/workflows/build_platformIO.yml"
+      - "library.json"
+      - "examples/**"
+      - "!examples/old_backups/**"
+      - "!examples/rf24_ATTiny/**"
+
+jobs:
+  check_formatting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Check code formatting
+        uses: per1234/artistic-style-action@main
+        with:
+          options-file-path: ./examples/examples_formatter.conf
+          name-patterns: |
+            - '*.ino'
+            - '*.cpp'
+            - '*.hpp'
+            - '*.h'
+          target-paths: |
+            - examples
+
+  build:
+    needs: check_formatting
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        example:
+          - "examples\RF24Mesh_Example\RF24Mesh_Example.ino"
+          - "examples\RF24Mesh_Example_Master_Statics\RF24Mesh_Example_Master_Statics.ino"
+          - "examples\RF24Mesh_Example_Master_To_Nodes\RF24Mesh_Example_Master_To_Nodes.ino"
+          - "examples\RF24Mesh_Example_Node2Node\RF24Mesh_Example_Node2Node.ino"
+          - "examples\RF24Mesh_Example_Node2NodeExtra\RF24Mesh_Example_Node2NodeExtra.ino"
+          - "examples\RF24Mesh_SerialConfig\RF24Mesh_SerialConfig.ino"
+          # ignore this last one because it only works on AVR chips (uses EEPROM.h)
+          # - "examples\RF24Mesh_Example_Master\RF24Mesh_Example_Master.ino"
+        board:
+          - "teensy31"
+          - "teensy35"
+          - "teensy36"
+          - "teensy40"
+          - "teensy41"
+          - "teensylc"
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+    - name: Set up Python
+      uses: actions/setup-python@v2
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+    # "dependencies" field in JSON should automatically install RF24 & RF24Network.
+    # Because we run this CI test against the local repo, the JSON seems neglected
+    - name: Install library dependencies
+      run: |
+        pio lib -g install nrf24/RF24
+        pio lib -g install nrf24/RF24Network
+    - name: Run PlatformIO
+      run: pio ci --lib="." --board=${{ matrix.board }}
+      env:
+        PLATFORMIO_CI_SRC: ${{ matrix.example }}
