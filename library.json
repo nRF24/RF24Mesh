@@ -24,6 +24,8 @@
     "export":
     {
         "exclude": [
+            ".github/*",
+            "keywords.txt",
             "examples_RPi/*",
             "pyRF24Mesh/*",
             "cmake/*",
