@@ -8,7 +8,9 @@
         "url": "https://github.com/nRF24/RF24Mesh.git"
     },
     "version": "1.1.6",
-    "dependencies": [{
+    "dependencies":
+    [
+        {
             "name": "RF24",
             "authors": "nRF24",
             "frameworks": "arduino"
@@ -19,8 +21,15 @@
             "frameworks": "arduino"
         }
     ],
-    "export": {
-        "exclude": ["examples_RPi/*", "build/*"]
+    "export":
+    {
+        "exclude": [
+            "examples_RPi/*",
+            "pyRF24Mesh/*",
+            "cmake/*",
+            "CMakeLists.txt",
+            "Makefile"
+        ]
     },
     "frameworks": "arduino",
     "platforms": [
@@ -30,7 +39,6 @@
         "atmelmegaavr",
         "espressif32",
         "espressif8266",
-        "linux_arm",
         "ststm32"
     ]
 }
