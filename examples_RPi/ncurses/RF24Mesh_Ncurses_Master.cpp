@@ -27,7 +27,7 @@
 
 RF24 radio(22, 0);
 RF24Network network(radio);
-RF24Mesh mesh(radio,network);
+RF24Mesh mesh(radio, network);
 
 void printNodes(uint8_t boldID);
 void pingNode(uint8_t listNo);
@@ -41,7 +41,10 @@ int main()
 
     printf("Establishing mesh...\n");
 	mesh.setNodeID(0);
-    mesh.begin();
+	if (!mesh.begin()) {
+		printf("Radio hardware not responding or could not connect to network.\n");
+		return 0;
+	}
 	radio.printDetails();
 
 	initscr();			/* Start curses mode 		  */

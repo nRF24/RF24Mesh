@@ -25,7 +25,10 @@ int main(int argc, char **argv)
   mesh.setNodeID(4);
   // Connect to the mesh
   printf("start nodeID %d\n", mesh.getNodeID());
-  mesh.begin();
+  if (!mesh.begin()) {
+    printf("Radio hardware not responding or could not connect to network.\n");
+    return 0;
+  }
   radio.printDetails();
 
   while (1)

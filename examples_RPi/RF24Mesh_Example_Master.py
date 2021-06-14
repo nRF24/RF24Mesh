@@ -13,7 +13,9 @@ network = RF24Network(radio)
 mesh = RF24Mesh(radio, network)
 
 mesh.setNodeID(0)
-mesh.begin()
+if not mesh.begin():
+    print("Radio hardware not responding or could not connect to network.")
+    exit()
 radio.setPALevel(RF24_PA_MAX) # Power Amplifier
 radio.printDetails()
 

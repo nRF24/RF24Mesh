@@ -17,13 +17,15 @@ def delay(ms):
     sleep(ms / 1000.0)
 
 # radio setup for RPi B Rev2: CS0=Pin 24
-radio = RF24(22,0)
+radio = RF24(22, 0)
 network = RF24Network(radio)
 mesh = RF24Mesh(radio, network)
 
 mesh.setNodeID(4)
 print("start nodeID", mesh.getNodeID())
-mesh.begin()
+if not mesh.begin():
+    print("Radio hardware not responding or could not connect to network.")
+    exit()
 radio.setPALevel(RF24_PA_MAX) # Power Amplifier
 radio.printDetails()
 
