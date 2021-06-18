@@ -16,6 +16,11 @@ project(RF24Mesh C CXX)
 include(cmake/StandardProjectSettings.cmake)
 include(cmake/PreventInSourceBuilds.cmake)
 
+# allow using CMake options to adjust RF24Network_config.h without modiying source code
+option(MESH_NOMASTER "exclude compiling code that is strictly for master nodes" OFF)
+option(MESH_DEBUG "enable/disable debugging output" OFF)
+option(MESH_DEBUG_MINIMAL "enable/disable minimal debugging output" OFF)
+
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_17)
@@ -72,6 +77,49 @@ set_target_properties(
     SOVERSION ${${LibName}_VERSION_MAJOR}
     VERSION ${${LibName}_VERSION_STRING}
 )
+# assert the appropriate preprocessor macros for RF24Network_config.h
+if(MESH_NOMASTER)
+    message(STATUS "MESH_NOMASTER asserted")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_NOMASTER)
+endif()
+if(MESH_DEBUG)
+    message(STATUS "MESH_DEBUG asserted")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_DEBUG)
+endif()
+if(MESH_DEBUG_MINIMAL)
+    message(STATUS "MESH_DEBUG_MINIMAL asserted")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_DEBUG_MINIMAL)
+endif()
+# for the following, we let the default be configured in source code
+if(DEFINED MESH_MAX_CHILDREN)
+    message(STATUS "MESH_MAX_CHILDREN set to ${MESH_MAX_CHILDREN}")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_MAX_CHILDREN=${MESH_MAX_CHILDREN})
+endif()
+if(DEFINED MESH_DEFAULT_CHANNEL)
+    message(STATUS "MESH_DEFAULT_CHANNEL set to ${MESH_DEFAULT_CHANNEL}")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_DEFAULT_CHANNEL=${MESH_DEFAULT_CHANNEL})
+endif()
+if(DEFINED MESH_RENEWAL_TIMEOUT)
+    message(STATUS "MESH_RENEWAL_TIMEOUT set to ${MESH_RENEWAL_TIMEOUT}")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_RENEWAL_TIMEOUT=${MESH_RENEWAL_TIMEOUT})
+endif()
+if(DEFINED MESH_MEM_ALLOC_SIZE)
+    message(STATUS "MESH_MEM_ALLOC_SIZE set to ${MESH_MEM_ALLOC_SIZE}")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_MEM_ALLOC_SIZE=${MESH_MEM_ALLOC_SIZE})
+endif()
+if(DEFINED MESH_LOOKUP_TIMEOUT)
+    message(STATUS "MESH_LOOKUP_TIMEOUT set to ${MESH_LOOKUP_TIMEOUT}")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_LOOKUP_TIMEOUT=${MESH_LOOKUP_TIMEOUT})
+endif()
+if(DEFINED MESH_WRITE_TIMEOUT)
+    message(STATUS "MESH_WRITE_TIMEOUT set to ${MESH_WRITE_TIMEOUT}")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_WRITE_TIMEOUT=${MESH_WRITE_TIMEOUT})
+endif()
+if(DEFINED MESH_DEFAULT_ADDRESS)
+    message(STATUS "MESH_DEFAULT_ADDRESS set to ${MESH_DEFAULT_ADDRESS}")
+    target_compile_definitions(${LibTargetName} PUBLIC MESH_DEFAULT_ADDRESS=${MESH_DEFAULT_ADDRESS})
+endif()
+
 
 ###########################
 # target install rules for the RF24Log lib
