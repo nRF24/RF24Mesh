@@ -98,8 +98,8 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
 {
     if (mesh_address == MESH_DEFAULT_ADDRESS) { return 0; }
 
-    RF24NetworkHeader header(to_node,msg_type);
-    return network.write(header,data,size);
+    RF24NetworkHeader header(to_node, msg_type);
+    return network.write(header, data, size);
 }
 
 /*****************************************************/
@@ -208,8 +208,8 @@ int16_t RF24Mesh::getNodeID(uint16_t address)
     }
     #endif
 
-    RF24NetworkHeader header( 00, MESH_ID_LOOKUP );
-    if (network.write(header,&address,sizeof(address)) ) {
+    RF24NetworkHeader header(00, MESH_ID_LOOKUP);
+    if (network.write(header, &address, sizeof(address)) ) {
         uint32_t timer = millis();
         while(network.update() != MESH_ID_LOOKUP) {
             MESH_CALLBACK
@@ -249,8 +249,8 @@ bool RF24Mesh::releaseAddress()
 {
     if (mesh_address == MESH_DEFAULT_ADDRESS) { return 0; }
 
-    RF24NetworkHeader header(00,MESH_ADDR_RELEASE);
-    if (network.write(header,0,0)) {
+    RF24NetworkHeader header(00, MESH_ADDR_RELEASE);
+    if (network.write(header, 0, 0)) {
         beginDefault();
         return 1;
     }
@@ -285,7 +285,7 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout)
 
 bool RF24Mesh::requestAddress(uint8_t level)
 {
-    RF24NetworkHeader header( 0100, NETWORK_POLL );
+    RF24NetworkHeader header(0100, NETWORK_POLL);
     //Find another radio, starting with level 0 multicast
     #if defined (MESH_DEBUG_SERIAL)
     Serial.print(millis()); Serial.println(F(" MSH: Poll "));
@@ -325,7 +325,7 @@ bool RF24Mesh::requestAddress(uint8_t level)
                 #if defined (MESH_DEBUG_SERIAL)
                 Serial.print( millis() ); Serial.println(F(" MSH: Poll < -64dbm "));
                 #elif defined (MESH_DEBUG_PRINTF)
-                printf( "%u MSH: Poll < -64dbm\n", millis() );
+                printf("%u MSH: Poll < -64dbm\n", millis() );
                 #endif
             }
             #endif // defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)
@@ -336,7 +336,7 @@ bool RF24Mesh::requestAddress(uint8_t level)
                 #if defined (MESH_DEBUG_SERIAL)
                 Serial.print( millis() ); Serial.print(F(" MSH: No poll from level ")); Serial.println(level);
                 #elif defined (MESH_DEBUG_PRINTF)
-                printf( "%u MSH: No poll from level %d\n", millis(), level);
+                printf("%u MSH: No poll from level %d\n", millis(), level);
                 #endif
                 return 0;
             }
@@ -500,12 +500,12 @@ void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 void RF24Mesh::loadDHCP() {
 
     #if defined (__linux) && !defined(__ARDUINO_X86__)
-    std::ifstream infile ("dhcplist.txt",std::ifstream::binary);
+    std::ifstream infile ("dhcplist.txt", std::ifstream::binary);
     if (!infile) { return; }
 
-    infile.seekg(0,infile.end);
+    infile.seekg(0, infile.end);
     int length = infile.tellg();
-    infile.seekg(0,infile.beg);
+    infile.seekg(0, infile.beg);
 
     addrListStruct tmpNode;
 
@@ -524,7 +524,7 @@ void RF24Mesh::saveDHCP() {
     std::ofstream outfile("dhcplist.txt", std::ofstream::binary | std::ofstream::trunc);
 
     for (int i=0; i< addrListTop; i++) {
-        outfile.write( (char*)&addrList[i],sizeof(addrListStruct));
+        outfile.write((char*)&addrList[i], sizeof(addrListStruct));
     }
     outfile.close();
     #endif // __linux & not X86
@@ -621,11 +621,11 @@ void RF24Mesh::DHCP()
             }
             else {
                 //delay(2);
-                network.write(header,&newAddress,sizeof(newAddress),header.to_node);
+                network.write(header, &newAddress, sizeof(newAddress), header.to_node);
             }
 
             #ifdef MESH_DEBUG_PRINTF
-            printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,MESH_DEFAULT_ADDRESS,newAddress,header.reserved);
+            printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node, MESH_DEFAULT_ADDRESS, newAddress, header.reserved);
             #endif
             break;
         }
