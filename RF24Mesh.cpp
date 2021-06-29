@@ -285,7 +285,7 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout)
 
 bool RF24Mesh::requestAddress(uint8_t level)
 {
-    RF24NetworkHeader header(0100, NETWORK_POLL);
+    RF24NetworkHeader header(NETWORK_MULTICAST_ADDRESS, NETWORK_POLL);
     //Find another radio, starting with level 0 multicast
     #if defined (MESH_DEBUG_SERIAL)
     Serial.print(millis()); Serial.println(F(" MSH: Poll "));
