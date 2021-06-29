@@ -16,13 +16,7 @@
 #ifndef MESH_MAX_CHILDREN
     #define MESH_MAX_CHILDREN 4
 #endif // MESH_MAX_CHILDREN
-#if defined (RF24_TINY) || defined (DOXYGEN_FORCED)
-    /**
-     * @brief Save on resources for non-master nodes
-     *
-     * This can be optionally set to 0 for all nodes except the master (nodeID 0) to save program space.
-     * Enabled automatically on ATTiny devices
-     */
+#if defined (RF24_TINY)
     #define MESH_NOMASTER
 #endif
 

@@ -257,29 +257,36 @@ public:
     void setStaticAddress(uint8_t nodeID, uint16_t address);
 
     #endif // !defined(MESH_NOMASTER)
-
-    /**@}*/
-    /**
-     * @name Address list struct
-     *
-     *  See the list struct class reference
-     */
-    /**@{*/
-
     /**@}*/
 
     uint8_t _nodeID;
 
     #if !defined(MESH_NOMASTER)
+    /** @brief A struct for storing a NodeID and an address in a single element of the RF24Mesh::addrList array */
     typedef struct {
-        uint8_t nodeID;   /** NodeIDs and addresses are stored in the addrList array using this structure */
-        uint16_t address; /** NodeIDs and addresses are stored in the addrList array using this structure */
+        /** @brief the nodeID of an network node (child) */
+        uint8_t nodeID;
+        /** @brief the address of an network node (child) */
+        uint16_t address;
     } addrListStruct;
 
+    /**
+     * @name Address list struct
+     * @brief helping members for managing the list of assigned addresses
+     * @see the addrListStruct struct reference
+     */
+    /**@{*/
+
     // Pointer used for dynamic memory allocation of address list
-    addrListStruct *addrList; /** See the addrListStruct class reference */
-    uint8_t addrListTop;      /** The number of entries in the assigned address list */
+    /**
+     * @brief A array of addressListStruct elements for assigned addresses
+     * @see addrListStruct class reference
+     */
+    addrListStruct *addrList;
+    /** @brief The number of entries in the addressListStruct of assigned addresses */
+    uint8_t addrListTop;
     #endif
+    /**@}*/
 
 private:
     RF24 &radio;

@@ -48,6 +48,6 @@ The @ref MESH_MAX_CHILDREN option restricts the maximum number of child nodes/no
 ```cpp
 #define MESH_NOMASTER
 ```
-The @ref MESH_NOMASTER option reduces program space and memory usage. Can be used on any node except for the master (nodeID 0)
+The MESH_NOMASTER macro optionally reduces program space and memory usage. Can be used on any node except for the master (nodeID 0)
 
 @see [General Usage](md_docs_general_usage.html) for information on how to work with the mesh once connected

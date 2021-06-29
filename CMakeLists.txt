@@ -115,10 +115,7 @@ if(DEFINED MESH_WRITE_TIMEOUT)
     message(STATUS "MESH_WRITE_TIMEOUT set to ${MESH_WRITE_TIMEOUT}")
     target_compile_definitions(${LibTargetName} PUBLIC MESH_WRITE_TIMEOUT=${MESH_WRITE_TIMEOUT})
 endif()
-if(DEFINED MESH_DEFAULT_ADDRESS)
-    message(STATUS "MESH_DEFAULT_ADDRESS set to ${MESH_DEFAULT_ADDRESS}")
-    target_compile_definitions(${LibTargetName} PUBLIC MESH_DEFAULT_ADDRESS=${MESH_DEFAULT_ADDRESS})
-endif()
+# MESH_DEFAULT_ADDRESS is an alias of the RF24Network's NETWORK_DEFAULT_ADDRESS definition
 
 
 ###########################
