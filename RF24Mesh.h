@@ -182,14 +182,12 @@ public:
      */
     int16_t getAddress(uint8_t nodeID);
 
-    /**
-     * Write to a specific node by RF24Network address.
-     *
-     */
+    /** @brief Write to a specific node by RF24Network address. */
     bool write(uint16_t to_node, const void *data, uint8_t msg_type, size_t size);
 
     /**
      * Change the active radio channel after the mesh has been started.
+     * @param _channel The value passed to `RF24::setChannel()`
      */
     void setChannel(uint8_t _channel);
 
@@ -218,20 +216,20 @@ public:
 
     #if !defined(MESH_NOMASTER)
     /**
-     * Set/change a nodeID/RF24Network Address pair manually on the master node.
+     * Set or change a nodeID:RF24Network Address (key:value) pair manually on the master node.
      *
      * @code
-     * Set a static address for node 02, with nodeID 23, since it will just be a static routing node for example
+     * // Set a static address for node 02, with nodeID 23, since it will just be a static routing node for example
      * running on an ATTiny chip.
      *
-     * mesh.setAddress(23,02);
+     * mesh.setAddress(23, 02);
      * @endcode
      *
      * @code
-     * Change/set the nodeID for an existing address
+     * // Change or set the nodeID for an existing address
      *
      * uint16_t address = 012;
-     * mesh.setAddress(3,address,true);
+     * mesh.setAddress(3, address, true);
      * @endcode
      *
      * @param nodeID The nodeID to assign

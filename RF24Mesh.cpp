@@ -67,20 +67,20 @@ uint8_t RF24Mesh::update()
             header->to_node = header->from_node;
 
             int16_t returnAddr = 0;
-            if (type==MESH_ADDR_LOOKUP) {
+            if (type == MESH_ADDR_LOOKUP) {
                 returnAddr = getAddress(network.frame_buffer[sizeof(RF24NetworkHeader)]);
                 network.write(*header, &returnAddr, sizeof(returnAddr));
             }
             else {
                 int16_t addr = 0;
-                memcpy(&addr,&network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(addr));
+                memcpy(&addr, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(addr));
                 returnAddr = getNodeID(addr);
                 network.write(*header, &returnAddr, sizeof(returnAddr));
             }
         }
         else if (type == MESH_ADDR_RELEASE) {
             uint16_t *fromAddr = (uint16_t*)network.frame_buffer;
-            for(uint8_t i = 0; i<addrListTop; i++) {
+            for(uint8_t i = 0; i < addrListTop; i++) {
                 if (addrList[i].address == *fromAddr) {
                     addrList[i].address = 0;
                 }
@@ -113,11 +113,11 @@ bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size, uint8_t no
     uint32_t retryDelay = 5;
 
     if (nodeID) {
-        while( (toNode=getAddress(nodeID)) < 0 ) {
+        while((toNode = getAddress(nodeID)) < 0) {
             if (millis() > lookupTimeout || toNode == -2) {
                 return 0;
             }
-            retryDelay+=10;
+            retryDelay += 10;
             delay(retryDelay);
         }
     }
@@ -144,12 +144,7 @@ void RF24Mesh::setChild(bool allow)
 
 bool RF24Mesh::checkConnection()
 {
-    if (getAddress(_nodeID) < 1) {
-        if (getAddress(_nodeID) < 1) {
-            return false;
-        }
-    }
-    return true;
+    return !(getAddress(_nodeID) < 1 && getAddress(_nodeID) < 1);
 }
 
 /*****************************************************/
@@ -199,7 +194,7 @@ int16_t RF24Mesh::getNodeID(uint16_t address)
 
     #if !defined(MESH_NOMASTER)
     if (!mesh_address) { //Master Node
-        for (uint8_t i = 0; i<addrListTop; i++) {
+        for (uint8_t i = 0; i < addrListTop; i++) {
             if (addrList[i].address == address) {
                 return addrList[i].nodeID;
             }
@@ -305,7 +300,7 @@ bool RF24Mesh::requestAddress(uint8_t level)
         if (network.update() == NETWORK_POLL) {
 
             memcpy(&contactNode[pollCount], &network.frame_buffer[0], sizeof(uint16_t));
-            if (pollCount > 0 && contactNode[pollCount] != contactNode[pollCount - 1]) { //Drop duplicate polls to help prevent dupliacate requests
+            if (pollCount > 0 && contactNode[pollCount] != contactNode[pollCount - 1]) { //Drop duplicate polls to help prevent duplicate requests
               ++pollCount;
             }
             else{
@@ -356,7 +351,7 @@ bool RF24Mesh::requestAddress(uint8_t level)
     #ifdef MESH_DEBUG_SERIAL
     Serial.print(millis()); Serial.print(F(" MSH: Got poll from level ")); Serial.print(level);
     Serial.print(F(" count ")); Serial.print(pollCount);
-    Serial.print(F(" node ")); Serial.println(contactNode[pollCount-1], OCT); // #ML#
+    Serial.print(F(" node ")); Serial.println(contactNode[pollCount - 1], OCT); // #ML#
     #elif defined MESH_DEBUG_PRINTF
     printf("%u MSH: Got poll from level %d count %d\n", millis(), level, pollCount);
     #endif
@@ -371,9 +366,9 @@ bool RF24Mesh::requestAddress(uint8_t level)
         // Do a direct write (no ack) to the contact node. Include the nodeId and address.
         network.write(header, 0, 0, contactNode[i]);
     #ifdef MESH_DEBUG_SERIAL
-        Serial.print( millis() ); Serial.print(F(" MSH: Req addr from ")); Serial.println(contactNode[i],OCT);
+        Serial.print(millis()); Serial.print(F(" MSH: Req addr from ")); Serial.println(contactNode[i], OCT);
     #elif defined MESH_DEBUG_PRINTF
-        printf("%u MSH: Request address from: 0%o\n",millis(),contactNode[i]);
+        printf("%u MSH: Request address from: 0%o\n", millis(), contactNode[i]);
     #endif
 
         timr = millis();
@@ -381,15 +376,15 @@ bool RF24Mesh::requestAddress(uint8_t level)
         while (millis() - timr < 225) {
             if (network.update() == NETWORK_ADDR_RESPONSE) {
                 if (network.frame_buffer[7] == _nodeID ) {
-                uint16_t newAddy = 0;
-                memcpy(&newAddy, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(newAddy));
-                uint16_t mask = 0xFFFF;
-                newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
-                    if (newAddy == contactNode[i]) {                  // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
-                        i=pollCount;                                  // address to evalute whether 'subnet' of the assigned address matches the contact node address.
-                        gotResponse = 1;
-                        break;
-                    }
+                    uint16_t newAddy = 0;
+                    memcpy(&newAddy, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(newAddy));
+                    uint16_t mask = 0xFFFF;
+                    newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
+                        if (newAddy == contactNode[i]) {                  // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
+                            i = pollCount;                                // address to evalute whether 'subnet' of the assigned address matches the contact node address.
+                            gotResponse = 1;
+                            break;
+                        }
                 }
             }
             MESH_CALLBACK
@@ -421,11 +416,9 @@ bool RF24Mesh::requestAddress(uint8_t level)
     radio.stopListening();
     network.begin(mesh_address);
 
-    if (getNodeID(mesh_address) != _nodeID) {
-        if (getNodeID(mesh_address) != _nodeID) {
-            beginDefault();
-            return 0;
-        }
+    if (getNodeID(mesh_address) != _nodeID && getNodeID(mesh_address) != _nodeID) {
+        beginDefault();
+        return 0;
     }
     return 1;
 }
@@ -463,7 +456,7 @@ void RF24Mesh::setStaticAddress(uint8_t nodeID, uint16_t address)
 void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 {
     //Look for the node in the list
-    for(uint8_t i=0; i<addrListTop; i++) {
+    for(uint8_t i = 0; i < addrListTop; i++) {
         if (searchBy == false) {
             if (addrList[i].nodeID == nodeID) {
                 addrList[i].address = address;
@@ -475,7 +468,7 @@ void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
         }
         else { // Search by address, set the nodeID
             if (addrList[i].address == address) {
-                //printf("*** Addr 0%o Found, reassign fr ID %d to ID %d ***\n", addrList[i].address,addrList[i].nodeID,nodeID);
+                //printf("*** Addr 0%o Found, reassign fr ID %d to ID %d ***\n", addrList[i].address, addrList[i].nodeID, nodeID);
                 addrList[i].nodeID = nodeID;
                 #if defined (__linux)  && !defined(__ARDUINO_X86__)
                 saveDHCP();
@@ -573,7 +566,7 @@ void RF24Mesh::DHCP()
     }
 
     #ifdef MESH_DEBUG_PRINTF
-    // printf("%u MSH: Rcv addr req from_id %d \n",millis(),header.reserved);
+    // printf("%u MSH: Rcv addr req from_id %d \n", millis(), header.reserved);
     #endif
 
     for (int i = MESH_MAX_CHILDREN + extraChild; i > 0; i--) { // For each of the possible addresses (5 max)
@@ -586,21 +579,21 @@ void RF24Mesh::DHCP()
         for (uint8_t i = 0; i < addrListTop; i++) {
     #if defined (MESH_DEBUG_MINIMAL)
         #if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY || defined(__ARDUINO_X86__)
-            Serial.print("ID: ");Serial.print(addrList[i].nodeID,DEC);Serial.print(" ADDR: ");
+            Serial.print("ID: "); Serial.print(addrList[i].nodeID, DEC); Serial.print(" ADDR: ");
             uint16_t newAddr = addrList[i].address;
             char addr[5] = "    ";
-            uint8_t count=3,mask=7;
+            uint8_t count=3, mask=7;
             while(newAddr) {
-                addr[count] = (newAddr & mask)+48; //get the individual Octal numbers, specified in chunks of 3 bits, convert to ASCII by adding 48
+                addr[count] = (newAddr & mask) + 48; //get the individual Octal numbers, specified in chunks of 3 bits, convert to ASCII by adding 48
                 newAddr >>= 3;
                 count--;
             }
             Serial.println(addr);
         #else
-            printf("ID: %d ADDR: 0%o\n", addrList[i].nodeID,addrList[i].address);
+            printf("ID: %d ADDR: 0%o\n", addrList[i].nodeID, addrList[i].address);
         #endif
     #endif
-            if ((addrList[i].address == newAddress) && (addrList[i].nodeID != header.reserved)) {
+            if (addrList[i].address == newAddress && addrList[i].nodeID != header.reserved) {
                 found = true;
                 break;
             }
