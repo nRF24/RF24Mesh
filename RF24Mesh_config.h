@@ -83,6 +83,8 @@
     #define MESH_DEFAULT_ADDRESS NETWORK_DEFAULT_ADDRESS
 #endif // MESH_DEFAULT_ADDRESS
 
+#define MESH_MULTICAST_ADDRESS NETWORK_MULTICAST_ADDRESS
+
 //#define MESH_MAX_ADDRESSES 255 /* UNUSED Determines the max size of the array used for storing addresses on the Master Node */
 //#define MESH_ADDRESS_HOLD_TIME 30000 /* UNUSED How long before a released address becomes available */
 
