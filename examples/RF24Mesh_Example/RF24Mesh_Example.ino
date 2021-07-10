@@ -19,15 +19,14 @@ RF24 radio(7, 8);
 RF24Network network(radio);
 RF24Mesh mesh(radio, network);
 
-/**
-   User Configuration: nodeID - A unique identifier for each radio. Allows addressing
-   to change dynamically with physical changes to the mesh.
-
-   In this example, configuration takes place below, prior to uploading the sketch to the device
-   A unique value from 1-255 must be configured for each node.
-   This will be stored in EEPROM on AVR devices, so remains persistent between further uploads, loss of power, etc.
-
- **/
+/*
+ * User Configuration: nodeID - A unique identifier for each radio. Allows addressing
+ * to change dynamically with physical changes to the mesh.
+ *
+ * In this example, configuration takes place below, prior to uploading the sketch to the device
+ * A unique value from 1-255 must be configured for each node.
+ * This will be stored in EEPROM on AVR devices, so remains persistent between further uploads, loss of power, etc.
+ */
 #define nodeID 1
 
 

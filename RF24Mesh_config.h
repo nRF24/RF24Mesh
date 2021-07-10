@@ -74,7 +74,7 @@
     #define MESH_LOOKUP_TIMEOUT 135
 #endif // MESH_LOOKUP_TIMEOUT
 
-/** @brief How long RF24Mesh::write retries address lookups before timing out. Allows multiple attempts */
+/** @brief How long RF24Mesh::write() retries address lookups before timing out. Allows multiple attempts */
 #ifndef MESH_WRITE_TIMEOUT
     #define MESH_WRITE_TIMEOUT 115
 #endif // MESH_WRITE_TIMEOUT
@@ -83,15 +83,30 @@
     #define MESH_DEFAULT_ADDRESS NETWORK_DEFAULT_ADDRESS
 #endif // MESH_DEFAULT_ADDRESS
 
-//#define MESH_MAX_ADDRESSES 255 /** UNUSED Determines the max size of the array used for storing addresses on the Master Node */
-//#define MESH_ADDRESS_HOLD_TIME 30000 /**UNUSED How long before a released address becomes available */
+//#define MESH_MAX_ADDRESSES 255 /* UNUSED Determines the max size of the array used for storing addresses on the Master Node */
+//#define MESH_ADDRESS_HOLD_TIME 30000 /* UNUSED How long before a released address becomes available */
+
+#if (defined (__linux) || defined (linux)) && !defined (__ARDUINO_X86__)
+    #include <RF24/RF24_config.h>
+
+//ATXMega
+#elif defined(XMEGA)
+    #include "../../rf24lib/rf24lib/RF24_config.h"
+#else
+    #include <RF24_config.h>
+#endif
+
+#if defined (MESH_DEBUG_MINIMAL)
+    #define IF_MESH_DEBUG_MINIMAL(x) ({x;})
+#else
+    #define IF_MESH_DEBUG_MINIMAL(x)
+#endif
+
 
 #if defined (MESH_DEBUG)
-    #if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY || defined(__ARDUINO_X86__)
-        #define MESH_DEBUG_SERIAL
-    #else
-        #define MESH_DEBUG_PRINTF
-    #endif // platform ostream def
-#endif // defined (MESH_DEBUG)
+    #define IF_MESH_DEBUG(x) ({x;})
+#else
+    #define IF_MESH_DEBUG(x)
+#endif
 
 #endif // __RF24MESH_CONFIG_H__

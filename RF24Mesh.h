@@ -54,7 +54,7 @@ class RF24Mesh
     /**
      * @name RF24Mesh
      *
-     *  The mesh library and class documentation is currently in active development and usage may change.
+     * The mesh library and class documentation is currently in active development and usage may change.
      */
     /**@{*/
 public:
@@ -62,9 +62,9 @@ public:
      * Construct the mesh:
      *
      * @code
-     * RF24 radio(7,8);
+     * RF24 radio(7, 8);
      * RF24Network network(radio);
-     * RF24Mesh mesh(radio,network);
+     * RF24Mesh mesh(radio, network);
      * @endcode
      * @param _radio The underlying radio driver instance
      * @param _network The underlying network instance
