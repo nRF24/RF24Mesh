@@ -87,8 +87,7 @@ jobs:
           - "examples/RF24Mesh_Example_Node2Node/RF24Mesh_Example_Node2Node.ino"
           - "examples/RF24Mesh_Example_Node2NodeExtra/RF24Mesh_Example_Node2NodeExtra.ino"
           - "examples/RF24Mesh_SerialConfig/RF24Mesh_SerialConfig.ino"
-          # ignore this last one because it only works on AVR chips (uses EEPROM.h)
-          # - "examples/RF24Mesh_Example_Master/RF24Mesh_Example_Master.ino"
+          - "examples/RF24Mesh_Example_Master/RF24Mesh_Example_Master.ino"
         board:
           - "teensy31"
           - "teensy35"
@@ -127,7 +126,8 @@ jobs:
       - name: Install library dependencies
         run: |
           pio lib -g install nrf24/RF24
-          pio lib -g install nrf24/RF24Network
+          pio lib -g install https://github.com/nrf24/RF24Network.git#CMake-4-Linux
+        # pio lib -g install nrf24/RF24Network
 
       - name: Run PlatformIO
         run: pio ci --lib="." --board=${{ matrix.board }}

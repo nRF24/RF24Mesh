@@ -17,8 +17,6 @@
 #include "RF24.h"
 #include "RF24Mesh.h"
 #include <SPI.h>
-//Include eeprom.h for AVR (Uno, Nano) etc. except ATTiny
-#include <EEPROM.h>
 
 /***** Configure the chosen CE,CS pins *****/
 RF24 radio(7, 8);
