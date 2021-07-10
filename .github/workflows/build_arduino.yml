@@ -57,7 +57,7 @@ jobs:
           - "arduino:avr:pro"
           - "arduino:avr:atmegang"
           - "arduino:avr:robotControl"
-          # - "arduino:avr:gemma"  # does not support SPI
+          # - "arduino:avr:gemma"   # does not support SPI
           - "arduino:avr:circuitplay32u4cat"
           - "arduino:avr:yunmini"
           - "arduino:avr:chiwawa"
