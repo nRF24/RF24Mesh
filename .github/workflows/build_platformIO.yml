@@ -25,22 +25,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: get latest release version number
         id: latest_ver
         run: echo "::set-output name=release::$(awk -F "=" '/version/ {print $2}' library.properties)"
+
       - name: Set up Python
         uses: actions/setup-python@v2
+
       - name: Install PlatformIO
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade platformio
+
       - name: package lib
         run: pio package pack -o PlatformIO-RF24Mesh-${{ steps.latest_ver.outputs.release }}.tar.gz
+
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
           name: "PIO_pkg_RF24Mesh"
           path: PlatformIO*.tar.gz
+
       - name: Upload Release assets
         if: github.event_name == 'release'
         uses: csexton/release-asset-action@master
@@ -93,6 +99,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Cache pip
         uses: actions/cache@v2
         with:
@@ -100,23 +107,28 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
       - name: Cache PlatformIO
         uses: actions/cache@v2
         with:
           path: ~/.platformio
           key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
       - name: Set up Python
         uses: actions/setup-python@v2
+
       - name: Install PlatformIO
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade platformio
+
       # "dependencies" field in JSON should automatically install RF24 & RF24Network.
       # Because we run this CI test against the local repo, the JSON seems neglected
       - name: Install library dependencies
         run: |
           pio lib -g install nrf24/RF24
           pio lib -g install nrf24/RF24Network
+
       - name: Run PlatformIO
         run: pio ci --lib="." --board=${{ matrix.board }}
         env:
