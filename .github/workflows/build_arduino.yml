@@ -97,7 +97,7 @@ jobs:
             - examples/RF24Mesh_Example_Master
           libraries: |
             - name: RF24
-            - source-url: https://github.com/nRF24/RF24Network
+            - source-url: https://github.com/nRF24/RF24Network.git
               version: CMake-4-Linux
             - source-path: ./
           # - name: RF24Network
