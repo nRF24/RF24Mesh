@@ -44,12 +44,21 @@ uint32_t delayTime = 120;
 void setup() {
 
   Serial.begin(115200);
-  //printf_begin();
+  while (!Serial) {
+    // some boards need this because of native USB capability
+  }
+
   // Set the nodeID manually
   mesh.setNodeID(nodeID);
+
   // Connect to the mesh
   Serial.println(F("Connecting to the mesh..."));
-  mesh.begin();
+  if (!mesh.begin()) {
+    Serial.println(F("Radio hardware not responding or could not connect to network."));
+    while (1) {
+      // hold in an infinite loop
+    }
+  }
 }
 
 unsigned int sizeCtr = 2;

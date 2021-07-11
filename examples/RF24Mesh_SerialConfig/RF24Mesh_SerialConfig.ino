@@ -32,7 +32,9 @@ RF24Mesh mesh(radio, network);
 void setup() {
 
   Serial.begin(115200);
-  printf_begin();
+  while (!Serial) {
+    // some boards need this because of native USB capability
+  }
 
   // If this is a new node, the nodeID will return 0. Once the node is configured with an ID other than 0, this
   // bit will no longer run.
@@ -46,7 +48,12 @@ void setup() {
   }
 
   // Now that this node has a unique ID, connect to the mesh
-  mesh.begin();
+  if (!mesh.begin()) {
+    Serial.println(F("Radio hardware not responding or could not connect to network."));
+    while (1) {
+      // hold in an infinite loop
+    }
+  }
 
 }
 

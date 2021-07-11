@@ -25,6 +25,7 @@ char *get_bytes_or_bytearray_str(bp::object buf)
         return PyBytes_AsString(py_ba);
     else
         throw_ba_exception();
+
     return NULL;
 }
 
@@ -38,6 +39,7 @@ int get_bytes_or_bytearray_ln(bp::object buf)
         return PyBytes_Size(py_ba);
     else
         throw_ba_exception();
+
     return 0;
 }
 

@@ -1,5 +1,6 @@
 # Executables from examples
 */bin/*
+*.exe
 
 # Generated library files
 *.so
@@ -8,3 +9,13 @@
 # ignore docs folder
 docs/html/
 docs/xml/
+
+# ignore CMake stuff
+build/
+*CMakeUserPresets.json
+
+# ignore local vscode folder
+.vscode/
+
+# ignore PlatformIO packages
+*.tar.gz

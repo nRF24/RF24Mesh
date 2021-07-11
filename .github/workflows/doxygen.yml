@@ -2,30 +2,43 @@ name: DoxyGen build
 
 on:
   pull_request:
-    branches:
-      - master
+    types: [opened, reopened]
+    paths:
+      - "*.h"
+      - "docs/**"
+      - "!docs/README.md"
+      - "*.md"
+      - "examples**.cpp"
+      - "examples**.ino"
+      - "images/**"
+      - ".github/workflows/doxygen.yml"
+      - "Doxyfile"
+      - "library.properties" # get lib version from here
   push:
-    branches:
-      - master
+    paths:
+      - "*.h"
+      - "docs/**"
+      - "!docs/README.md"
+      - "*.md"
+      - "examples**.cpp"
+      - "examples**.ino"
+      - "images/**"
+      - ".github/workflows/doxygen.yml"
+      - "Doxyfile"
+      - "library.properties" # get lib version from here
   release:
-    branches:
-      - master
-    types:
-      - published
-      - edited
+    branches: [master]
+    types: [published, edited]
 
 jobs:
   build-doxygen:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
     - name: get latest release version number
       id: latest_ver
-      uses: pozetroninc/github-action-get-latest-release@master
-      with:
-        repository: nRF24/RF24Mesh
-    - name: checkout
-      uses: actions/checkout@v2
+      run: echo "::set-output name=release::$(awk -F "=" '/version/ {print $2}' library.properties)"
     - name: overwrite doxygen tags
       run: |
         touch doxygenAction
