@@ -145,7 +145,7 @@ void RF24Mesh::setChild(bool allow)
 bool RF24Mesh::checkConnection()
 {
     // getAddress() doesn't use auto-ack; do a double-check to manually retry 1 more time
-    return !(getAddress(_nodeID) < 1 && getAddress(_nodeID) < 1);
+    return !(getAddress(_nodeID) < 1) || !(getAddress(_nodeID) < 1);
 }
 
 /*****************************************************/
@@ -371,7 +371,7 @@ bool RF24Mesh::requestAddress(uint8_t level)
     network.begin(mesh_address);
 
     // getNodeID() doesn't use auto-ack; do a double-check to manually retry 1 more time
-    if (getNodeID(mesh_address) != _nodeID && getNodeID(mesh_address) != _nodeID) {
+    if (getNodeID(mesh_address) != _nodeID || getNodeID(mesh_address) != _nodeID) {
         beginDefault();
         return 0;
     }
@@ -509,7 +509,7 @@ void RF24Mesh::DHCP()
 
         while(m) {   //Octal addresses convert nicely to binary in threes. Address 03 = B011  Address 033 = B011011
             m >>= 3; //Find out how many digits are in the octal address
-            count+=3;
+            count += 3;
         }
         shiftVal = count; //Now we know how many bits to shift when adding a child node 1-5 (B001 to B101) to any address
     }
