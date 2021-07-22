@@ -166,6 +166,12 @@ jobs:
           file ./RF24Mesh_Example
 
       # cross-compiling a python C extension is better done with pypa/cibuildwheel action
+      - name: Set up Python 3.7
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
       - name: provide python wrapper prerequisites
         if: ${{ matrix.toolchain.compiler == 'default' }}
         # python3-rpi.gpio is only required for physical hardware (namely the IRQ example)
