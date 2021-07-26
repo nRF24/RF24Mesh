@@ -351,11 +351,11 @@ bool RF24Mesh::requestAddress(uint8_t level)
                     memcpy(&newAddy, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(newAddy));
                     uint16_t mask = 0xFFFF;
                     newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
-                        if (newAddy == contactNode[i]) {                  // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
-                            i = pollCount;                                // address to evalute whether 'subnet' of the assigned address matches the contact node address.
-                            gotResponse = 1;
-                            break;
-                        }
+                    if (newAddy == contactNode[i]) {                      // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
+                        i = pollCount;                                    // address to evalute whether 'subnet' of the assigned address matches the contact node address.
+                        gotResponse = 1;
+                        break;
+                    }
                 }
             }
             MESH_CALLBACK
@@ -548,7 +548,10 @@ void RF24Mesh::DHCP()
             //This is a routed request to 00
 
             setAddress(header.reserved, newAddress);
-            //delay(10); // ML: without this delay, address renewal fails
+            // without this delay, address renewal fails for children with slower execution speed
+            #if defined (MESH_SLOW_ADDR_RESPONSE)
+            delay(MESH_SLOW_ADDR_RESPONSE);
+            #endif // defined (MESH_SLOW_ADDR_RESPONSE)
             if (header.from_node != MESH_DEFAULT_ADDRESS) { //Is NOT node 01 to 05
                 //delay(2);
                 if (!network.write(header, &newAddress, sizeof(newAddress))) {

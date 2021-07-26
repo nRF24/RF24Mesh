@@ -20,6 +20,19 @@
     #define MESH_NOMASTER
 #endif
 
+#ifdef DOXYGEN_FORCED
+    /**
+     * @brief Adds a delay to node prior to transmitting NETWORK_ADDR_RESPONSE messages
+     *
+     * By default this is undefined for speed. This defined number of milliseconds is
+     * only applied to the master node when replying to a child trying to connect to the
+     * mesh network.
+     * @note It advisable to define this if any child node is running CircuitPython because
+     * the execution speed in pure python is inherently slower than it is in C++.
+     */
+     #define MESH_SLOW_ADDR_RESPONSE 10
+#endif // defined DOXYGEN_FORCED
+
 // un-comment for non-master nodes not running on ATTiny MCUs
 //#define MESH_NOMASTER
 

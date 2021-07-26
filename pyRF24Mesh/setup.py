@@ -9,6 +9,8 @@ if version_info >= (3,):
 else:
     BOOST_LIB = "boost_python"
 
+# NOTE can't access "../../LICENSE.inc" from working dir because
+# it's relative. Brute force absolute path dynamically.
 git_dir = os.path.split(os.path.abspath(os.getcwd()))[0]
 
 # get LIB_VERSION from library.properties file for Arduino IDE
