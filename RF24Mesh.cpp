@@ -548,7 +548,10 @@ void RF24Mesh::DHCP()
             //This is a routed request to 00
 
             setAddress(header.reserved, newAddress);
-            //delay(10); // ML: without this delay, address renewal fails
+            // without this delay, address renewal fails for children with slower execution speed
+            #if defined (SLOW_ADDR_POLL_RESPONSE)
+            delay(SLOW_ADDR_POLL_RESPONSE);
+            #endif // defined (SLOW_ADDR_POLL_RESPONSE)
             if (header.from_node != MESH_DEFAULT_ADDRESS) { //Is NOT node 01 to 05
                 //delay(2);
                 if (!network.write(header, &newAddress, sizeof(newAddress))) {
