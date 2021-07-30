@@ -292,7 +292,6 @@ private:
 
     void (*meshCallback)(void);
     bool requestAddress(uint8_t level);      /** Actual requesting of the address once a contact node is discovered or supplied **/
-    bool waitForAvailable(uint32_t timeout); /** Waits for data to become available */
 
     #if !defined(MESH_NOMASTER)
     bool doDHCP;           /** Indicator that an address request is available */

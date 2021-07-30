@@ -386,19 +386,6 @@ bool RF24Mesh::requestAddress(uint8_t level)
 }
 
 /*****************************************************/
-/*
-bool RF24Mesh::waitForAvailable(uint32_t timeout) {
-
-    unsigned long timer = millis();
-    while(millis()-timer < timeout) {
-      network.update();
-    if (network.available()) { return 1; }
-  }
-    if (network.available()) { return 1; }
-  else{  return 0; }
-}
-*/
-/*****************************************************/
 
 void RF24Mesh::setNodeID(uint8_t nodeID)
 {
