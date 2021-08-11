@@ -19,14 +19,17 @@ if(NOT "${CMAKE_CURRENT_LIST_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
     include(${CMAKE_CURRENT_LIST_DIR}/cmake/PreventInSourceBuilds.cmake)
 endif()
 
+# get library info from Arduino IDE's required library.properties file
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/GetLibInfo.cmake) # sets the variable LibTargetName
+
 # allow using CMake options to adjust RF24Network_config.h without modiying source code
 option(MESH_NOMASTER "exclude compiling code that is strictly for master nodes" OFF)
 option(MESH_DEBUG "enable/disable debugging output" OFF)
 option(MESH_DEBUG_MINIMAL "enable/disable minimal debugging output" OFF)
 
 # Link this 'library' to set the c++ standard / compile-time options requested
-add_library(project_options INTERFACE)
-target_compile_features(project_options INTERFACE cxx_std_17)
+add_library(${LibTargetName}_project_options INTERFACE)
+target_compile_features(${LibTargetName}_project_options INTERFACE cxx_std_17)
 add_compile_options(-Ofast -Wall)
 
 # detect CPU and add compiler flags accordingly
@@ -35,22 +38,19 @@ include(cmake/detectCPU.cmake)
 if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
     if(ENABLE_BUILD_WITH_TIME_TRACE)
-        add_compile_definitions(project_options INTERFACE -ftime-trace)
+        add_compile_definitions(${LibTargetName}_project_options INTERFACE -ftime-trace)
     endif()
 endif()
 
 # Link this 'library' to use the warnings specified in CompilerWarnings.cmake
-add_library(project_warnings INTERFACE)
+add_library(${LibTargetName}_project_warnings INTERFACE)
 
 # enable cache system
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/Cache.cmake)
 
 # standard compiler warnings
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/CompilerWarnings.cmake)
-set_project_warnings(project_warnings)
-
-# get library info from Arduino IDE's required library.properties file
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/GetLibInfo.cmake) # sets the variable LibTargetName
+set_project_warnings(${LibTargetName}_project_warnings)
 
 # setup CPack options
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/CPackInfo.cmake)
