@@ -68,8 +68,8 @@ add_library(${LibTargetName} SHARED RF24Mesh.cpp)
 target_include_directories(${LibTargetName} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 target_link_libraries(${LibTargetName} INTERFACE
-    project_options
-    project_warnings
+    ${LibTargetName}_project_options
+    ${LibTargetName}_project_warnings
     SHARED ${RF24}
     SHARED ${RF24Network}
 )
