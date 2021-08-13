@@ -88,7 +88,7 @@
 //#define MESH_MAX_ADDRESSES 255 /* UNUSED Determines the max size of the array used for storing addresses on the Master Node */
 //#define MESH_ADDRESS_HOLD_TIME 30000 /* UNUSED How long before a released address becomes available */
 
-#if (defined (__linux) || defined (linux)) && !defined (__ARDUINO_X86__)
+#if (defined (__linux) || defined (linux)) && !defined (__ARDUINO_X86__) && !defined (USE_RF24_LIB_SRC)
     #include <RF24/RF24_config.h>
 
 //ATXMega

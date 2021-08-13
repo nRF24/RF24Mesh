@@ -34,7 +34,7 @@
 
 #include "RF24Mesh_config.h"
 
-#if defined(__linux) && !defined(__ARDUINO_X86__)
+#if defined(__linux) && !defined(__ARDUINO_X86__) && !defined(USE_RF24_LIB_SRC)
     #include <RF24/RF24.h>
     #include <RF24Network/RF24Network.h>
     #define RF24_LINUX
