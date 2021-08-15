@@ -14,10 +14,7 @@ cmake_minimum_required(VERSION 3.15)
 # Set the project name to your project name
 project(RF24Mesh C CXX)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/StandardProjectSettings.cmake)
-
-if(NOT pybind11_FOUND) # python wrapper builds in source
-    include(${CMAKE_CURRENT_LIST_DIR}/cmake/PreventInSourceBuilds.cmake)
-endif()
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/PreventInSourceBuilds.cmake)
 
 # get library info from Arduino IDE's required library.properties file
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/GetLibInfo.cmake) # sets the variable LibTargetName
@@ -70,9 +67,31 @@ target_include_directories(${LibTargetName} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(${LibTargetName} INTERFACE
     ${LibTargetName}_project_options
     ${LibTargetName}_project_warnings
-    SHARED ${RF24}
-    SHARED ${RF24Network}
 )
+
+# python wrapper builds from source
+if(DEFINED USE_RF24_LIB_SRC OR pybind11_FOUND OR SKBUILD)
+    message(STATUS "Building lib from RF24 source")
+    target_compile_definitions(${LibTargetName} PUBLIC USE_RF24_LIB_SRC)
+    target_link_libraries(${LibTargetName} INTERFACE rf24 rf24network)
+
+    if(NOT DEFINED RF24_LIB_PATH)
+        target_include_directories(${LibTargetName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../RF24)
+    else()
+        target_include_directories(${LibTargetName} PUBLIC ${RF24_LIB_PATH})
+    endif()
+
+    if(NOT DEFINED RF24NETWORK_LIB_PATH)
+        target_include_directories(${LibTargetName} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../RF24)
+    else()
+        target_include_directories(${LibTargetName} PUBLIC ${RF24NETWORK_LIB_PATH})
+    endif()
+else()
+    target_link_libraries(${LibTargetName}
+        SHARED ${RF24}
+        SHARED ${RF24Network}
+    )
+endif()
 
 set_target_properties(
     ${LibTargetName}
