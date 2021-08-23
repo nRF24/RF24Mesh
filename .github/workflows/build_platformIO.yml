@@ -54,6 +54,13 @@ jobs:
           pattern: "PlatformIO*.tar.gz"
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: upload package to PlatformIO Registry
+        if: github.event_name == 'release' && github.event_type != 'edited'
+        # PIO lib packages cannot be re-published under the same tag
+        env:
+          PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
+        run: pio package publish --owner nrf24
+
   check_formatting:
     runs-on: ubuntu-latest
 
