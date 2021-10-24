@@ -6,9 +6,7 @@
  * routing nodes as required. The master node manages the address assignments for the individual nodes
  * in a manner similar to DHCP.
  */
-#include "pico/stdlib.h"  // printf(), sleep_ms(), getchar_timeout_us(), to_us_since_boot(), get_absolute_time()
-#include "pico/bootrom.h" // reset_usb_boot()
-#include <tusb.h>         // tud_cdc_connected()
+#include "pico/stdlib.h"  // printf(), to_us_since_boot(), get_absolute_time()
 #include <RF24.h>         // RF24 radio object
 #include <RF24Network.h>  // RF24Network network object
 #include <RF24Mesh.h>     // RF24Mesh mesh object
@@ -57,13 +55,13 @@ void loop()
         switch (header.type)
         { // Display the incoming millis() values from the sensor nodes
             case 'M':
-            network.read(header, &dat, sizeof(dat));
-            printf("Rcv %u from 0%o\n", dat, header.from_node);
-            break;
+                network.read(header, &dat, sizeof(dat));
+                printf("Rcv %u from 0%o\n", dat, header.from_node);
+                break;
             default:
-            network.read(header, 0, 0);
-            printf("Rcv bad type %d from 0%o\n", header.type, header.from_node);
-            break;
+                network.read(header, 0, 0);
+                printf("Rcv bad type %d from 0%o\n", header.type, header.from_node);
+                break;
         }
     }
 }

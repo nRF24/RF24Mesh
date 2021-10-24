@@ -1,6 +1,6 @@
 /** RF24Mesh_Example.cpp by TMRh20
  *
- * Note: This sketch only functions on -RPi-
+ * Note: This sketch only functions on RP2040 boards
  *
  * This example sketch shows how to manually configure a node via RF24Mesh, and send data to the
  * master node.
@@ -8,9 +8,7 @@
  * nodes to change position in relation to each other and the master node.
  *
  */
-#include "pico/stdlib.h"  // printf(), sleep_ms(), getchar_timeout_us(), to_us_since_boot(), get_absolute_time()
-#include "pico/bootrom.h" // reset_usb_boot()
-#include <tusb.h>         // tud_cdc_connected()
+#include "pico/stdlib.h"  // printf(), to_us_since_boot(), get_absolute_time()
 #include <RF24.h>         // RF24 radio object
 #include <RF24Network.h>  // RF24Network network object
 #include <RF24Mesh.h>     // RF24Mesh mesh object
@@ -46,8 +44,8 @@ void loop()
     mesh.update();
 
     // Send the current millis() to the master node every second
-    if (millis() - displayTimer >= 1000) {
-        displayTimer = millis();
+    if (to_us_since_boot(get_absolute_time()) - displayTimer >= 1000) {
+        displayTimer = to_us_since_boot(get_absolute_time());
 
         if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer))) {
             // If a write fails, check connectivity to the mesh network
