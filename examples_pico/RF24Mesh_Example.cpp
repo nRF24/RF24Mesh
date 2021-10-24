@@ -8,7 +8,8 @@
  * nodes to change position in relation to each other and the master node.
  *
  */
-#include "pico/stdlib.h"  // printf(), to_us_since_boot(), get_absolute_time()
+#include "pico/stdlib.h"  // printf(), sleep_ms(), to_us_since_boot(), get_absolute_time()
+#include <tusb.h>         // tud_cdc_connected()
 #include <RF24.h>         // RF24 radio object
 #include <RF24Network.h>  // RF24Network network object
 #include <RF24Mesh.h>     // RF24Mesh mesh object
@@ -25,6 +26,11 @@ uint32_t displayTimer = 0;
 
 bool setup()
 {
+    // wait here until the CDC ACM (serial port emulation) is connected
+    while (!tud_cdc_connected()) {
+        sleep_ms(10);
+    }
+
     // Set the nodeID to 0 for the master node
     mesh.setNodeID(4);
 

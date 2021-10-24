@@ -6,7 +6,8 @@
  * routing nodes as required. The master node manages the address assignments for the individual nodes
  * in a manner similar to DHCP.
  */
-#include "pico/stdlib.h"  // printf(), to_us_since_boot(), get_absolute_time()
+#include "pico/stdlib.h"  // printf(), sleep_ms(), to_us_since_boot(), get_absolute_time()
+#include <tusb.h>         // tud_cdc_connected()
 #include <RF24.h>         // RF24 radio object
 #include <RF24Network.h>  // RF24Network network object
 #include <RF24Mesh.h>     // RF24Mesh mesh object
@@ -21,6 +22,11 @@ RF24Mesh mesh(radio, network);
 
 bool setup()
 {
+    // wait here until the CDC ACM (serial port emulation) is connected
+    while (!tud_cdc_connected()) {
+        sleep_ms(10);
+    }
+
     // Set the nodeID to 0 for the master node
     mesh.setNodeID(0);
 
