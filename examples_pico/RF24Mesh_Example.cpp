@@ -8,7 +8,7 @@
  * nodes to change position in relation to each other and the master node.
  *
  */
-#include "pico/stdlib.h"  // printf(), sleep_ms(), to_us_since_boot(), get_absolute_time()
+#include "pico/stdlib.h"  // printf(), sleep_ms(), to_ms_since_boot(), get_absolute_time()
 #include <tusb.h>         // tud_cdc_connected()
 #include <RF24.h>         // RF24 radio object
 #include <RF24Network.h>  // RF24Network network object
@@ -50,8 +50,8 @@ void loop()
     mesh.update();
 
     // Send the current millis() to the master node every second
-    if (to_us_since_boot(get_absolute_time()) - displayTimer >= 1000) {
-        displayTimer = to_us_since_boot(get_absolute_time());
+    if (to_ms_since_boot(get_absolute_time()) - displayTimer >= 1000) {
+        displayTimer = to_ms_since_boot(get_absolute_time());
 
         if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer))) {
             // If a write fails, check connectivity to the mesh network
