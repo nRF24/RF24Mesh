@@ -78,9 +78,9 @@ public:
      * This may take a few moments to complete.
      *
      * The following parameters are optional:
-     * @param channel The radio channel (1-127) default:97
-     * @param data_rate The data rate (RF24_250KBPS,RF24_1MBPS,RF24_2MBPS) default:RF24_1MBPS
-     * @param timeout How long to attempt address renewal in milliseconds default:7500
+     * @param channel The radio channel (0 - 125). Default is 97.
+     * @param data_rate The data rate (RF24_250KBPS, RF24_1MBPS, RF24_2MBPS). Default is RF24_1MBPS.
+     * @param timeout How long to attempt address renewal in milliseconds. Default is 7500.
      */
     bool begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout = MESH_RENEWAL_TIMEOUT);
 
@@ -91,47 +91,52 @@ public:
     uint8_t update();
 
     /**
-     * Automatically construct a header and send a payload
+     * Automatically construct a header and send a payload.
      * Very similar to the standard network.write() function, which can be used directly.
      *
-     * @note Including the nodeID parameter will result in an automatic address lookup being performed.
-     * @note Message types 1-64 (decimal) will NOT be acknowledged by the network, types 65-127 will be. Use as appropriate to manage traffic:
+     * @note Including the @ref _nodeID "nodeID" parameter will result in an automatic address lookup being performed.
+     * @note Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65 - 127 will be. Use as appropriate to manage traffic:
      * if expecting a response, no ack is needed.
      *
-     * @param data Send any type of data of any length (Max length determined by RF24Network layer)
-     * @param msg_type The user-defined (1-127) message header_type to send. Used to distinguish between different types of data being transmitted.
+     * @param data Send any type of data of any length (maximum length determined by RF24Network layer).
+     * @param msg_type The user-defined (1 - 127) message header_type to send. Used to distinguish between different types of data being transmitted.
      * @param size The size of the data being sent
-     * @param nodeID **Optional**: The nodeID of the recipient if not sending to master
-     * @return True if success, False if failed
+     * @param nodeID **Optional**: The @ref _nodeID "nodeID" of the recipient if not sending to master.
+     * @return True if success; false if failed
      */
     bool write(const void *data, uint8_t msg_type, size_t size, uint8_t nodeID = 0);
 
     /**
-     * Set a unique nodeID for this node.
+     * Set a unique @ref _nodeID "nodeID" for this node.
      *
-     * This needs to be called before mesh.begin(), can be via serial connection, eeprom etc if configuring a large number of nodes...
+     * This needs to be called before RF24Mesh::begin(). The parameter value passed can be fetched
+     * via serial connection, eeprom, etc when configuring a large number of nodes.
      * @note If using RF24Gateway and/or RF24Ethernet, nodeIDs 0 & 1 are used by the master node.
-     * @param nodeID Can be any unique value ranging from 1 to 253
+     * @param nodeID Can be any unique value ranging from 1 to 253 (reserving 0 for the master node).
      */
     void setNodeID(uint8_t nodeID);
 
     /**
-     * Reconnect to the mesh and renew the current RF24Network address. Used to re-establish a connection to the mesh if physical location etc. has changed, or
-     * a routing node goes down.
-     * @note Currently times out after 7.5 seconds if address renewal fails.
+     * @brief Reconnect to the mesh and renew the current RF24Network address.
      *
-     * @note If all nodes are set to verify connectivity/reconnect at a specified period, restarting the master (and deleting dhcplist.txt on Linux) will result
-     * in complete network/mesh reconvergence.
-     * @param timeout How long to attempt address renewal in milliseconds default:7500
+     * This is used to re-establish a connection to the mesh network if physical location of a node
+     * or surrounding nodes has changed (or a routing node becomes unavailable).
      *
-     * @return Returns the newly assigned RF24Network address
+     * @note If all nodes are set to verify connectivity and reconnect at a specified period, then
+     * restarting the master (and deleting dhcplist.txt on Linux) will result in complete
+     * network/mesh reconvergence.
+     * @param timeout How long to attempt address renewal in milliseconds. Default is 7500
+     * @return The newly assigned RF24Network address
      */
     uint16_t renewAddress(uint32_t timeout = MESH_RENEWAL_TIMEOUT);
 
     #if !defined(MESH_NOMASTER)
     /**
-     * Only to be used on the master node. Provides automatic configuration for sensor nodes, similar to DHCP.
-     * Call immediately after calling network.update() to ensure address requests are handled appropriately
+     * This is only to be used on the master node because it manages allocation of network addresses
+     * for any requesting (non-master) node's ID, similar to DHCP.
+     *
+     * @warning On master nodes, It is required to call this function immediately after calling
+     * RF24Mesh::update() to ensure address requests are handled appropriately.
      */
     void DHCP();
 
@@ -147,38 +152,40 @@ public:
 
     /**
      * Convert an RF24Network address into a nodeId.
-     * @param address If no address is provided, returns the local nodeID, otherwise a lookup request is sent to the master node
-     * @return Returns the unique identifier (1-255) or -1 if not found.
+     * @param address If no address is provided, returns the local @ref _nodeID "nodeID",
+     * otherwise a lookup request is sent to the master node
+     * @return The unique identifier of the node in the range [1, 253] or -1 if node was not found.
      */
     int16_t getNodeID(uint16_t address = MESH_BLANK_ID);
 
     /**
      * Tests connectivity of this node to the mesh.
      * @note If this function fails, address renewal should typically be done.
-     * @return Return 1 if connected, 0 if mesh not responding
+     * @return 1 if connected, 0 if mesh not responding
      */
     bool checkConnection();
 
     /**
      * Releases the currently assigned address lease. Useful for nodes that will be sleeping etc.
      * @note Nodes should ensure that addresses are released successfully prior to going offline.
-     * @return Returns 1 if successfully released, 0 if not
+     * @return True if successfully released, otherwise false.
      */
     bool releaseAddress();
 
     /**
      * The assigned RF24Network (Octal) address of this node
-     * @return Returns an unsigned 16-bit integer containing the RF24Network address in octal format
+     * @return An unsigned 16-bit integer containing the RF24Network address in octal format.
      */
     uint16_t mesh_address;
 
     /**
-     * Convert a nodeID into an RF24Network address
-     * @note If printing or displaying the address, it needs to be converted to octal format: Serial.println(address,OCT);
+     * @brief Convert a @ref _nodeID "nodeID" into an RF24Network address
+     * @note If printing or displaying the address, it needs to be converted to octal format:
+     * @code Serial.println(address, OCT); @endcode
      *
      * Results in a lookup request being sent to the master node.
-     * @param nodeID - The unique identifier (1-253) of the node
-     * @return Returns the RF24Network address of the node, -2 if successful but not in list, -1 if failed
+     * @param nodeID The unique identifier of the node in the range [1, 253].
+     * @return The RF24Network address of the node, -2 if successful but not in list, -1 if failed.
      */
     int16_t getAddress(uint8_t nodeID);
 
@@ -208,7 +215,7 @@ public:
      * mesh.setCallback(myCallbackFunction);
      * @endcode
      *
-     * @param meshCallback The name of a function to call
+     * @param meshCallback The name of a function to call. This function should consume no required input parameters.
      */
     void setCallback(void (*meshCallback)(void));
 
@@ -216,30 +223,38 @@ public:
 
     #if !defined(MESH_NOMASTER)
     /**
-     * Set or change a nodeID:RF24Network Address (key:value) pair manually on the master node.
+     * Set or change a @ref _nodeID "nodeID" : node address (key : value) pair manually.
+     * This function is for use on the master node only.
      *
      * @code
-     * // Set a static address for node 02, with nodeID 23, since it will just be a static routing node for example
-     * running on an ATTiny chip.
-     *
+     * // Set a static address for node 02, with nodeID 23, since it will just be
+     * // a static routing node for example running on an ATTiny chip.
      * mesh.setAddress(23, 02);
      * @endcode
-     *
      * @code
      * // Change or set the nodeID for an existing address
-     *
      * uint16_t address = 012;
      * mesh.setAddress(3, address, true);
      * @endcode
      *
-     * @param nodeID The nodeID to assign
+     * @param nodeID The @ref _nodeID "nodeID" to assign
      * @param address The octal RF24Network address to assign
-     * @param searchBy Optional parameter. Default is search by nodeID and set the address. True allows searching by address and setting nodeID.
-     * @return If the nodeID exists in the list,
+     * @param searchBy Optional parameter. Default is search by @ref _nodeID "nodeID" and
+     * set the address. True allows searching by address and setting @ref _nodeID "nodeID".
+     * @return If the @ref _nodeID "nodeID" exists in the list,
      */
     void setAddress(uint8_t nodeID, uint16_t address, bool searchBy = false);
 
+    /**
+     * Save the @ref addrList to a binary file named "dhcplist.txt".
+     * @note This function is for use on the master node only and only on Linux or x86 platforms.
+     */
     void saveDHCP();
+
+    /**
+     * Load the @ref addrList from a binary file named "dhcplist.txt".
+     * @note This function is for use on the master node only and only on Linux or x86 platforms.
+     */
     void loadDHCP();
 
     /**
@@ -249,22 +264,35 @@ public:
      */
     /**@{*/
 
-    /**
-     * Calls setAddress()
-     */
+    /** @deprecated For backward compatibility with older code. Use the synonomous setAddress() instead. */
     void setStaticAddress(uint8_t nodeID, uint16_t address);
 
     #endif // !defined(MESH_NOMASTER)
     /**@}*/
 
+    /**
+     * The unique identifying number used to differentiate mesh nodes' from their assigned network
+     * address. Ideally, this is set before calling begin() or renewAddress(). It is up to the
+     * network administrator to make sure that this number is unique to each mesh/network node.
+     *
+     * This nodeID number is typically in the range [0, 255], but remember that `0` is reserved for
+     * the master node. Other external systems may reserve other node ID numbers, for instance
+     * RF24Gateway/RF24Ethernet reserves the node ID number `1` in addition to the master node ID
+     * `0`.
+     */
     uint8_t _nodeID;
 
     #if !defined(MESH_NOMASTER)
-    /** @brief A struct for storing a NodeID and an address in a single element of the RF24Mesh::addrList array */
+    /**
+     * @brief A struct for storing a  @ref _nodeID "nodeID" and an address in a single element of
+     * the RF24Mesh::addrList array.
+     *
+     * @note This array only exists on the mesh network's master node.
+     */
     typedef struct {
-        /** @brief the nodeID of an network node (child) */
+        /** @brief The @ref _nodeID "nodeID" of an network node (child) */
         uint8_t nodeID;
-        /** @brief the address of an network node (child) */
+        /** @brief The logical address of an network node (child) */
         uint16_t address;
     } addrListStruct;
 
@@ -277,11 +305,11 @@ public:
 
     // Pointer used for dynamic memory allocation of address list
     /**
-     * @brief A array of addressListStruct elements for assigned addresses
+     * @brief A array of addrListStruct elements for assigned addresses.
      * @see addrListStruct class reference
      */
     addrListStruct *addrList;
-    /** @brief The number of entries in the addressListStruct of assigned addresses */
+    /** @brief The number of entries in the addrListStruct of assigned addresses. */
     uint8_t addrListTop;
     #endif
     /**@}*/
@@ -290,17 +318,25 @@ private:
     RF24 &radio;
     RF24Network &network;
 
+    /** Function pionter for customized callback usage in long running algorithms. */
     void (*meshCallback)(void);
-    bool requestAddress(uint8_t level);      /** Actual requesting of the address once a contact node is discovered or supplied **/
+
+    /** Actual requesting of the address once a contact node is discovered or supplied **/
+    bool requestAddress(uint8_t level);
 
     #if !defined(MESH_NOMASTER)
-    bool doDHCP;           /** Indicator that an address request is available */
-    bool addrMemAllocated; /** Just ensures we don't re-allocate the memory buffer if restarting the mesh on master **/
+    /** Indicator that an address request is available. */
+    bool doDHCP;
+    /** Just ensures we don't re-allocate the memory buffer if restarting the mesh on master. **/
+    bool addrMemAllocated;
     #endif
 
-    void beginDefault(); /** Starts up the network layer with default address **/
+    /** Starts up the network layer with default address. **/
+    void beginDefault();
+    /** A flag asserted in begin() afer putting the radio in TX mode. */
     bool meshStarted;
-    uint8_t getLevel(uint16_t address); /** Returns the number of digits in the specified address **/
+    /** Returns the number of octal digits in the specified address. **/
+    uint8_t getLevel(uint16_t address);
 };
 
 #endif // define __RF24MESH_H__

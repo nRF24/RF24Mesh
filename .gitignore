@@ -8,7 +8,8 @@
 
 # ignore docs folder
 docs/html/
-docs/xml/
+docs/sphinx/xml/
+docs/_build
 
 # ignore CMake stuff
 build/
