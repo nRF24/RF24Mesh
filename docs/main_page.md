@@ -3,9 +3,9 @@
 This class intends to provide a simple and seamless 'mesh' layer for sensor networks,
 allowing automatic and dynamic configuration that can be customized to suit many scenarios.
 It is currently designed to interface directly with with the
-[RF24Network library](http://tmrh20.github.com/RF24Network/), an
+[RF24Network library](http://nRF24.github.io/RF24Network), an
 [OSI Network Layer](http://en.wikipedia.org/wiki/Network_layer) using nRF24L01(+) radios
-driven by the newly optimized [RF24 library](http://tmrh20.github.com/RF24/) fork.
+driven by the newly optimized [RF24 library](http://nRF24.github.io/RF24) fork.
 
 ## Purpose/Goals
 
@@ -57,4 +57,4 @@ multi-node radio network.
 - [RF24Ethernet: TCP/IP based Mesh over RF24](http://nRF24.github.io/RF24Ethernet/)
 - [RF24Gateway: A TCP/IP and RF24 Gateway for RF24 nodes](http://nRF24.github.io/RF24Gateway/)
 - [All Documentation and Downloads](https://tmrh20.github.io)
-- [Source Code](https://github.com/TMRh20/RF24Mesh)
+- [Source Code](https://github.com/nRF24/RF24Mesh)
