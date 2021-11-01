@@ -112,7 +112,7 @@ public:
      * This needs to be called before RF24Mesh::begin(). The parameter value passed can be fetched
      * via serial connection, eeprom, etc when configuring a large number of nodes.
      * @note If using RF24Gateway and/or RF24Ethernet, nodeIDs 0 & 1 are used by the master node.
-     * @param nodeID Can be any unique value ranging from 1 to 253 (reserving 0 for the master node).
+     * @param nodeID Can be any unique value ranging from 1 to 255 (reserving 0 for the master node).
      */
     void setNodeID(uint8_t nodeID);
 
@@ -154,7 +154,7 @@ public:
      * Convert an RF24Network address into a nodeId.
      * @param address If no address is provided, returns the local @ref _nodeID "nodeID",
      * otherwise a lookup request is sent to the master node
-     * @return The unique identifier of the node in the range [1, 253] or -1 if node was not found.
+     * @return The unique identifier of the node in the range [1, 255] or -1 if node was not found.
      */
     int16_t getNodeID(uint16_t address = MESH_BLANK_ID);
 
@@ -184,7 +184,7 @@ public:
      * @code Serial.println(address, OCT); @endcode
      *
      * Results in a lookup request being sent to the master node.
-     * @param nodeID The unique identifier of the node in the range [1, 253].
+     * @param nodeID The unique identifier of the node in the range [1, 255].
      * @return The RF24Network address of the node, -2 if successful but not in list, -1 if failed.
      */
     int16_t getAddress(uint8_t nodeID);

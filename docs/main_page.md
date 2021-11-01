@@ -26,7 +26,7 @@ of wireless sensors.
 
 ### How does it work?
 
-Nodes are assigned a unique number ranging from 1 to 253, and just about everything else, addressing, routing, etc. is managed by the library.
+Nodes are assigned a unique number ranging from 1 to 255, and just about everything else, addressing, routing, etc. is managed by the library.
 
 The unique identifier is like an IP address, used to communicate at a high level within the
 RF24 communication stack and will generally remain static. At the network layer, the physical
