@@ -53,7 +53,7 @@ Communication from node-to-node requires address queries to be sent to the maste
 node, since individual nodes may change RF24Network & radio address at any time.
 Due to the extra data transmissions, node-to-node communication is less efficient.
 
-## General Usage
+## Tricks of Trade
 
 One thing to keep in mind is the dynamic nature of RF24Mesh, and the need to
 verify connectivity to the network. For nodes that are constantly transmitting,

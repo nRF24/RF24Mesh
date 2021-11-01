@@ -1,4 +1,4 @@
-RF24Mesh_Example_Master.cpp
+RF24Mesh_Example_Master
 ===========================
 
 .. seealso::

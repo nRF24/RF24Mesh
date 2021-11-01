@@ -45,6 +45,7 @@ extensions = [
     "breathe",
     "sphinx_immaterial",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.autosectionlabel",
 ]
 
 intersphinx_mapping = {
@@ -71,6 +72,9 @@ add_function_parentheses = True
 
 breathe_projects = {"RF24Mesh": "xml"}
 breathe_default_project = "RF24Mesh"
+breathe_show_define_initializer = True
+breathe_show_enumvalue_initializer = True
+breathe_domain_by_extension = { "h" : "cpp" }
 
 READTHEDOCS = os.environ.get("READTHEDOCS", None) == "True"
 
