@@ -40,7 +40,7 @@ all: ${PROGRAMS}
 
 ${PROGRAMS}: ${SOURCES}
 	mkdir -p bin
-	$(CC) ${CCFLAGS} -Wall -I../ -lncurses -lrf24-bcm -lrf24network -lrf24mesh $@.cpp -o bin/$@
+	$(CC) ${CCFLAGS} -Wall -I../ $@.cpp -lncurses -lrf24-bcm -lrf24network -lrf24mesh -o bin/$@
 
 clean:
 	rm -rf $(PROGRAMS)
