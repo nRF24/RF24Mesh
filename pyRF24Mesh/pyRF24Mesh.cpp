@@ -74,7 +74,7 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             .def("write", &write_wrap1, (bp::arg("data"), bp::arg("msg_type")))
             .def("write", &write_wrap2, (bp::arg("data"), bp::arg("msg_type"), bp::arg("nodeID")))
             //bool write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size );
-            .def("write", &write_to_node_wrap, (bp::arg("to_node"), bp::arg("data"), bp::arg("msg_type"), bp::arg("size")))
+            .def("write", &write_to_node_wrap, (bp::arg("to_node"), bp::arg("data"), bp::arg("msg_type")))
             //void setNodeID(uint8_t nodeID);
             .def("setNodeID", &RF24Mesh::setNodeID, (bp::arg("nodeID")))
             //void DHCP();
