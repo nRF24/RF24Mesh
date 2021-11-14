@@ -26,6 +26,7 @@
 #include <RF24Network/RF24Network.h>
 
 RF24 radio(22, 0);
+
 RF24Network network(radio);
 RF24Mesh mesh(radio, network);
 
