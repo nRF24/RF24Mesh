@@ -96,7 +96,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: nRF24/RF24Network
-          ref: CMake-4-Linux
 
       - name: build & install RF24Network
         run: |
