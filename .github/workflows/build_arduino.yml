@@ -98,7 +98,6 @@ jobs:
           libraries: |
             - name: RF24
             - source-url: https://github.com/nRF24/RF24Network.git
-              version: CMake-4-Linux
             - source-path: ./
           # - name: RF24Network
           fqbn: ${{ matrix.fqbn }}
