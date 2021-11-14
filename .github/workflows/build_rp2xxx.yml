@@ -59,14 +59,12 @@ jobs:
       with:
         repository: nRF24/RF24Network
         path: RF24Network
-        ref: CMake-4-Linux
 
     - name: checkout RF24 lib
       uses: actions/checkout@v2
       with:
         repository: nRF24/RF24
         path: RF24
-        ref: rp2xxx
 
     - name: Install toolchain
       run: sudo apt update && sudo apt install gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
