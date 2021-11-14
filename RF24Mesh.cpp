@@ -67,20 +67,20 @@ uint8_t RF24Mesh::update()
             header->to_node = header->from_node;
 
             int16_t returnAddr = 0;
-            if (type==MESH_ADDR_LOOKUP) {
+            if (type == MESH_ADDR_LOOKUP) {
                 returnAddr = getAddress(network.frame_buffer[sizeof(RF24NetworkHeader)]);
                 network.write(*header, &returnAddr, sizeof(returnAddr));
             }
             else {
                 int16_t addr = 0;
-                memcpy(&addr,&network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(addr));
+                memcpy(&addr, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(addr));
                 returnAddr = getNodeID(addr);
                 network.write(*header, &returnAddr, sizeof(returnAddr));
             }
         }
         else if (type == MESH_ADDR_RELEASE) {
             uint16_t *fromAddr = (uint16_t*)network.frame_buffer;
-            for(uint8_t i = 0; i<addrListTop; i++) {
+            for(uint8_t i = 0; i < addrListTop; i++) {
                 if (addrList[i].address == *fromAddr) {
                     addrList[i].address = 0;
                 }
@@ -98,8 +98,8 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
 {
     if (mesh_address == MESH_DEFAULT_ADDRESS) { return 0; }
 
-    RF24NetworkHeader header(to_node,msg_type);
-    return network.write(header,data,size);
+    RF24NetworkHeader header(to_node, msg_type);
+    return network.write(header, data, size);
 }
 
 /*****************************************************/
@@ -113,11 +113,11 @@ bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size, uint8_t no
     uint32_t retryDelay = 5;
 
     if (nodeID) {
-        while( (toNode=getAddress(nodeID)) < 0 ) {
+        while((toNode = getAddress(nodeID)) < 0) {
             if (millis() > lookupTimeout || toNode == -2) {
                 return 0;
             }
-            retryDelay+=10;
+            retryDelay += 10;
             delay(retryDelay);
         }
     }
@@ -144,6 +144,7 @@ void RF24Mesh::setChild(bool allow)
 
 bool RF24Mesh::checkConnection()
 {
+    // getAddress() doesn't use auto-ack; do a double-check to manually retry 1 more time
     if (getAddress(_nodeID) < 1) {
         if (getAddress(_nodeID) < 1) {
             return false;
@@ -199,7 +200,7 @@ int16_t RF24Mesh::getNodeID(uint16_t address)
 
     #if !defined(MESH_NOMASTER)
     if (!mesh_address) { //Master Node
-        for (uint8_t i = 0; i<addrListTop; i++) {
+        for (uint8_t i = 0; i < addrListTop; i++) {
             if (addrList[i].address == address) {
                 return addrList[i].nodeID;
             }
@@ -208,8 +209,8 @@ int16_t RF24Mesh::getNodeID(uint16_t address)
     }
     #endif
 
-    RF24NetworkHeader header( 00, MESH_ID_LOOKUP );
-    if (network.write(header,&address,sizeof(address)) ) {
+    RF24NetworkHeader header(00, MESH_ID_LOOKUP);
+    if (network.write(header, &address, sizeof(address)) ) {
         uint32_t timer = millis();
         while(network.update() != MESH_ID_LOOKUP) {
             MESH_CALLBACK
@@ -249,8 +250,8 @@ bool RF24Mesh::releaseAddress()
 {
     if (mesh_address == MESH_DEFAULT_ADDRESS) { return 0; }
 
-    RF24NetworkHeader header(00,MESH_ADDR_RELEASE);
-    if (network.write(header,0,0)) {
+    RF24NetworkHeader header(00, MESH_ADDR_RELEASE);
+    if (network.write(header, 0, 0)) {
         beginDefault();
         return 1;
     }
@@ -290,11 +291,9 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout)
 
 bool RF24Mesh::requestAddress(uint8_t level)
 {
-    RF24NetworkHeader header( 0100, NETWORK_POLL );
+    RF24NetworkHeader header(MESH_MULTICAST_ADDRESS, NETWORK_POLL);
     //Find another radio, starting with level 0 multicast
-    #if defined (MESH_DEBUG_SERIAL)
-    Serial.print(millis()); Serial.println(F(" MSH: Poll "));
-    #endif
+    IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Poll\n"), millis()));
     network.multicast(header, 0, 0, level);
 
     uint32_t timr = millis();
@@ -303,54 +302,30 @@ bool RF24Mesh::requestAddress(uint8_t level)
     uint8_t pollCount = 0;
 
     while (1) {
-        #if defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)
+        #if defined (MESH_DEBUG)
         bool goodSignal = radio.testRPD();
         #endif
 
         if (network.update() == NETWORK_POLL) {
 
             memcpy(&contactNode[pollCount], &network.frame_buffer[0], sizeof(uint16_t));
-            if (pollCount > 0 && contactNode[pollCount] != contactNode[pollCount - 1]) { //Drop duplicate polls to help prevent dupliacate requests
+            if (pollCount > 0 && contactNode[pollCount] != contactNode[pollCount - 1]) { //Drop duplicate polls to help prevent duplicate requests
               ++pollCount;
             }
             else{
               ++pollCount;
             }
 
-            #if defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)
-            if (goodSignal) {
-                // This response was better than -64dBm
-                #if defined (MESH_DEBUG_SERIAL)
-                Serial.print(millis()); Serial.println(F(" MSH: Poll > -64dbm "));
-                #elif defined (MESH_DEBUG_PRINTF)
-                printf("%u MSH: Poll > -64dbm\n", millis());
-                #endif
-            }
-            else{
-                #if defined (MESH_DEBUG_SERIAL)
-                Serial.print( millis() ); Serial.println(F(" MSH: Poll < -64dbm "));
-                #elif defined (MESH_DEBUG_PRINTF)
-                printf( "%u MSH: Poll < -64dbm\n", millis() );
-                #endif
-            }
-            #endif // defined (MESH_DEBUG_SERIAL) || defined (MESH_DEBUG_PRINTF)
+            IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Poll %c -64dbm\n"), millis(), (goodSignal ? '>' : '<')));
         } // end if
 
         if (millis() - timr > 55 || pollCount >=  MESH_MAXPOLLS ) {
             if (!pollCount) {
-                #if defined (MESH_DEBUG_SERIAL)
-                Serial.print( millis() ); Serial.print(F(" MSH: No poll from level ")); Serial.println(level);
-                #elif defined (MESH_DEBUG_PRINTF)
-                printf( "%u MSH: No poll from level %d\n", millis(), level);
-                #endif
+                IF_MESH_DEBUG(printf_P(PSTR("%u: MSH No poll from level %d\n"), millis(), level));
                 return 0;
             }
             else {
-                #if defined (MESH_DEBUG_SERIAL)
-                Serial.print(millis()); Serial.println(F(" MSH: Poll OK "));
-                #elif defined (MESH_DEBUG_PRINTF)
-                printf("%u MSH: Poll OK\n", millis());
-                #endif
+                IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Poll OK\n"), millis()));
                 break;
             }
         }
@@ -358,13 +333,7 @@ bool RF24Mesh::requestAddress(uint8_t level)
     } // end while
 
 
-    #ifdef MESH_DEBUG_SERIAL
-    Serial.print(millis()); Serial.print(F(" MSH: Got poll from level ")); Serial.print(level);
-    Serial.print(F(" count ")); Serial.print(pollCount);
-    Serial.print(F(" node ")); Serial.println(contactNode[pollCount-1], OCT); // #ML#
-    #elif defined MESH_DEBUG_PRINTF
-    printf("%u MSH: Got poll from level %d count %d\n", millis(), level, pollCount);
-    #endif
+    IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Got poll from level %d count %d\n"), millis(), level, pollCount));
 
     bool gotResponse = 0;
     for (uint8_t i = 0; i < pollCount; i++) {
@@ -375,23 +344,20 @@ bool RF24Mesh::requestAddress(uint8_t level)
 
         // Do a direct write (no ack) to the contact node. Include the nodeId and address.
         network.write(header, 0, 0, contactNode[i]);
-    #ifdef MESH_DEBUG_SERIAL
-        Serial.print( millis() ); Serial.print(F(" MSH: Req addr from ")); Serial.println(contactNode[i],OCT);
-    #elif defined MESH_DEBUG_PRINTF
-        printf("%u MSH: Request address from: 0%o\n",millis(),contactNode[i]);
-    #endif
+
+        IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Request address from: 0%o\n"), millis(), contactNode[i]));
 
         timr = millis();
 
         while (millis() - timr < 225) {
             if (network.update() == NETWORK_ADDR_RESPONSE) {
                 if (network.frame_buffer[7] == _nodeID ) {
-                uint16_t newAddy = 0;
-                memcpy(&newAddy, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(newAddy));
-                uint16_t mask = 0xFFFF;
-                newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
-                    if (newAddy == contactNode[i]) {                  // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
-                        i=pollCount;                                  // address to evalute whether 'subnet' of the assigned address matches the contact node address.
+                    uint16_t newAddy = 0;
+                    memcpy(&newAddy, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(newAddy));
+                    uint16_t mask = 0xFFFF;
+                    newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
+                    if (newAddy == contactNode[i]) {                      // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
+                        i = pollCount;                                    // address to evalute whether 'subnet' of the assigned address matches the contact node address.
                         gotResponse = 1;
                         break;
                     }
@@ -405,27 +371,16 @@ bool RF24Mesh::requestAddress(uint8_t level)
         return 0;
     }
 
-    #ifdef MESH_DEBUG_SERIAL
-    uint8_t mask = 7, count=3;
-    char addrs[5] = "    ";
-    uint16_t newAddr;
-    #endif
-
     uint16_t newAddress=0;
     memcpy(&newAddress, network.frame_buffer + sizeof(RF24NetworkHeader), sizeof(newAddress));
 
-    #ifdef MESH_DEBUG_SERIAL
-    Serial.print(millis());
-    Serial.print(F(" Set address: "));
-    Serial.println(newAddress, OCT);
-    #elif defined (MESH_DEBUG_PRINTF)
-    printf("Set address 0%o rcvd 0%o\n", mesh_address, newAddress);
-    #endif
+    IF_MESH_DEBUG(printf_P(PSTR("Set address 0%o rcvd 0%o\n"), mesh_address, newAddress));
     mesh_address = newAddress;
 
     radio.stopListening();
     network.begin(mesh_address);
 
+    // getNodeID() doesn't use auto-ack; do a double-check to manually retry 1 more time
     if (getNodeID(mesh_address) != _nodeID) {
         if (getNodeID(mesh_address) != _nodeID) {
             beginDefault();
@@ -435,19 +390,6 @@ bool RF24Mesh::requestAddress(uint8_t level)
     return 1;
 }
 
-/*****************************************************/
-/*
-bool RF24Mesh::waitForAvailable(uint32_t timeout) {
-
-    unsigned long timer = millis();
-    while(millis()-timer < timeout) {
-      network.update();
-    if (network.available()) { return 1; }
-  }
-    if (network.available()) { return 1; }
-  else{  return 0; }
-}
-*/
 /*****************************************************/
 
 void RF24Mesh::setNodeID(uint8_t nodeID)
@@ -468,7 +410,7 @@ void RF24Mesh::setStaticAddress(uint8_t nodeID, uint16_t address)
 void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 {
     //Look for the node in the list
-    for(uint8_t i=0; i<addrListTop; i++) {
+    for(uint8_t i = 0; i < addrListTop; i++) {
         if (searchBy == false) {
             if (addrList[i].nodeID == nodeID) {
                 addrList[i].address = address;
@@ -480,7 +422,7 @@ void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
         }
         else { // Search by address, set the nodeID
             if (addrList[i].address == address) {
-                //printf("*** Addr 0%o Found, reassign fr ID %d to ID %d ***\n", addrList[i].address,addrList[i].nodeID,nodeID);
+                //printf("*** Addr 0%o Found, reassign fr ID %d to ID %d ***\n", addrList[i].address, addrList[i].nodeID, nodeID);
                 addrList[i].nodeID = nodeID;
                 #if defined (__linux)  && !defined(__ARDUINO_X86__)
                 saveDHCP();
@@ -505,12 +447,12 @@ void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 void RF24Mesh::loadDHCP() {
 
     #if defined (__linux) && !defined(__ARDUINO_X86__)
-    std::ifstream infile ("dhcplist.txt",std::ifstream::binary);
+    std::ifstream infile ("dhcplist.txt", std::ifstream::binary);
     if (!infile) { return; }
 
-    infile.seekg(0,infile.end);
+    infile.seekg(0, infile.end);
     int length = infile.tellg();
-    infile.seekg(0,infile.beg);
+    infile.seekg(0, infile.beg);
 
     addrListStruct tmpNode;
 
@@ -529,7 +471,7 @@ void RF24Mesh::saveDHCP() {
     std::ofstream outfile("dhcplist.txt", std::ofstream::binary | std::ofstream::trunc);
 
     for (int i=0; i< addrListTop; i++) {
-        outfile.write( (char*)&addrList[i],sizeof(addrListStruct));
+        outfile.write((char*)&addrList[i], sizeof(addrListStruct));
     }
     outfile.close();
     #endif // __linux & not X86
@@ -551,9 +493,7 @@ void RF24Mesh::DHCP()
 
     // Get the unique id of the requester (ID is in header.reserved)
     if (!header.reserved || header.type != NETWORK_REQ_ADDRESS) {
-    #ifdef MESH_DEBUG_PRINTF
-        printf("MSH: Invalid id or type rcvd\n");
-    #endif
+        IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Invalid id or type rcvd\n"), millis()));
         return;
     }
 
@@ -568,7 +508,7 @@ void RF24Mesh::DHCP()
 
         while(m) {   //Octal addresses convert nicely to binary in threes. Address 03 = B011  Address 033 = B011011
             m >>= 3; //Find out how many digits are in the octal address
-            count+=3;
+            count += 3;
         }
         shiftVal = count; //Now we know how many bits to shift when adding a child node 1-5 (B001 to B101) to any address
     }
@@ -577,9 +517,7 @@ void RF24Mesh::DHCP()
         extraChild = 1;
     }
 
-    #ifdef MESH_DEBUG_PRINTF
-    // printf("%u MSH: Rcv addr req from_id %d \n",millis(),header.reserved);
-    #endif
+    // IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Rcv addr req from_id %d\n"), millis(), header.reserved));
 
     for (int i = MESH_MAX_CHILDREN + extraChild; i > 0; i--) { // For each of the possible addresses (5 max)
 
@@ -589,23 +527,8 @@ void RF24Mesh::DHCP()
         if (newAddress == MESH_DEFAULT_ADDRESS) { continue; }
 
         for (uint8_t i = 0; i < addrListTop; i++) {
-    #if defined (MESH_DEBUG_MINIMAL)
-        #if !defined (__linux) && !defined ARDUINO_SAM_DUE || defined TEENSY || defined(__ARDUINO_X86__)
-            Serial.print("ID: ");Serial.print(addrList[i].nodeID,DEC);Serial.print(" ADDR: ");
-            uint16_t newAddr = addrList[i].address;
-            char addr[5] = "    ";
-            uint8_t count=3,mask=7;
-            while(newAddr) {
-                addr[count] = (newAddr & mask)+48; //get the individual Octal numbers, specified in chunks of 3 bits, convert to ASCII by adding 48
-                newAddr >>= 3;
-                count--;
-            }
-            Serial.println(addr);
-        #else
-            printf("ID: %d ADDR: 0%o\n", addrList[i].nodeID,addrList[i].address);
-        #endif
-    #endif
-            if ((addrList[i].address == newAddress) && (addrList[i].nodeID != header.reserved)) {
+            IF_MESH_DEBUG_MINIMAL(printf_P(PSTR("ID: %d ADDR: 0%o\n"), addrList[i].nodeID, addrList[i].address));
+            if (addrList[i].address == newAddress && addrList[i].nodeID != header.reserved) {
                 found = true;
                 break;
             }
@@ -617,7 +540,10 @@ void RF24Mesh::DHCP()
             //This is a routed request to 00
 
             setAddress(header.reserved, newAddress);
-            //delay(10); // ML: without this delay, address renewal fails
+            // without this delay, address renewal fails for children with slower execution speed
+            #if defined (SLOW_ADDR_POLL_RESPONSE)
+            delay(SLOW_ADDR_POLL_RESPONSE);
+            #endif // defined (SLOW_ADDR_POLL_RESPONSE)
             if (header.from_node != MESH_DEFAULT_ADDRESS) { //Is NOT node 01 to 05
                 //delay(2);
                 if (!network.write(header, &newAddress, sizeof(newAddress))) {
@@ -626,18 +552,14 @@ void RF24Mesh::DHCP()
             }
             else {
                 //delay(2);
-                network.write(header,&newAddress,sizeof(newAddress),header.to_node);
+                network.write(header, &newAddress, sizeof(newAddress), header.to_node);
             }
 
-            #ifdef MESH_DEBUG_PRINTF
-            printf("Sent to 0%o phys: 0%o new: 0%o id: %d\n", header.to_node,MESH_DEFAULT_ADDRESS,newAddress,header.reserved);
-            #endif
+            IF_MESH_DEBUG(printf_P(PSTR("Sent to 0%o phys: 0%o new: 0%o id: %d\n"), header.to_node, MESH_DEFAULT_ADDRESS, newAddress, header.reserved));
             break;
         }
         else {
-            #if defined (MESH_DEBUG_PRINTF)
-            printf("not allocated\n");
-            #endif
+            IF_MESH_DEBUG(printf_P(PSTR("not allocated\n")));
         }
     } // end for
 }

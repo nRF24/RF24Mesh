@@ -1,5 +1,6 @@
 # Executables from examples
 */bin/*
+*.exe
 
 # Generated library files
 *.so
@@ -7,4 +8,26 @@
 
 # ignore docs folder
 docs/html/
-docs/xml/
+docs/sphinx/xml/
+docs/_build
+
+# ignore CMake stuff
+build/
+*CMakeUserPresets.json
+
+# ignore local vscode folder
+.vscode/
+
+# ignore PlatformIO packages
+*.tar.gz
+
+# Cmake build-in-source generated stuff
+CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
+CMakeFiles
+DEBIAN
+cmake_install.cmake
+compile_commands.json
+# Makefile is modified when `cmake .` is run
+# Makefile # preserve old/traditional build system

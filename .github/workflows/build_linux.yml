@@ -1,0 +1,190 @@
+name: Linux build
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - "*.h"
+      - "*.cpp"
+      - "CMakeLists.txt"
+      - "cmake/**"
+      - "library.properties" # CMake gets lib info from here
+      - "examples_RPi/**"
+      - "!examples_RPi/*.py"
+      - "!**Makefile" # old build system is not tested in this workflow
+      - "pyRF24Mesh/*"
+      - ".github/workflows/build_linux.yml"
+  push:
+    paths:
+      - "*.h"
+      - "*.cpp"
+      - "CMakeLists.txt"
+      - "cmake/**"
+      - "library.properties" # CMake gets lib info from here
+      - "examples_RPi/**"
+      - "!examples_RPi/*.py"
+      - "!**Makefile" # old build system is not tested in this workflow
+      - "pyRF24Mesh/*"
+      - ".github/workflows/build_linux.yml"
+  release:
+    types: [published, edited]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  using_cmake:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        toolchain:
+          - compiler: "armhf"
+            usr_dir: "arm-linux-gnueabihf"
+          - compiler: "arm64"
+            usr_dir: "aarch64-linux-gnu"
+          # - compiler: "x86_64"
+          #   usr_dir: "x86_64-linux-gnux32"
+          # - compiler: "i686"
+          #   usr_dir: "i686-linux-gnu"
+          - compiler: "default" # github runner is hosted on a "amd64"
+            usr_dir: "local"
+
+    steps:
+      # - name: provide toolchain (for x86_64)
+      #   if: ${{ matrix.toolchain.compiler == 'x86_64' }}
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install gcc-x86-64-linux-gnux32 g++-x86-64-linux-gnux32
+
+      # - name: provide toolchain (for i686)
+      #   if: ${{ matrix.toolchain.compiler == 'i686' }}
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install gcc-i686-linux-gnu g++-i686-linux-gnu
+
+      - name: provide toolchain (for arm64)
+        if: ${{ matrix.toolchain.compiler == 'arm64' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: provide toolchain (for armhf)
+        if: ${{ matrix.toolchain.compiler == 'armhf' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+
+      - name: checkout RF24
+        uses: actions/checkout@v2
+        with:
+          repository: nRF24/RF24
+
+      - name: build & install RF24
+        run: |
+          mkdir build
+          cd build
+          cmake .. -D CMAKE_BUILD_TYPE=$BUILD_TYPE -D RF24_DRIVER=SPIDEV \
+          -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
+          -D CMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+          sudo make install
+
+      - name: checkout RF24Network
+        uses: actions/checkout@v2
+        with:
+          repository: nRF24/RF24Network
+
+      - name: build & install RF24Network
+        run: |
+          mkdir build
+          cd build
+          cmake .. -D CMAKE_BUILD_TYPE=$BUILD_TYPE \
+          -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
+          -D CMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+          sudo make install
+
+      - name: checkout RF24Mesh repo
+        uses: actions/checkout@v2
+
+      - name: create CMake build environment
+        run: cmake -E make_directory ${{ github.workspace }}/build
+
+      - name: configure lib
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          cmake .. -D CMAKE_BUILD_TYPE=$BUILD_TYPE \
+          -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
+          -D CMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+
+      - name: build lib
+        working-directory: ${{ github.workspace }}/build
+        run: cmake --build .
+
+      - name: install lib
+        working-directory: ${{ github.workspace }}/build
+        run: sudo cmake --install .
+
+      - name: package lib
+        working-directory: ${{ github.workspace }}/build
+        run: sudo cpack
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "pkg_RF24Mesh"
+          path: |
+            ${{ github.workspace }}/build/pkgs/*.deb
+            ${{ github.workspace }}/build/pkgs/*.rpm
+
+      - name: Upload Release assets
+        if: github.event_name == 'release' && (matrix.toolchain.compiler == 'armhf' || matrix.toolchain.compiler == 'arm64')
+        uses: csexton/release-asset-action@master
+        with:
+          pattern: "${{ github.workspace }}/build/pkgs/librf24*"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: clean build environment
+        working-directory: ${{ github.workspace }}/build
+        run: sudo rm -r ./*
+
+      - name: configure examples
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          cmake ../examples_RPi \
+          -D CMAKE_TOOLCHAIN_FILE=../cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+
+      - name: build examples
+        working-directory: ${{ github.workspace }}/build
+        # doesn't build the RF24Mesh_Ncurses_Master example because we haven't cross-compiled it in this workflow
+        run: |
+          cmake --build .
+          file ./RF24Mesh_Example
+
+      # cross-compiling a python C extension is better done with pypa/cibuildwheel action
+      - name: Set up Python 3.7
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: provide python wrapper prerequisites
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        # python3-rpi.gpio is only required for physical hardware (namely the IRQ example)
+        run: sudo apt-get install python3-dev libboost-python-dev python3-setuptools
+
+      - name: create alias symlink to libboost_python3*.so
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        run: sudo ln -s $(ls /usr/lib/$(ls /usr/lib/gcc | tail -1)/libboost_python3*.so | tail -1) /usr/lib/$(ls /usr/lib/gcc | tail -1)/libboost_python3.so
+
+      - name: build python wrapper
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        working-directory: ${{ github.workspace }}/pyRF24Mesh
+        run: python3 setup.py build
+
+      - name: install python wrapper
+        if: ${{ matrix.toolchain.compiler == 'default' }}
+        working-directory: ${{ github.workspace }}/pyRF24Mesh
+        run: sudo python3 setup.py install
