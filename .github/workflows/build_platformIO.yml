@@ -133,7 +133,7 @@ jobs:
       - name: Install library dependencies
         run: |
           pio lib -g install nrf24/RF24
-          pio lib -g install https://github.com/nrf24/RF24Network.git#CMake-4-Linux
+          pio lib -g install https://github.com/nrf24/RF24Network.git
         # pio lib -g install nrf24/RF24Network
 
       - name: Run PlatformIO
