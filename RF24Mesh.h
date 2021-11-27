@@ -221,7 +221,6 @@ public:
 
     #define MESH_CALLBACK if (meshCallback) { meshCallback(); }
 
-    #if !defined(MESH_NOMASTER)
     /**
      * Set or change a @ref _nodeID "nodeID" : node address (key : value) pair manually.
      * This function is for use on the master node only.
@@ -245,6 +244,7 @@ public:
      */
     void setAddress(uint8_t nodeID, uint16_t address, bool searchBy = false);
 
+    #if !defined(MESH_NOMASTER)
     /**
      * Save the @ref addrList to a binary file named "dhcplist.txt".
      * @note This function is for use on the master node only and only on Linux or x86 platforms.
