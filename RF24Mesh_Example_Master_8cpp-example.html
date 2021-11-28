@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios
-   &#160;<span id="projectnumber">1.1.5</span>
+   &#160;<span id="projectnumber">1.1.6</span>
    </div>
    <div id="projectbrief">TMRh20 2020 - A user friendly mesh overlay for sensor neworks using RF24Network</div>
   </td>
@@ -93,68 +93,64 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <p>This example sketch shows how to manually configure a node via <a class="el" href="classRF24Mesh.html">RF24Mesh</a> as a master node, which will receive all data from sensor nodes.</p>
 <p>The nodes can change physical or logical position in the network, and reconnect through different routing nodes as required. The master node manages the address assignments for the individual nodes in a manner similar to DHCP.</p>
 <div class="fragment"><div class="line"> </div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &quot;RF24Mesh/RF24Mesh.h&quot;</span>  </div>
+<div class="line"><span class="preprocessor">#include &quot;RF24Mesh/RF24Mesh.h&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;RF24/RF24.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;RF24Network/RF24Network.h&gt;</span></div>
 <div class="line"> </div>
-<div class="line"> </div>
-<div class="line">RF24 radio(22,0);  </div>
+<div class="line">RF24 radio(22, 0);</div>
 <div class="line">RF24Network network(radio);</div>
-<div class="line"><a name="_a0"></a><a class="code" href="classRF24Mesh.html">RF24Mesh</a> mesh(radio,network);</div>
+<div class="line"><a name="_a0"></a><a class="code" href="classRF24Mesh.html">RF24Mesh</a> mesh(radio, network);</div>
 <div class="line"> </div>
-<div class="line"> </div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>** argv) {</div>
-<div class="line">  </div>
+<div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="line">{</div>
 <div class="line">  <span class="comment">// Set the nodeID to 0 for the master node</span></div>
 <div class="line">  mesh.setNodeID(0);</div>
 <div class="line">  <span class="comment">// Connect to the mesh</span></div>
 <div class="line">  printf(<span class="stringliteral">&quot;start\n&quot;</span>);</div>
-<div class="line">  mesh.begin();</div>
+<div class="line">  <span class="keywordflow">if</span> (!mesh.begin()) {</div>
+<div class="line">    printf(<span class="stringliteral">&quot;Radio hardware not responding or could not connect to network.\n&quot;</span>);</div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">  }</div>
 <div class="line">  radio.printDetails();</div>
 <div class="line"> </div>
-<div class="line"><span class="keywordflow">while</span>(1)</div>
-<div class="line">{</div>
-<div class="line">  </div>
-<div class="line">  <span class="comment">// Call network.update as usual to keep the network updated</span></div>
-<div class="line">  mesh.update();</div>
+<div class="line">  <span class="keywordflow">while</span> (1)</div>
+<div class="line">  {</div>
+<div class="line">    <span class="comment">// Call network.update as usual to keep the network updated</span></div>
+<div class="line">    mesh.update();</div>
 <div class="line"> </div>
-<div class="line">  <span class="comment">// In addition, keep the &#39;DHCP service&#39; running on the master node so addresses will</span></div>
-<div class="line">  <span class="comment">// be assigned to the sensor nodes</span></div>
-<div class="line">  mesh.DHCP();</div>
-<div class="line">  </div>
-<div class="line">  </div>
-<div class="line">  <span class="comment">// Check for incoming data from the sensors</span></div>
-<div class="line">  <span class="keywordflow">while</span>(network.available()){</div>
-<div class="line"><span class="comment">//    printf(&quot;rcv\n&quot;);</span></div>
-<div class="line">    RF24NetworkHeader header;</div>
-<div class="line">    network.peek(header);</div>
-<div class="line">    </div>
-<div class="line">    uint32_t dat=0;</div>
-<div class="line">    <span class="keywordflow">switch</span>(header.type){</div>
-<div class="line">      <span class="comment">// Display the incoming millis() values from the sensor nodes</span></div>
-<div class="line">      <span class="keywordflow">case</span> <span class="charliteral">&#39;M&#39;</span>: network.read(header,&amp;dat,<span class="keyword">sizeof</span>(dat)); </div>
-<div class="line">                printf(<span class="stringliteral">&quot;Rcv %u from 0%o\n&quot;</span>,dat,header.from_node);</div>
-<div class="line">                 <span class="keywordflow">break</span>;</div>
-<div class="line">      <span class="keywordflow">default</span>:  network.read(header,0,0); </div>
-<div class="line">                printf(<span class="stringliteral">&quot;Rcv bad type %d from 0%o\n&quot;</span>,header.type,header.from_node); </div>
-<div class="line">                <span class="keywordflow">break</span>;</div>
+<div class="line">    <span class="comment">// In addition, keep the &#39;DHCP service&#39; running on the master node so addresses will</span></div>
+<div class="line">    <span class="comment">// be assigned to the sensor nodes</span></div>
+<div class="line">    mesh.DHCP();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Check for incoming data from the sensors</span></div>
+<div class="line">    <span class="keywordflow">while</span> (network.available())</div>
+<div class="line">    {</div>
+<div class="line">      <span class="comment">// printf(&quot;rcv\n&quot;);</span></div>
+<div class="line">      RF24NetworkHeader header;</div>
+<div class="line">      network.peek(header);</div>
+<div class="line"> </div>
+<div class="line">      uint32_t dat = 0;</div>
+<div class="line">      <span class="keywordflow">switch</span> (header.type)</div>
+<div class="line">      { <span class="comment">// Display the incoming millis() values from the sensor nodes</span></div>
+<div class="line">        <span class="keywordflow">case</span> <span class="charliteral">&#39;M&#39;</span>:</div>
+<div class="line">          network.read(header, &amp;dat, <span class="keyword">sizeof</span>(dat));</div>
+<div class="line">          printf(<span class="stringliteral">&quot;Rcv %u from 0%o\n&quot;</span>, dat, header.from_node);</div>
+<div class="line">          <span class="keywordflow">break</span>;</div>
+<div class="line">        <span class="keywordflow">default</span>:</div>
+<div class="line">          network.read(header, 0, 0);</div>
+<div class="line">          printf(<span class="stringliteral">&quot;Rcv bad type %d from 0%o\n&quot;</span>, header.type, header.from_node);</div>
+<div class="line">          <span class="keywordflow">break</span>;</div>
+<div class="line">      }</div>
 <div class="line">    }</div>
+<div class="line">    delay(2);</div>
 <div class="line">  }</div>
-<div class="line">delay(2);</div>
-<div class="line">  }</div>
-<div class="line"><span class="keywordflow">return</span> 0;</div>
+<div class="line">  <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
-<div class="line"> </div>
-<div class="line">      </div>
-<div class="line">      </div>
-<div class="line">      </div>
 <div class="ttc" id="aclassRF24Mesh_html"><div class="ttname"><a href="classRF24Mesh.html">RF24Mesh</a></div><div class="ttdef"><b>Definition:</b> <a href="RF24Mesh_8h_source.html#l00052">RF24Mesh.h:53</a></div></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Apr 13 2021 01:05:55 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Sun Nov 28 2021 12:56:29 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>

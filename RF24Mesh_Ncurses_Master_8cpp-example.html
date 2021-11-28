@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios
-   &#160;<span id="projectnumber">1.1.5</span>
+   &#160;<span id="projectnumber">1.1.6</span>
    </div>
    <div id="projectbrief">TMRh20 2020 - A user friendly mesh overlay for sensor neworks using RF24Network</div>
   </td>
@@ -98,15 +98,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line"><span class="comment">* assignments, and information regarding incoming data, regardless of the specific</span></div>
 <div class="line"><span class="comment">* configuration details.</span></div>
 <div class="line"><span class="comment">*</span></div>
-<div class="line"><span class="comment">* Requirements: NCurses </span></div>
+<div class="line"><span class="comment">* Requirements: NCurses</span></div>
 <div class="line"><span class="comment">* Install NCurses: apt-get install libncurses5-dev</span></div>
 <div class="line"><span class="comment">* Setup:</span></div>
 <div class="line"><span class="comment">* 1: make</span></div>
 <div class="line"><span class="comment">* 2: sudo ./RF24Mesh_Ncurses_Master</span></div>
-<div class="line"><span class="comment">* </span></div>
+<div class="line"><span class="comment">*</span></div>
 <div class="line"><span class="comment">* NOTE: DEBUG MUST BE DISABLED IN RF24Mesh_config.h</span></div>
 <div class="line"><span class="comment">*</span></div>
-<div class="line"><span class="comment">* Once configured and running, the interface will display the header information, data rate, </span></div>
+<div class="line"><span class="comment">* Once configured and running, the interface will display the header information, data rate,</span></div>
 <div class="line"><span class="comment">* and address assignments for all connected nodes.*</span></div>
 <div class="line"><span class="comment">* The master node will also continuously ping each of the child nodes, one per second, while indicating</span></div>
 <div class="line"><span class="comment">* the results.</span></div>
@@ -114,13 +114,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line"><span class="comment">*/</span></div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &lt;ncurses.h&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;RF24Mesh/RF24Mesh.h&quot;</span>  </div>
+<div class="line"><span class="preprocessor">#include &quot;RF24Mesh/RF24Mesh.h&quot;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;RF24/RF24.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;RF24Network/RF24Network.h&gt;</span></div>
 <div class="line"> </div>
-<div class="line">RF24 radio(RPI_V2_GPIO_P1_15, BCM2835_SPI_CS0, BCM2835_SPI_SPEED_8MHZ);  </div>
+<div class="line">RF24 radio(22, 0);</div>
+<div class="line"> </div>
 <div class="line">RF24Network network(radio);</div>
-<div class="line"><a name="_a0"></a><a class="code" href="classRF24Mesh.html">RF24Mesh</a> mesh(radio,network);</div>
+<div class="line"><a name="_a0"></a><a class="code" href="classRF24Mesh.html">RF24Mesh</a> mesh(radio, network);</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> printNodes(uint8_t boldID);</div>
 <div class="line"><span class="keywordtype">void</span> pingNode(uint8_t listNo);</div>
@@ -130,11 +131,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line">uint16_t failID = 0;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main()</div>
-<div class="line">{   </div>
+<div class="line">{</div>
 <div class="line"> </div>
 <div class="line">    printf(<span class="stringliteral">&quot;Establishing mesh...\n&quot;</span>);</div>
 <div class="line">    mesh.setNodeID(0);</div>
-<div class="line">    mesh.begin();</div>
+<div class="line">    <span class="keywordflow">if</span> (!mesh.begin()) {</div>
+<div class="line">        printf(<span class="stringliteral">&quot;Radio hardware not responding or could not connect to network.\n&quot;</span>);</div>
+<div class="line">        <span class="keywordflow">return</span> 0;</div>
+<div class="line">    }</div>
 <div class="line">    radio.printDetails();</div>
 <div class="line"> </div>
 <div class="line">    initscr();          <span class="comment">/* Start curses mode          */</span></div>
@@ -147,8 +151,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line">    printw(<span class="stringliteral">&quot;RF24Mesh Master Node Monitoring Interface by TMRh20 - 2014\n&quot;</span>);</div>
 <div class="line">    attroff(COLOR_PAIR(1));</div>
 <div class="line">    refresh();          <span class="comment">/* Print it on to the real screen */</span></div>
-<div class="line">    </div>
-<div class="line">    uint32_t kbTimer = 0,kbCount = 0, pingTimer=millis();   </div>
+<div class="line"> </div>
+<div class="line">    uint32_t kbTimer = 0,kbCount = 0, pingTimer=millis();</div>
 <div class="line">    <span class="comment">//std::map&lt;char,uint16_t&gt;::iterator it = mesh.addrMap.begin();</span></div>
 <div class="line">    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> totalPayloads = 0;</div>
 <div class="line"> </div>
@@ -162,26 +166,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line">    mesh.DHCP();</div>
 <div class="line">    <span class="comment">// Wait until a sensor node is connected</span></div>
 <div class="line">    <span class="keywordflow">if</span>(<span class="keyword">sizeof</span>(mesh.addrList) &lt; 1){<span class="keywordflow">continue</span>; }</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    <span class="comment">// Check for incoming data from the sensors</span></div>
-<div class="line">    <span class="keywordflow">while</span>(network.available()){    </div>
+<div class="line">    <span class="keywordflow">while</span>(network.available()){</div>
 <div class="line">        RF24NetworkHeader header;</div>
 <div class="line">        network.peek(header);</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">        uint8_t boldID = 0;</div>
-<div class="line">        </div>
+<div class="line"> </div>
 <div class="line">        <span class="comment">// Print the total number of received payloads</span></div>
 <div class="line">        mvprintw(9,0,<span class="stringliteral">&quot; Total: %lu\n&quot;</span>,totalPayloads++);</div>
 <div class="line"> </div>
 <div class="line">        kbCount++;</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">        attron(A_BOLD | COLOR_PAIR(1));</div>
 <div class="line">        mvprintw(2,0,<span class="stringliteral">&quot;[Last Payload Info]\n&quot;</span>);</div>
-<div class="line">        attroff(A_BOLD | COLOR_PAIR(1));    </div>
-<div class="line">        </div>
+<div class="line">        attroff(A_BOLD | COLOR_PAIR(1));</div>
+<div class="line"> </div>
 <div class="line">        <span class="comment">// Read the network payload</span></div>
 <div class="line">        network.read(header,0,0);</div>
-<div class="line">        </div>
+<div class="line"> </div>
 <div class="line">        <span class="comment">// Display the header info</span></div>
 <div class="line">        mvprintw(3,0,<span class="stringliteral">&quot; HeaderID: %u  \n Type: %d  \n From: 0%o  \n &quot;</span>,header.id,header.type,header.from_node);</div>
 <div class="line"> </div>
@@ -192,11 +196,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line">                boldID = mesh.addrList[i].nodeID;</div>
 <div class="line">            }</div>
 <div class="line">        }</div>
-<div class="line">        printNodes(boldID);     </div>
+<div class="line">        printNodes(boldID);</div>
 <div class="line"> </div>
 <div class="line">    }</div>
 <div class="line">    <span class="comment">//refresh();</span></div>
-<div class="line">  </div>
+<div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span>(millis()-kbTimer &gt; 1000 &amp;&amp; kbCount &gt; 0){</div>
 <div class="line">    kbTimer = millis();</div>
 <div class="line">    attron(A_BOLD | COLOR_PAIR(1));</div>
@@ -204,9 +208,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line">    attroff(A_BOLD | COLOR_PAIR(1));</div>
 <div class="line">    mvprintw(8,0,<span class="stringliteral">&quot; Kbps: %.2f&quot;</span>,(kbCount * 32 * 8)/1000.00);</div>
 <div class="line">    kbCount = 0;</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">  }</div>
-<div class="line">  </div>
+<div class="line"> </div>
 <div class="line">  <span class="comment">// Ping each connected node, one per second</span></div>
 <div class="line">  <span class="keywordflow">if</span>(millis()-pingTimer&gt;1003 &amp;&amp; <span class="keyword">sizeof</span>(mesh.addrList) &gt; 0){</div>
 <div class="line">    pingTimer=millis();</div>
@@ -214,9 +218,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line">        nodeCounter = 0;</div>
 <div class="line">    }</div>
 <div class="line">    pingNode(nodeCounter);</div>
-<div class="line">    nodeCounter++;  </div>
+<div class="line">    nodeCounter++;</div>
 <div class="line">  }</div>
-<div class="line">  </div>
+<div class="line"> </div>
 <div class="line">    <span class="comment">/*uint32_t nOK,nFails;</span></div>
 <div class="line"><span class="comment">    network.failures(&amp;nFails,&amp;nOK);</span></div>
 <div class="line"><span class="comment">    attron(A_BOLD | COLOR_PAIR(1));</span></div>
@@ -224,12 +228,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line"><span class="comment">    attroff(A_BOLD | COLOR_PAIR(1));</span></div>
 <div class="line"><span class="comment">    mvprintw(3,25,&quot; #OK: %u   &quot;,nOK);</span></div>
 <div class="line"><span class="comment">    mvprintw(4,25,&quot; #Fail: %u   &quot;,nFails);*/</span></div>
-<div class="line">  </div>
-<div class="line">  </div>
+<div class="line"> </div>
+<div class="line"> </div>
 <div class="line">  refresh();</div>
 <div class="line">  delay(2);</div>
 <div class="line">}<span class="comment">//while 1</span></div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    endwin();           <span class="comment">/* End curses mode        */</span></div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
@@ -277,7 +281,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line">    mvprintw(12,0,<span class="stringliteral">&quot; ID:%d    &quot;</span>,mesh.addrList[listNo].nodeID);</div>
 <div class="line">    mvprintw(13,0,<span class="stringliteral">&quot; Net:0%o    &quot;</span>,mesh.addrList[listNo].address);</div>
 <div class="line">    mvprintw(14,0,<span class="stringliteral">&quot; Time:%ums       &quot;</span>,pingtime);</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span>(ok || !headers.to_node){ mvprintw(15,0,<span class="stringliteral">&quot; OK  &quot;</span>);</div>
 <div class="line">    } <span class="keywordflow">else</span>{ attron(A_BOLD); mvprintw(15,0,<span class="stringliteral">&quot; FAIL&quot;</span>); attron(A_BOLD); }</div>
 <div class="line">}</div>
@@ -285,7 +289,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Apr 13 2021 01:05:55 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Sun Nov 28 2021 12:56:29 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rf24mesh_41',['RF24Mesh',['../classRF24Mesh.html',1,'']]]
+  ['addrliststruct_54',['addrListStruct',['../structRF24Mesh_1_1addrListStruct.html',1,'RF24Mesh']]]
 ];

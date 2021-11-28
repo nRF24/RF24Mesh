@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios
-   &#160;<span id="projectnumber">1.1.5</span>
+   &#160;<span id="projectnumber">1.1.6</span>
    </div>
    <div id="projectbrief">TMRh20 2020 - A user friendly mesh overlay for sensor neworks using RF24Network</div>
   </td>
@@ -102,63 +102,80 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#ifndef MESH_MAX_CHILDREN</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a34a829ec67e8c11ed0416fe1ee5e3bae">   17</a></span>&#160;<span class="preprocessor">    #define MESH_MAX_CHILDREN 4</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_MAX_CHILDREN</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#if defined (RF24_TINY) || defined (DOXYGEN_FORCED)</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a9f71e253a399c9200373abe26877642e">   26</a></span>&#160;<span class="preprocessor">    #define MESH_NOMASTER</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// un-comment for non-master nodes not running on ATTiny MCUs</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">//#define MESH_NOMASTER</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">/***Advanced User Config***/</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#ifndef MESH_DEFAULT_CHANNEL</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a8a8ab350f590431aad2791ed1cf36177">   39</a></span>&#160;<span class="preprocessor">    #define MESH_DEFAULT_CHANNEL 97</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_DEFAULT_CHANNEL</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#ifndef MESH_RENEWAL_TIMEOUT</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#ab7aba6d7a94d3c79a7ed4f61ee19af21">   47</a></span>&#160;<span class="preprocessor">    #define MESH_RENEWAL_TIMEOUT 7500</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_RENEWAL_TIMEOUT</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#ifndef MESH_MEM_ALLOC_SIZE</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#af717a331ff344489e9e299f2e3fadaf0">   60</a></span>&#160;<span class="preprocessor">    #define MESH_MEM_ALLOC_SIZE 10</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_MEM_ALLOC_SIZE</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#if defined (RF24_TINY)</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">    #define MESH_NOMASTER</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// un-comment for non-master nodes not running on ATTiny MCUs</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">//#define MESH_NOMASTER</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">/***Advanced User Config***/</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#ifndef MESH_DEFAULT_CHANNEL</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a8a8ab350f590431aad2791ed1cf36177">   33</a></span>&#160;<span class="preprocessor">    #define MESH_DEFAULT_CHANNEL 97</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_DEFAULT_CHANNEL</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#ifndef MESH_RENEWAL_TIMEOUT</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#ab7aba6d7a94d3c79a7ed4f61ee19af21">   41</a></span>&#160;<span class="preprocessor">    #define MESH_RENEWAL_TIMEOUT 7500</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_RENEWAL_TIMEOUT</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#ifndef MESH_MEM_ALLOC_SIZE</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#af717a331ff344489e9e299f2e3fadaf0">   54</a></span>&#160;<span class="preprocessor">    #define MESH_MEM_ALLOC_SIZE 10</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_MEM_ALLOC_SIZE</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">/**************************/</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">/***       Debug        ***/</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">//#define MESH_DEBUG_MINIMAL /** Uncomment for the Master Node to print out address assignments as they are assigned */</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">//#define MESH_DEBUG         /** Uncomment to enable debug output to serial **/</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">/**************************/</span></div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">/**************************/</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">/***       Debug        ***/</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">//#define MESH_DEBUG_MINIMAL /** Uncomment for the Master Node to print out address assignments as they are assigned */</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">//#define MESH_DEBUG         /** Uncomment to enable debug output to serial **/</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">/**************************/</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">/*** Other Configuration ***/</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">//#define MESH_MIN_SAVE_TIME 30000 /** UNUSED Minimum time required before changing nodeID. Prevents excessive writing to EEPROM */</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#ifndef MESH_LOOKUP_TIMEOUT</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a57000c827c68ddc0ba6f2a04efa3ef35">   80</a></span>&#160;<span class="preprocessor">    #define MESH_LOOKUP_TIMEOUT 135</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_LOOKUP_TIMEOUT</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#ifndef MESH_WRITE_TIMEOUT</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#afd5121b771fe8bd255f70863b2127d6e">   85</a></span>&#160;<span class="preprocessor">    #define MESH_WRITE_TIMEOUT 115</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_WRITE_TIMEOUT</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">/*** Other Configuration ***/</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">//#define MESH_MIN_SAVE_TIME 30000 /** UNUSED Minimum time required before changing nodeID. Prevents excessive writing to EEPROM */</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="preprocessor">#ifndef MESH_LOOKUP_TIMEOUT</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a57000c827c68ddc0ba6f2a04efa3ef35">   74</a></span>&#160;<span class="preprocessor">    #define MESH_LOOKUP_TIMEOUT 135</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_LOOKUP_TIMEOUT</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#ifndef MESH_WRITE_TIMEOUT</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#afd5121b771fe8bd255f70863b2127d6e">   79</a></span>&#160;<span class="preprocessor">    #define MESH_WRITE_TIMEOUT 115</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_WRITE_TIMEOUT</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor">#ifndef MESH_DEFAULT_ADDRESS</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a9aa307506ecde1e60194a4eed4e073c9">   83</a></span>&#160;<span class="preprocessor">    #define MESH_DEFAULT_ADDRESS NETWORK_DEFAULT_ADDRESS</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_DEFAULT_ADDRESS</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a08953747b6affc39e66a81acc7baf9db">   86</a></span>&#160;<span class="preprocessor">#define MESH_MULTICAST_ADDRESS NETWORK_MULTICAST_ADDRESS</span></div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#ifndef MESH_DEFAULT_ADDRESS</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a9aa307506ecde1e60194a4eed4e073c9">   89</a></span>&#160;<span class="preprocessor">    #define MESH_DEFAULT_ADDRESS NETWORK_DEFAULT_ADDRESS</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MESH_DEFAULT_ADDRESS</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">//#define MESH_MAX_ADDRESSES 255 /** UNUSED Determines the max size of the array used for storing addresses on the Master Node */</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">//#define MESH_ADDRESS_HOLD_TIME 30000 /**UNUSED How long before a released address becomes available */</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#if defined (MESH_DEBUG)</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">    #if !defined (__linux) &amp;&amp; !defined ARDUINO_SAM_DUE || defined TEENSY || defined(__ARDUINO_X86__)</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">        #define MESH_DEBUG_SERIAL</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">    #else</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">        #define MESH_DEBUG_PRINTF</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">    #endif </span><span class="comment">// platform ostream def</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// defined (MESH_DEBUG)</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// __RF24MESH_CONFIG_H__</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">//#define MESH_MAX_ADDRESSES 255 /* UNUSED Determines the max size of the array used for storing addresses on the Master Node */</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">//#define MESH_ADDRESS_HOLD_TIME 30000 /* UNUSED How long before a released address becomes available */</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#if (defined (__linux) || defined (linux)) &amp;&amp; !defined (__ARDUINO_X86__) &amp;&amp; !defined (USE_RF24_LIB_SRC)</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">    #include &lt;RF24/RF24_config.h&gt;</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">//ATXMega</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#elif defined(XMEGA)</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">    #include &quot;../../rf24lib/rf24lib/RF24_config.h&quot;</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">    #include &lt;RF24_config.h&gt;</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#if defined (MESH_DEBUG_MINIMAL)</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">    #define IF_MESH_DEBUG_MINIMAL(x) ({x;})</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a6103680c1abbb354076da7af72753dd3">  104</a></span>&#160;<span class="preprocessor">    #define IF_MESH_DEBUG_MINIMAL(x)</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor">#if defined (MESH_DEBUG)</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">    #define IF_MESH_DEBUG(x) ({x;})</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#else</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="RF24Mesh__config_8h.html#a8d4bf8ac17495dc172a94729a11e62ad">  111</a></span>&#160;<span class="preprocessor">    #define IF_MESH_DEBUG(x)</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// __RF24MESH_CONFIG_H__</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Apr 13 2021 01:05:55 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Sun Nov 28 2021 12:56:29 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>

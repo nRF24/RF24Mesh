@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['setup_20and_20config_82',['Setup And Config',['../md_docs_setup_config.html',1,'']]]
+  ['mesh_20networking_20layer_20for_20rf24_20radios_107',['Mesh Networking Layer for RF24 Radios',['../index.html',1,'']]]
 ];

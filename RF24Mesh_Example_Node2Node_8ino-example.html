@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios
-   &#160;<span id="projectnumber">1.1.5</span>
+   &#160;<span id="projectnumber">1.1.6</span>
    </div>
    <div id="projectbrief">TMRh20 2020 - A user friendly mesh overlay for sensor neworks using RF24Network</div>
   </td>
@@ -98,69 +98,78 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="line"> </div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/**** Configure the nrf24l01 CE and CS pins ****/</span></div>
-<div class="line">RF24 radio(7,8);</div>
+<div class="line">RF24 radio(7, 8);</div>
 <div class="line">RF24Network network(radio);</div>
-<div class="line"><a name="_a0"></a><a class="code" href="classRF24Mesh.html">RF24Mesh</a> mesh(radio,network);</div>
+<div class="line"><a name="_a0"></a><a class="code" href="classRF24Mesh.html">RF24Mesh</a> mesh(radio, network);</div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#define nodeID 1</span></div>
-<div class="line"><span class="preprocessor">#define otherNodeID 2    </span></div>
+<div class="line"><span class="preprocessor">#define otherNodeID 2</span></div>
 <div class="line"> </div>
 <div class="line"> </div>
-<div class="line">uint32_t millisTimer=0;</div>
+<div class="line">uint32_t millisTimer = 0;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> setup() {</div>
 <div class="line"> </div>
 <div class="line">  Serial.begin(115200);</div>
+<div class="line">  <span class="keywordflow">while</span> (!Serial) {</div>
+<div class="line">    <span class="comment">// some boards need this because of native USB capability</span></div>
+<div class="line">  }</div>
+<div class="line"> </div>
 <div class="line">  <span class="comment">// Set the nodeID</span></div>
-<div class="line">  mesh.setNodeID(nodeID);  </div>
+<div class="line">  mesh.setNodeID(nodeID);</div>
+<div class="line"> </div>
 <div class="line">  <span class="comment">// Connect to the mesh</span></div>
 <div class="line">  Serial.println(F(<span class="stringliteral">&quot;Connecting to the mesh...&quot;</span>));</div>
-<div class="line">  mesh.begin();</div>
+<div class="line">  <span class="keywordflow">if</span> (!mesh.begin()) {</div>
+<div class="line">    Serial.println(F(<span class="stringliteral">&quot;Radio hardware not responding or could not connect to network.&quot;</span>));</div>
+<div class="line">    <span class="keywordflow">while</span> (1) {</div>
+<div class="line">      <span class="comment">// hold in an infinite loop</span></div>
+<div class="line">    }</div>
+<div class="line">  }</div>
 <div class="line">}</div>
 <div class="line"> </div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span> loop() {</div>
-<div class="line">  </div>
+<div class="line"> </div>
 <div class="line">  mesh.update();</div>
 <div class="line"> </div>
-<div class="line">  <span class="keywordflow">if</span>(network.available()){</div>
-<div class="line">        RF24NetworkHeader header;</div>
-<div class="line">        uint32_t mills;</div>
-<div class="line">        network.read(header,&amp;mills,<span class="keyword">sizeof</span>(mills));</div>
-<div class="line">        Serial.print(<span class="stringliteral">&quot;Rcv &quot;</span>); Serial.print(mills);</div>
-<div class="line">        Serial.print(<span class="stringliteral">&quot; from nodeID &quot;</span>);</div>
-<div class="line">        <span class="keywordtype">int</span> _ID = mesh.getNodeID(header.from_node);</div>
-<div class="line">        <span class="keywordflow">if</span>( _ID &gt; 0){</div>
-<div class="line">           Serial.println(_ID);</div>
-<div class="line">        }<span class="keywordflow">else</span>{</div>
-<div class="line">           Serial.println(<span class="stringliteral">&quot;Mesh ID Lookup Failed&quot;</span>); </div>
-<div class="line">        }</div>
-<div class="line">  }</div>
-<div class="line">  </div>
-<div class="line">  </div>
-<div class="line">  <span class="comment">// Send to the other node every second</span></div>
-<div class="line">  <span class="keywordflow">if</span>(millis() - millisTimer &gt;= 1000){</div>
-<div class="line">    millisTimer = millis();</div>
-<div class="line">    </div>
-<div class="line">    <span class="comment">// Send an &#39;M&#39; type to other Node containing the current millis()</span></div>
-<div class="line">    <span class="keywordflow">if</span>(!mesh.write(&amp;millisTimer,<span class="charliteral">&#39;M&#39;</span>,<span class="keyword">sizeof</span>(millisTimer),otherNodeID)){</div>
-<div class="line">            <span class="keywordflow">if</span>( ! mesh.checkConnection() ){</div>
-<div class="line">              Serial.println(<span class="stringliteral">&quot;Renewing Address&quot;</span>);</div>
-<div class="line">              mesh.renewAddress(); </div>
-<div class="line">            }<span class="keywordflow">else</span>{</div>
-<div class="line">              Serial.println(<span class="stringliteral">&quot;Send fail, Test OK&quot;</span>); </div>
-<div class="line">            }</div>
+<div class="line">  <span class="keywordflow">if</span> (network.available()) {</div>
+<div class="line">    RF24NetworkHeader header;</div>
+<div class="line">    uint32_t mills;</div>
+<div class="line">    network.read(header, &amp;mills, <span class="keyword">sizeof</span>(mills));</div>
+<div class="line">    Serial.print(<span class="stringliteral">&quot;Rcv &quot;</span>); Serial.print(mills);</div>
+<div class="line">    Serial.print(<span class="stringliteral">&quot; from nodeID &quot;</span>);</div>
+<div class="line">    <span class="keywordtype">int</span> _ID = mesh.getNodeID(header.from_node);</div>
+<div class="line">    <span class="keywordflow">if</span> ( _ID &gt; 0) {</div>
+<div class="line">      Serial.println(_ID);</div>
+<div class="line">    } <span class="keywordflow">else</span> {</div>
+<div class="line">      Serial.println(<span class="stringliteral">&quot;Mesh ID Lookup Failed&quot;</span>);</div>
 <div class="line">    }</div>
 <div class="line">  }</div>
-<div class="line">  </div>
-<div class="line">}</div>
 <div class="line"> </div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Send to the other node every second</span></div>
+<div class="line">  <span class="keywordflow">if</span> (millis() - millisTimer &gt;= 1000) {</div>
+<div class="line">    millisTimer = millis();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Send an &#39;M&#39; type to other Node containing the current millis()</span></div>
+<div class="line">    <span class="keywordflow">if</span> (!mesh.write(&amp;millisTimer, <span class="charliteral">&#39;M&#39;</span>, <span class="keyword">sizeof</span>(millisTimer), otherNodeID)) {</div>
+<div class="line">      <span class="keywordflow">if</span> ( ! mesh.checkConnection() ) {</div>
+<div class="line">        Serial.println(<span class="stringliteral">&quot;Renewing Address&quot;</span>);</div>
+<div class="line">        mesh.renewAddress();</div>
+<div class="line">      } <span class="keywordflow">else</span> {</div>
+<div class="line">        Serial.println(<span class="stringliteral">&quot;Send fail, Test OK&quot;</span>);</div>
+<div class="line">      }</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">}</div>
 <div class="ttc" id="aRF24Mesh_8h_html"><div class="ttname"><a href="RF24Mesh_8h.html">RF24Mesh.h</a></div></div>
 <div class="ttc" id="aclassRF24Mesh_html"><div class="ttname"><a href="classRF24Mesh.html">RF24Mesh</a></div><div class="ttdef"><b>Definition:</b> <a href="RF24Mesh_8h_source.html#l00052">RF24Mesh.h:53</a></div></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Apr 13 2021 01:05:55 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Sun Nov 28 2021 12:56:29 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>

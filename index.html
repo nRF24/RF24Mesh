@@ -28,7 +28,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios
-   &#160;<span id="projectnumber">1.1.5</span>
+   &#160;<span id="projectnumber">1.1.6</span>
    </div>
    <div id="projectbrief">TMRh20 2020 - A user friendly mesh overlay for sensor neworks using RF24Network</div>
   </td>
@@ -88,7 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
 <div class="title">Mesh Networking Layer for RF24 Radios </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_docs_main_page"></a>This class intends to provide a simple and seamless 'mesh' layer for sensor networks, allowing automatic and dynamic configuration that can be customized to suit many scenarios. It is currently designed to interface directly with with the <a href="http://tmrh20.github.com/RF24Network/">RF24Network library</a>, an <a href="http://en.wikipedia.org/wiki/Network_layer">OSI Network Layer</a> using nRF24L01(+) radios driven by the newly optimized <a href="http://tmrh20.github.com/RF24/">RF24 library</a> fork.</p>
+<div class="textblock"><p><a class="anchor" id="md_docs_main_page"></a> This class intends to provide a simple and seamless 'mesh' layer for sensor networks, allowing automatic and dynamic configuration that can be customized to suit many scenarios. It is currently designed to interface directly with with the <a href="http://nRF24.github.io/RF24Network">RF24Network library</a>, an <a href="http://en.wikipedia.org/wiki/Network_layer">OSI Network Layer</a> using nRF24L01(+) radios driven by the newly optimized <a href="http://nRF24.github.io/RF24">RF24 library</a> fork.</p>
 <h1><a class="anchor" id="autotoc_md9"></a>
 Purpose/Goals</h1>
 <ul>
@@ -100,11 +100,11 @@ News</h1>
 <p>See a the list of changes on <a href="https://github.com/nRF24/RF24Mesh/releases/">the Github releases page</a></p>
 <h1><a class="anchor" id="autotoc_md11"></a>
 RF24Mesh Overview</h1>
-<p>The RF24Network library provides a system of addressing and routing for RF24 radio modules that allows large wireless sensor networks to be constructed. <br  />
- <a class="el" href="classRF24Mesh.html">RF24Mesh</a> provides extended features, including automatic addressing and dynamic configuration of wireless sensors.</p>
+<p>The RF24Network library provides a system of addressing and routing for RF24 radio modules that allows large wireless sensor networks to be constructed.</p>
+<p><a class="el" href="classRF24Mesh.html">RF24Mesh</a> provides extended features, including automatic addressing and dynamic configuration of wireless sensors.</p>
 <h2><a class="anchor" id="autotoc_md12"></a>
 How does it work?</h2>
-<p>Nodes are assigned a unique number ranging from 1 to 253, and just about everything else, addressing, routing, etc. is managed by the library.</p>
+<p>Nodes are assigned a unique number ranging from 1 to 255, and just about everything else, addressing, routing, etc. is managed by the library.</p>
 <p>The unique identifier is like an IP address, used to communicate at a high level within the RF24 communication stack and will generally remain static. At the network layer, the physical radio addresses, similar to MAC addresses, are allocated as nodes move around and establish connections within the network.</p>
 <p>The 'master' node keeps track of the unique nodeIDs and the assigned RF24Network addresses. When a node is moved physically, or just loses its connection to the network, it can automatically re-join the mesh and reconfigure itself within the network.</p>
 <p>In the mesh configuration sensors/nodes can move around physically, far from the 'master node' using other nodes to route traffic over extended distances. Addressing and topology is reconfigured as connections are broken and re-established within different areas of the network.</p>
@@ -120,13 +120,13 @@ How to learn more</h1>
 <li><a href="http://nRF24.github.io/RF24Ethernet/">RF24Ethernet: TCP/IP based Mesh over RF24</a></li>
 <li><a href="http://nRF24.github.io/RF24Gateway/">RF24Gateway: A TCP/IP and RF24 Gateway for RF24 nodes</a></li>
 <li><a href="https://tmrh20.github.io">All Documentation and Downloads</a></li>
-<li><a href="https://github.com/TMRh20/RF24Mesh">Source Code</a> </li>
+<li><a href="https://github.com/nRF24/RF24Mesh">Source Code</a> </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Apr 13 2021 01:05:55 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Sun Nov 28 2021 12:56:29 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>
