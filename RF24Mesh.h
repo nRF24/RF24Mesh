@@ -181,7 +181,7 @@ public:
     /**
      * @brief Convert a @ref _nodeID "nodeID" into an RF24Network address
      * @note If printing or displaying the address, it needs to be converted to octal format:
-     * @code Serial.println(address, OCT); @endcode
+     * @code{.ino} Serial.println(address, OCT); @endcode
      *
      * Results in a lookup request being sent to the master node.
      * @param nodeID The unique identifier of the node in the range [1, 255].

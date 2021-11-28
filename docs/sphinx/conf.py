@@ -1,8 +1,14 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""Configuration file for the Sphinx documentation builder.
+
+This file only contains a selection of the most common options. For a full
+list see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
+import subprocess
+import os
+import json
+
+# pylint: disable=invalid-name
 
 # -- Path setup --------------------------------------------------------------
 
@@ -10,12 +16,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import subprocess
-import os
-import json
 
 # -- Project information -----------------------------------------------------
 
@@ -126,7 +128,7 @@ html_theme_options = {
     "repo_name": "RF24Mesh",
     "repo_type": "github",
     # Visible levels of the global TOC; -1 means unlimited
-    "globaltoc_depth": 3,
+    "globaltoc_depth": -1,
     # If False, expand all TOC entries
     "globaltoc_collapse": False,
     # If True, show hidden TOC entries
