@@ -53,16 +53,16 @@ int main()
 	curs_set(0);
 	//keypad(stdscr, TRUE); //Enable user interaction
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
-	init_pair(2, COLOR_RED, COLOR_BLACK);
+	init_pair(2, COLOR_BLUE, COLOR_GREEN);
 	attron(COLOR_PAIR(1));
-	printw("RF24Mesh Master Node Monitoring Interface by TMRh20 - 2014\n");
+	printw("RF24Mesh Master Node Monitoring Interface by TMRh20 - 2014-2021\n");
 	attroff(COLOR_PAIR(1));
 	refresh();			/* Print it on to the real screen */
 
 	uint32_t kbTimer = 0,kbCount = 0, pingTimer=millis();
-	//std::map<char,uint16_t>::iterator it = mesh.addrMap.begin();
     unsigned long totalPayloads = 0;
-
+    uint8_t boldID = 0;
+    
 while(1)
 {
 
@@ -71,24 +71,20 @@ while(1)
     // In addition, keep the 'DHCP service' running on the master node so addresses will
     // be assigned to the sensor nodes
 	mesh.DHCP();
-    // Wait until a sensor node is connected
-	if(sizeof(mesh.addrList) < 1){continue; }
 
+    attron(A_BOLD | COLOR_PAIR(1));
+    mvprintw(2,0,"[Last Payload Info]\n");
+    attroff(A_BOLD | COLOR_PAIR(1));
+        
 	// Check for incoming data from the sensors
     while(network.available()){
 		RF24NetworkHeader header;
 		network.peek(header);
 
-		uint8_t boldID = 0;
-
 		// Print the total number of received payloads
 		mvprintw(9,0," Total: %lu\n",totalPayloads++);
 
 		kbCount++;
-
-		attron(A_BOLD | COLOR_PAIR(1));
-		mvprintw(2,0,"[Last Payload Info]\n");
-		attroff(A_BOLD | COLOR_PAIR(1));
 
 		// Read the network payload
 		network.read(header,0,0);
@@ -96,19 +92,15 @@ while(1)
 		// Display the header info
 		mvprintw(3,0," HeaderID: %u  \n Type: %d  \n From: 0%o  \n ",header.id,header.type,header.from_node);
 
-		//refresh();
-		//for (std::map<char,uint16_t>::iterator _it=mesh.addrMap.begin(); _it!=mesh.addrMap.end(); _it++){
 		for(uint8_t i=0; i<mesh.addrListTop; i++){
 			if(header.from_node == mesh.addrList[i].address){
 				boldID = mesh.addrList[i].nodeID;
 			}
 		}
-		printNodes(boldID);
-
     }
-	//refresh();
+    printNodes(boldID);
 
-    if(millis()-kbTimer > 1000 && kbCount > 0){
+    if(millis()-kbTimer > 1000){
 	kbTimer = millis();
 	attron(A_BOLD | COLOR_PAIR(1));
 	mvprintw(7,0,"[Data Rate (In)]");
@@ -119,9 +111,9 @@ while(1)
   }
 
   // Ping each connected node, one per second
-  if(millis()-pingTimer>1003 && sizeof(mesh.addrList) > 0){
+  if(millis()-pingTimer>1003 && mesh.addrListTop > 0){
     pingTimer=millis();
-	if(	nodeCounter == mesh.addrListTop){ // if(mesh.addrMap.size() > 1){ it=mesh.addrMap.begin(); } continue;}
+	if(	nodeCounter == mesh.addrListTop){
 		nodeCounter = 0;
 	}
 	pingNode(nodeCounter);
@@ -152,9 +144,7 @@ void printNodes(uint8_t boldID){
    attron(A_BOLD | COLOR_PAIR(1));
    mvprintw(xCoord++,27,"[Address Assignments]\n");
    attroff(A_BOLD | COLOR_PAIR(1));
-  //for (std::map<char,uint16_t>::iterator it=mesh.addrMap.begin(); it!=mesh.addrMap.end(); ++it){
   for( uint8_t i=0; i<mesh.addrListTop; i++){
-    //if( failID == it->first){
 	if( failID == mesh.addrList[i].nodeID){
 		attron(COLOR_PAIR(2));
 	}else
