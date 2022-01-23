@@ -15,6 +15,11 @@ message(STATUS "using RF24Network library: ${RF24Network}")
 find_library(RF24Mesh rf24mesh REQUIRED)
 message(STATUS "using RF24Mesh library: ${RF24Mesh}")
 
+find_library(LibPIGPIO pigpio)
+if (NOT "${LibPIGPIO}" STREQUAL "LibPIGPIO-NOTFOUND")
+    message(STATUS "linking to ${LibPIGPIO} for interrupt support")
+endif()
+
 # iterate over a list of examples by filename
 set(EXAMPLES_LIST
     RF24Mesh_Example
@@ -26,7 +31,11 @@ foreach(example ${EXAMPLES_LIST})
     add_executable(${example} ${example}.cpp)
 
     # link the RF24 lib to the target. Notice we specify pthread as a linked lib here
-    target_link_libraries(${example} PUBLIC ${RF24} pthread ${RF24Network} ${RF24Mesh})
+    if("${LibPIGPIO}" STREQUAL "LibPIGPIO-NOTFOUND")
+        target_link_libraries(${example} PUBLIC ${RF24} pthread ${RF24Network} ${RF24Mesh})
+    else()
+        target_link_libraries(${example} PUBLIC ${RF24} pthread ${RF24Network} ${RF24Mesh} ${LibPIGPIO})
+    endif()
 endforeach()
 
 include(../cmake/enableNcursesExample.cmake)
