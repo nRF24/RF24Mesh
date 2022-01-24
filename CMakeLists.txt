@@ -32,6 +32,9 @@ add_compile_options(-Ofast -Wall)
 # detect CPU and add compiler flags accordingly
 include(cmake/detectCPU.cmake)
 
+# detect any applicable external libs (like pigpio)
+include(cmake/AutoConfig_RF24_DRIVER.cmake)
+
 if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
     option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
     if(ENABLE_BUILD_WITH_TIME_TRACE)
@@ -60,7 +63,7 @@ if(NOT DEFINED USE_RF24_LIB_SRC)
 endif()
 
 ###########################
-# create target for bulding the RF24Log lib
+# create target for bulding the RF24Mesh lib
 ###########################
 add_library(${LibTargetName} SHARED RF24Mesh.cpp)
 target_include_directories(${LibTargetName} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
@@ -140,11 +143,15 @@ if(DEFINED MESH_WRITE_TIMEOUT)
     message(STATUS "MESH_WRITE_TIMEOUT set to ${MESH_WRITE_TIMEOUT}")
     target_compile_definitions(${LibTargetName} PUBLIC MESH_WRITE_TIMEOUT=${MESH_WRITE_TIMEOUT})
 endif()
-# MESH_DEFAULT_ADDRESS is an alias of the RF24Network's NETWORK_DEFAULT_ADDRESS definition
+# conditionally disable interruot support (a pigpio specific feature)
+if("${LibPIGPIO}" STREQUAL "LibPIGPIO-NOTFOUND" OR DEFINED RF24_NO_INTERRUPT)
+    message(STATUS "Disabling IRQ pin support")
+    target_compile_definitions(${LibTargetName} PUBLIC RF24_NO_INTERRUPT)
+endif()
 
 
 ###########################
-# target install rules for the RF24Log lib
+# target install rules for the RF24Mesh lib
 ###########################
 install(TARGETS ${LibTargetName}
     DESTINATION lib
