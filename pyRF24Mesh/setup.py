@@ -44,7 +44,7 @@ setup(
         Extension(
             "RF24Mesh",
             sources=["pyRF24Mesh.cpp"],
-            libraries=["rf24", "rf24network", "rf24mesh", BOOST_LIB],
+            libraries=["rf24mesh", "rf24network", "rf24", BOOST_LIB],
         )
     ],
 )
