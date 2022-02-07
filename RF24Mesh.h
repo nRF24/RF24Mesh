@@ -240,7 +240,6 @@ public:
      * @param address The octal RF24Network address to assign
      * @param searchBy Optional parameter. Default is search by @ref _nodeID "nodeID" and
      * set the address. True allows searching by address and setting @ref _nodeID "nodeID".
-     * @return If the @ref _nodeID "nodeID" exists in the list,
      */
     void setAddress(uint8_t nodeID, uint16_t address, bool searchBy = false);
 
