@@ -14,6 +14,9 @@ RF24Mesh::RF24Mesh(RF24& _radio, RF24Network& _network): radio(_radio), network(
 {
     setCallback(NULL);
     meshStarted = false;
+#if !defined(MESH_NOMASTER)
+    addrMemAllocated = false;
+#endif
 }
 
 
