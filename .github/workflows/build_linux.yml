@@ -27,7 +27,7 @@ on:
       - "pyRF24Mesh/*"
       - ".github/workflows/build_linux.yml"
   release:
-    types: [published, edited]
+    types: [created]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)

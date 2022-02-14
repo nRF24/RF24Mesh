@@ -240,7 +240,6 @@ public:
      * @param address The octal RF24Network address to assign
      * @param searchBy Optional parameter. Default is search by @ref _nodeID "nodeID" and
      * set the address. True allows searching by address and setting @ref _nodeID "nodeID".
-     * @return If the @ref _nodeID "nodeID" exists in the list,
      */
     void setAddress(uint8_t nodeID, uint16_t address, bool searchBy = false);
 
@@ -260,11 +259,11 @@ public:
     /**
      * @name Deprecated
      *
-     *  Methods provided for backwards compabibility with old/testing code.
+     *  Methods provided for backwards compatibility with old/testing code.
      */
     /**@{*/
 
-    /** @deprecated For backward compatibility with older code. Use the synonomous setAddress() instead. */
+    /** @deprecated For backward compatibility with older code. Use the synonymous setAddress() instead. */
     void setStaticAddress(uint8_t nodeID, uint16_t address);
 
     #endif // !defined(MESH_NOMASTER)
@@ -331,11 +330,11 @@ private:
     bool addrMemAllocated;
     #endif
 
-    /** Starts up the network layer with default address. **/
+    /** Starts up the network layer with default address. */
     void beginDefault();
-    /** A flag asserted in begin() afer putting the radio in TX mode. */
+    /** A flag asserted in begin() after putting the radio in TX mode. */
     bool meshStarted;
-    /** Returns the number of octal digits in the specified address. **/
+    /** Returns the number of octal digits in the specified address. */
     uint8_t getLevel(uint16_t address);
 };
 
