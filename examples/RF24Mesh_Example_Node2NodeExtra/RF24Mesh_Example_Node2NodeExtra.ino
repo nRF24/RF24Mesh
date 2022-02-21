@@ -140,7 +140,7 @@ void loop() {
       if (!mesh.checkConnection()) {
         Serial.println(F("Renewing Address"));
         while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
-          Serial.println(F("Reconnecting to mesh network..."))
+          Serial.println(F("Reconnecting to mesh network..."));
         }
       } else {
         Serial.println(F("Send fail, Test OK"));
