@@ -86,9 +86,11 @@ void loop() {
 
     // Send an 'M' type to other Node containing the current millis()
     if (!mesh.write(&millisTimer, 'M', sizeof(millisTimer), otherNodeID)) {
-      if ( ! mesh.checkConnection() ) {
+      if (!mesh.checkConnection()) {
         Serial.println("Renewing Address");
-        mesh.renewAddress();
+        while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
+          Serial.println(F("Reconnecting to mesh network..."))
+        }
       } else {
         Serial.println("Send fail, Test OK");
       }

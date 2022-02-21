@@ -79,10 +79,10 @@ void loop() {
     if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer))) {
 
       // If a write fails, check connectivity to the mesh network
-      if ( ! mesh.checkConnection() ) {
+      if (!mesh.checkConnection()) {
         //refresh the network address
         Serial.println("Renewing Address");
-        if (!mesh.renewAddress()) {
+        if (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
           //If address renewal fails, reconfigure the radio and restart the mesh
           //This allows recovery from most if not all radio errors
           mesh.begin();

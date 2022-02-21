@@ -44,7 +44,8 @@ try:
                     # The address could be refreshed per a specified timeframe
                     # or only when sequential writes fail, etc.
                     print("Renewing Address")
-                    mesh.renewAddress()
+                    while mesh.renewAddress() == 0o4444:
+                        print("Renewing Address")
                 else:
                     print("Send fail, Test OK")
             else:
