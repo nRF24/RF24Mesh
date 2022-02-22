@@ -38,10 +38,10 @@ bool setup()
     printf("start nodeID %d\n", mesh.getNodeID());
     if (!mesh.begin()) {
         if (radio.isChipConnected()) {
-            while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
+            do {
                 // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
                 printf("Could not connect to network.\nConnecting to the mesh...\n");
-            }
+            } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
         }
         else {
             printf("Radio hardware not responding.\n");
@@ -64,8 +64,9 @@ void loop()
             // If a write fails, check connectivity to the mesh network
             if (!mesh.checkConnection()) {
                 // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
-                printf("Renewing Address\n");
-                mesh.renewAddress();
+                do {
+                    printf("Renewing Address...\n");
+                } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
             }
             else {
                 printf("Send fail, Test OK\n");

@@ -51,10 +51,10 @@ void setup() {
   Serial.println(F("Connecting to the mesh..."));
   if (!mesh.begin()) {
     if (radio.isChipConnected()) {
-      while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
+      do {
         // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
-        Serial.println(F("Connecting to the mesh..."));
-      }
+        Serial.println(F("Could not connect to network.\nConnecting to the mesh..."));
+      } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
     }
     else {
       Serial.println(F("Radio hardware not responding."));

@@ -138,10 +138,9 @@ void loop() {
     if (!mesh.write(&millisTimer, 'M', sizeof(millisTimer), otherNodeID)) {
       Serial.println(F("Send fail"));
       if (!mesh.checkConnection()) {
-        Serial.println(F("Renewing Address"));
-        while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
+        do {
           Serial.println(F("Reconnecting to mesh network..."));
-        }
+        } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
       } else {
         Serial.println(F("Send fail, Test OK"));
       }
