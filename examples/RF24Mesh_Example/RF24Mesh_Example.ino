@@ -25,7 +25,6 @@ RF24Mesh mesh(radio, network);
  *
  * In this example, configuration takes place below, prior to uploading the sketch to the device
  * A unique value from 1-255 must be configured for each node.
- * This will be stored in EEPROM on AVR devices, so remains persistent between further uploads, loss of power, etc.
  */
 #define nodeID 1
 
