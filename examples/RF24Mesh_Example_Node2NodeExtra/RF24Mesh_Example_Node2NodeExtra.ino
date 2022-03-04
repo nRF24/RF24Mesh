@@ -54,9 +54,17 @@ void setup() {
   // Connect to the mesh
   Serial.println(F("Connecting to the mesh..."));
   if (!mesh.begin()) {
-    Serial.println(F("Radio hardware not responding or could not connect to network."));
-    while (1) {
-      // hold in an infinite loop
+    if (radio.isChipConnected()) {
+      while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
+        // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
+        Serial.println(F("Connecting to the mesh..."));
+      }
+    }
+    else {
+      Serial.println(F("Radio hardware not responding."));
+      while (1) {
+        // hold in an infinite loop
+      }
     }
   }
 }
@@ -129,9 +137,10 @@ void loop() {
     // Send an 'M' type to other Node containing the current millis()
     if (!mesh.write(&millisTimer, 'M', sizeof(millisTimer), otherNodeID)) {
       Serial.println(F("Send fail"));
-      if ( ! mesh.checkConnection() ) {
-        Serial.println(F("Renewing Address"));
-        mesh.renewAddress();
+      if (!mesh.checkConnection()) {
+        do {
+          Serial.println(F("Reconnecting to mesh network..."));
+        } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
       } else {
         Serial.println(F("Send fail, Test OK"));
       }

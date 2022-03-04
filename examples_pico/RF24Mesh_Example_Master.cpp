@@ -33,7 +33,8 @@ bool setup()
     // Connect to the mesh
     printf("start\n");
     if (!mesh.begin()) {
-        printf("Radio hardware not responding or could not connect to network.\n");
+        // if mesh.begin() returns false for a master node, then radio.begin() returned false.
+        printf("Radio hardware not responding.\n");
         return 0;
     }
 

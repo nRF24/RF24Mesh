@@ -26,8 +26,16 @@ int main(int argc, char **argv)
   // Connect to the mesh
   printf("start nodeID %d\n", mesh.getNodeID());
   if (!mesh.begin()) {
-    printf("Radio hardware not responding or could not connect to network.\n");
-    return 0;
+    if (radio.isChipConnected()) {
+      do {
+        // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
+        printf("Could not connect to network.\nConnecting to the mesh...\n");
+      } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
+    }
+    else {
+      printf("Radio hardware not responding.\n");
+      return 0;
+    }
   }
   radio.printDetails();
 

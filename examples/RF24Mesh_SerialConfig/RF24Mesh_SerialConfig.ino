@@ -48,13 +48,21 @@ void setup() {
   }
 
   // Now that this node has a unique ID, connect to the mesh
+  Serial.println(F("Connecting to the mesh..."));
   if (!mesh.begin()) {
-    Serial.println(F("Radio hardware not responding or could not connect to network."));
-    while (1) {
-      // hold in an infinite loop
+    if (radio.isChipConnected()) {
+      do {
+        // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
+        Serial.println(F("Could not connect to network.\nConnecting to the mesh..."));
+      } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
+    }
+    else {
+      Serial.println(F("Radio hardware not responding."));
+      while (1) {
+        // hold in an infinite loop
+      }
     }
   }
-
 }
 
 unsigned long displayTimer = 0;

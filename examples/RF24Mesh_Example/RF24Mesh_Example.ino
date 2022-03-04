@@ -25,7 +25,6 @@ RF24Mesh mesh(radio, network);
  *
  * In this example, configuration takes place below, prior to uploading the sketch to the device
  * A unique value from 1-255 must be configured for each node.
- * This will be stored in EEPROM on AVR devices, so remains persistent between further uploads, loss of power, etc.
  */
 #define nodeID 1
 
@@ -50,9 +49,17 @@ void setup() {
   // Connect to the mesh
   Serial.println(F("Connecting to the mesh..."));
   if (!mesh.begin()) {
-    Serial.println(F("Radio hardware not responding or could not connect to network."));
-    while (1) {
-      // hold in an infinite loop
+    if (radio.isChipConnected()) {
+      do {
+        // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
+        Serial.println(F("Could not connect to network.\nConnecting to the mesh..."));
+      } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
+    }
+    else {
+      Serial.println(F("Radio hardware not responding."));
+      while (1) {
+        // hold in an infinite loop
+      }
     }
   }
 }
@@ -71,10 +78,10 @@ void loop() {
     if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer))) {
 
       // If a write fails, check connectivity to the mesh network
-      if ( ! mesh.checkConnection() ) {
+      if (!mesh.checkConnection()) {
         //refresh the network address
         Serial.println("Renewing Address");
-        if (!mesh.renewAddress()) {
+        if (mesh.renewAddress() == MESH_DEFAULT_ADDRESS) {
           //If address renewal fails, reconfigure the radio and restart the mesh
           //This allows recovery from most if not all radio errors
           mesh.begin();
