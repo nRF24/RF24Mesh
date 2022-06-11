@@ -15,7 +15,7 @@ Basic API
 .. doxygenfunction:: RF24Mesh::begin
 
 .. seealso::
-    :cpp:enum:`rf24_datarate_e`, :cpp:func:`RF24::setChannel()`, :c:macro:`MESH_DEFAULT_CHANNEL`, :c:macro:`MESH_RENEWAL_TIMEOUT`
+    :cpp:enum:`rf24_datarate_e`, :external:cpp:func:`RF24::setChannel()`, :c:macro:`MESH_DEFAULT_CHANNEL`, :c:macro:`MESH_RENEWAL_TIMEOUT`
 
 .. doxygenfunction:: RF24Mesh::update
 
@@ -42,7 +42,7 @@ Advanced API
 .. doxygenfunction:: RF24Mesh::write (uint16_t to_node, const void *data, uint8_t msg_type, size_t size)
 .. doxygenfunction:: RF24Mesh::setChannel
 
-.. seealso:: :cpp:func:`RF24::setChannel`
+.. seealso:: :external:cpp:func:`RF24::setChannel()`
 
 .. doxygenfunction:: RF24Mesh::setChild
 .. doxygenfunction:: RF24Mesh::setCallback

@@ -127,13 +127,15 @@ html_theme_options = {
     "repo_url": "https://github.com/nRF24/RF24Mesh/",
     "repo_name": "RF24Mesh",
     "repo_type": "github",
-    # Visible levels of the global TOC; -1 means unlimited
-    "globaltoc_depth": -1,
     # If False, expand all TOC entries
     "globaltoc_collapse": False,
-    # If True, show hidden TOC entries
-    "globaltoc_includehidden": True,
 }
+
+object_description_options = [
+    ("cpp:functionParam", dict(include_in_toc=False, generate_synopses=None)),
+    ("cpp:function", dict(include_fields_in_toc=False)),
+]
+
 # Set link name generated in the top bar.
 html_title = "RF24Mesh C++ library"
 
