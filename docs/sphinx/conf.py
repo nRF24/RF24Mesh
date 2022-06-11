@@ -48,6 +48,7 @@ extensions = [
     "sphinx_immaterial",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
+    "sphinx_immaterial.cppreference",
 ]
 
 intersphinx_mapping = {
