@@ -36,6 +36,11 @@ void pingNode(uint8_t listNo);
 uint8_t nodeCounter;
 
 uint16_t failID = 0;
+WINDOW *win;
+WINDOW *topoPad;
+void drawTopology();
+int nodeY, nodeX = 0;
+int maxY, maxX = 0;
 
 int main()
 {
@@ -43,19 +48,25 @@ int main()
   printf("Establishing mesh...\n");
   mesh.setNodeID(0);
   if (!mesh.begin()) {
-    printf("Radio hardware not responding or could not connect to network.\n");
+    // if mesh.begin() returns false for a master node, then radio.begin() returned false.
+    printf("Radio hardware not responding.\n");
     return 0;
   }
   radio.printDetails();
-
-  initscr();			/* Start curses mode 		  */
+  mesh.setStaticAddress(8,01);
+  win = initscr();			/* Start curses mode 		  */
+  getmaxyx(win, maxX, maxY);
   start_color();
   curs_set(0);
   //keypad(stdscr, TRUE); //Enable user interaction
   init_pair(1, COLOR_GREEN, COLOR_BLACK);
   init_pair(2, COLOR_BLUE, COLOR_GREEN);
+  init_pair(3, COLOR_MAGENTA, COLOR_BLACK);
+  init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(5, COLOR_CYAN, COLOR_BLACK);
+  topoPad = newpad(31, 75);
   attron(COLOR_PAIR(1));
-  printw("RF24Mesh Master Node Monitoring Interface by TMRh20 - 2014-2021\n");
+  printw("RF24Mesh Master Node Monitoring Interface by TMRh20 - 2014-2022\n");
   attroff(COLOR_PAIR(1));
   refresh();			/* Print it on to the real screen */
 
@@ -65,7 +76,7 @@ int main()
 
   while (1)
   {
-
+    
     // Call mesh.update to keep the network updated
     mesh.update();
     // In addition, keep the 'DHCP service' running on the master node so addresses will
@@ -107,7 +118,6 @@ int main()
       attroff(A_BOLD | COLOR_PAIR(1));
       mvprintw(8, 0, " Kbps: %.2f", (kbCount * 32 * 8) / 1000.00);
       kbCount = 0;
-
     }
 
     // Ping each connected node, one per second
@@ -118,6 +128,8 @@ int main()
       }
       pingNode(nodeCounter);
       nodeCounter++;
+      drawTopology();
+      
     }
 
     /*uint32_t nOK,nFails;
@@ -128,8 +140,9 @@ int main()
     mvprintw(3,25," #OK: %u   ",nOK);
     mvprintw(4,25," #Fail: %u   ",nFails);*/
 
-
+    prefresh(topoPad, 0, 0, 18 , 1, maxX-1, maxY-2);
     refresh();
+    
     delay(2);
   }//while 1
 
@@ -154,9 +167,10 @@ void printNodes(uint8_t boldID) {
     attroff(A_BOLD | COLOR_PAIR(1));
     attroff(COLOR_PAIR(2));
   }
-  mvprintw(xCoord++, 28, "                   ");
-  mvprintw(xCoord++, 28, "                   ");
-  mvprintw(xCoord++, 28, "                   ");
+  //mvprintw(xCoord++, 28, "                   ");
+  //mvprintw(xCoord++, 28, "                   ");
+  //mvprintw(xCoord++, 28, "                   ");
+  getyx(win,nodeY,nodeX);
 }
 
 void pingNode(uint8_t listNo) {
@@ -187,6 +201,87 @@ void pingNode(uint8_t listNo) {
   } else {
     attron(A_BOLD);
     mvprintw(15, 0, " FAIL");
-    attron(A_BOLD);
+    attroff(A_BOLD);
   }
+}
+
+/****************************************************************************************/
+
+void drawTopology(){
+   wclear(topoPad);
+   wattroff(topoPad, COLOR_PAIR(1));
+   mvprintw(17,10,"Mesh Topology");
+   mvwprintw(topoPad, nodeY > 15 ? nodeY-16 : 0,0,"");
+   wattron(topoPad,COLOR_PAIR(1));
+   int topoPadmaxX;
+   topoPadmaxX = getmaxx(topoPad);
+
+   for (int i = 01; i < 06; i++){
+     for (int j = 0; j < mesh.addrListTop; j++){
+         
+       if(mesh.addrList[j].address == i){
+         wprintw(topoPad,"0%o[%d]   |    ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
+       }
+
+     }
+   }
+  wprintw(topoPad,"\n");
+  wattron(topoPad,COLOR_PAIR(4)); 
+  uint16_t g = 051; 
+  for(int h = 011; h <= 015; h++){
+   
+   for (int i = h; i <= g; i+=010){
+       
+     for (int j = 0; j < mesh.addrListTop; j++){
+       if(mesh.addrList[j].address == i){
+         int y=0; int x=0;
+         getyx(topoPad,y,x);
+         if(x >= topoPadmaxX){ wprintw(topoPad,"\n"); }
+         wprintw(topoPad,"0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
+       }
+     }
+   }
+   g++;
+   wprintw(topoPad, "| ");
+  }
+  wprintw(topoPad,"\n");
+  wattron(topoPad,COLOR_PAIR(5)); 
+  g = 0411; 
+  for(int h = 0111; h <= 0145; h++){
+   
+   for (int i = h; i <= g; i+=0100){
+       
+     for (int j = 0; j < mesh.addrListTop; j++){
+       if(mesh.addrList[j].address == i){
+         int y=0; int x=0;
+         getyx(topoPad, y, x);
+         if(x >= topoPadmaxX){ wprintw(topoPad,"\n"); }         
+         wprintw(topoPad, "0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
+       }
+     }
+   }
+   g++;
+
+  }
+  wprintw(topoPad,"\n");
+  wattron(topoPad,COLOR_PAIR(3));
+  g = 04111; 
+  
+  for(int h = 01111; h <= 01445; h++){
+   
+   for (int i = h; i <= g; i+=01000){
+       
+     for (int j = 0; j < mesh.addrListTop; j++){
+       if(mesh.addrList[j].address == i){
+         int y=0; int x=0;
+         getyx(topoPad,y,x);
+         if(x >= topoPadmaxX){ wprintw(topoPad,"\n"); }         
+         wprintw(topoPad,"0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
+       }
+     }
+   }
+   g++;
+
+  }
+  wattroff(topoPad,COLOR_PAIR(2));
 }

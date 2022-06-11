@@ -36,7 +36,8 @@ void setup() {
   Serial.println(mesh.getNodeID());
   // Connect to the mesh
   if (!mesh.begin()) {
-    Serial.println(F("Radio hardware not responding or could not connect to network."));
+    // if mesh.begin() returns false for a master node, then radio.begin() returned false.
+    Serial.println(F("Radio hardware not responding."));
     while (1) {
       // hold in an infinite loop
     }

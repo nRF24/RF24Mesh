@@ -1,20 +1,21 @@
-#!/usr/bin/env python3
+"""
+Simplest RF24Mesh example that transmits a time stamp (in milliseconds) 1 per second.
+"""
+import sys
+import time
+import struct
+from RF24 import RF24, RF24_PA_MAX
+from RF24Network import RF24Network
+from RF24Mesh import RF24Mesh
 
+start = time.monotonic()
 
-from time import sleep, time
-from struct import pack
-from RF24 import *
-from RF24Network import *
-from RF24Mesh import *
-
-start = time()
 
 def millis():
-    return int((time() - start) * 1000) % (2 ** 32)
+    """:Returns: Delta time since started example in milliseconds. Wraps value around
+    the width of a ``long`` integer."""
+    return int((time.monotonic() - start) * 1000) % (2**32)
 
-def delay(ms):
-    ms = ms % (2 ** 32)
-    sleep(ms / 1000.0)
 
 # radio setup for RPi B Rev2: CS0=Pin 24
 radio = RF24(22, 0)
@@ -22,30 +23,43 @@ network = RF24Network(radio)
 mesh = RF24Mesh(radio, network)
 
 mesh.setNodeID(4)
-print("start nodeID", mesh.getNodeID())
+print("starting nodeID", mesh.getNodeID())
 if not mesh.begin():
-    print("Radio hardware not responding or could not connect to network.")
-    exit()
-radio.setPALevel(RF24_PA_MAX) # Power Amplifier
+    if not radio.isChipConnected():
+        try:
+            print("Could not connect to network.\nConnecting to mesh...")
+            while mesh.renewAddress() == 0o4444:
+                print("Could not connect to network.\nConnecting to mesh...")
+        except KeyboardInterrupt:
+            radio.powerDown()
+            sys.exit()
+    else:
+        raise OSError("Radio hardware not responding or could not connect to mesh.")
+radio.setPALevel(RF24_PA_MAX)  # Power Amplifier
 radio.printDetails()
 
-displayTimer = 0
+TIMER = 0
 
-while 1:
-    # Call mesh.update to keep the network updated
-    mesh.update()
+try:
+    while True:
+        # Call mesh.update to keep the network updated
+        mesh.update()
 
-    if (millis() - displayTimer) >= 1000:
-        displayTimer = millis()
+        if (millis() - TIMER) >= 1000:
+            TIMER = millis()
 
-        if not mesh.write(pack("L", displayTimer), ord('M')):
-            # If a write fails, check connectivity to the mesh network
-            if not mesh.checkConnection():
-                # The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
-                print("Renewing Address")
-                mesh.renewAddress()
+            if not mesh.write(struct.pack("L", TIMER), ord("M")):
+                # If a write fails, check connectivity to the mesh network
+                if not mesh.checkConnection():
+                    # The address could be refreshed per a specified timeframe
+                    # or only when sequential writes fail, etc.
+                    print("Renewing Address...")
+                    while mesh.renewAddress() == 0o4444:
+                        print("Renewing Address...")
+                else:
+                    print("Send fail, Test OK")
             else:
-                print("Send fail, Test OK")
-        else:
-            print("Send OK:", displayTimer)
-    delay(1)
+                print("Send OK:", TIMER)
+        time.sleep(0.001)  # delay 1 ms
+except KeyboardInterrupt:
+    radio.powerDown()  # power radio down before exiting

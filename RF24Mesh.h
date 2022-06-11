@@ -110,7 +110,7 @@ public:
      * Set a unique @ref _nodeID "nodeID" for this node.
      *
      * This needs to be called before RF24Mesh::begin(). The parameter value passed can be fetched
-     * via serial connection, eeprom, etc when configuring a large number of nodes.
+     * via serial connection, EEPROM, etc when configuring a large number of nodes.
      * @note If using RF24Gateway and/or RF24Ethernet, nodeIDs 0 & 1 are used by the master node.
      * @param nodeID Can be any unique value ranging from 1 to 255 (reserving 0 for the master node).
      */
@@ -124,9 +124,10 @@ public:
      *
      * @note If all nodes are set to verify connectivity and reconnect at a specified period, then
      * restarting the master (and deleting dhcplist.txt on Linux) will result in complete
-     * network/mesh reconvergence.
+     * network/mesh re-convergence.
      * @param timeout How long to attempt address renewal in milliseconds. Default is 7500
-     * @return The newly assigned RF24Network address
+     * @return The newly assigned RF24Network address. If the connecting process fails, then
+     * MESH_DEFAULT_ADDRESS is returned because all consciously unconnected nodes use that address.
      */
     uint16_t renewAddress(uint32_t timeout = MESH_RENEWAL_TIMEOUT);
 
