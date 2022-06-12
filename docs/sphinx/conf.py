@@ -1,8 +1,14 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""Configuration file for the Sphinx documentation builder.
+
+This file only contains a selection of the most common options. For a full
+list see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""
+import subprocess
+import os
+import json
+
+# pylint: disable=invalid-name
 
 # -- Path setup --------------------------------------------------------------
 
@@ -10,12 +16,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import subprocess
-import os
-import json
 
 # -- Project information -----------------------------------------------------
 
@@ -46,6 +48,7 @@ extensions = [
     "sphinx_immaterial",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
+    "sphinx_immaterial.cppreference",
 ]
 
 intersphinx_mapping = {
@@ -125,13 +128,15 @@ html_theme_options = {
     "repo_url": "https://github.com/nRF24/RF24Mesh/",
     "repo_name": "RF24Mesh",
     "repo_type": "github",
-    # Visible levels of the global TOC; -1 means unlimited
-    "globaltoc_depth": 3,
     # If False, expand all TOC entries
     "globaltoc_collapse": False,
-    # If True, show hidden TOC entries
-    "globaltoc_includehidden": True,
 }
+
+object_description_options = [
+    ("cpp:functionParam", dict(include_in_toc=False, generate_synopses=None)),
+    ("cpp:function", dict(include_fields_in_toc=False)),
+]
+
 # Set link name generated in the top bar.
 html_title = "RF24Mesh C++ library"
 
