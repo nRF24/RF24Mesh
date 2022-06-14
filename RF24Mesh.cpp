@@ -33,6 +33,7 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
         return 0;
     radio.setChannel(channel);
     radio.setDataRate(data_rate);
+    radio.setPALevel(RF24_PA_MIN);
     network.returnSysMsgs = true;
 
     if (getNodeID() > 0) { //Not master node
