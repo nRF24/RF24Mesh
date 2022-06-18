@@ -278,7 +278,7 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout)
 
     uint32_t start = millis();
     while (!requestAddress(reqCounter)) {
-        if (millis() - start > timeout) { return 0; }
+        if (millis() - start > timeout) { break; }
 
         uint32_t timeoutInternal = 50 + ((totalReqs + 1) * (reqCounter + 1)) * 2;
         uint32_t startInternal = millis();
