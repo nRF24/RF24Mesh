@@ -3,7 +3,7 @@ Example of using the rf24_mesh module to operate the nRF24L01 transceiver as
 a Mesh network master node.
 """
 import struct
-from RF24 import RF24, RF24_PA_MAX
+from RF24 import RF24
 from RF24Network import RF24Network
 from RF24Mesh import RF24Mesh
 
@@ -17,7 +17,6 @@ if not mesh.begin():
     # if mesh.begin() returns false for a master node,
     # then radio.begin() returned false.
     raise OSError("Radio hardware not responding.")
-radio.setPALevel(RF24_PA_MAX)  # Power Amplifier
 radio.printDetails()
 
 try:
@@ -29,4 +28,5 @@ try:
             header, payload = network.read(struct.calcsize("L"))
             print(f"Received message {header.toString()}")
 except KeyboardInterrupt:
-    radio.powerDown()  # power radio down before exiting
+    print("powering down radio and exiting.")
+    radio.powerDown()

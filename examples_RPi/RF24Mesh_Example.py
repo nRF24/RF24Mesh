@@ -4,7 +4,7 @@ Simplest RF24Mesh example that transmits a time stamp (in milliseconds) 1 per se
 import sys
 import time
 import struct
-from RF24 import RF24, RF24_PA_MAX
+from RF24 import RF24
 from RF24Network import RF24Network
 from RF24Mesh import RF24Mesh
 
@@ -25,7 +25,7 @@ mesh = RF24Mesh(radio, network)
 mesh.setNodeID(4)
 print("starting nodeID", mesh.getNodeID())
 if not mesh.begin():
-    if not radio.isChipConnected():
+    if radio.isChipConnected():
         try:
             print("Could not connect to network.\nConnecting to mesh...")
             while mesh.renewAddress() == 0o4444:
@@ -35,7 +35,6 @@ if not mesh.begin():
             sys.exit()
     else:
         raise OSError("Radio hardware not responding or could not connect to mesh.")
-radio.setPALevel(RF24_PA_MAX)  # Power Amplifier
 radio.printDetails()
 
 TIMER = 0
@@ -51,9 +50,9 @@ try:
             if not mesh.write(struct.pack("L", TIMER), ord("M")):
                 # If a write fails, check connectivity to the mesh network
                 if not mesh.checkConnection():
-                    # The address could be refreshed per a specified timeframe
+                    # The address could be refreshed per a specified time frame
                     # or only when sequential writes fail, etc.
-                    print("Renewing Address...")
+                    print("Send fail. Renewing Address...")
                     while mesh.renewAddress() == 0o4444:
                         print("Renewing Address...")
                 else:
@@ -62,4 +61,5 @@ try:
                 print("Send OK:", TIMER)
         time.sleep(0.001)  # delay 1 ms
 except KeyboardInterrupt:
-    radio.powerDown()  # power radio down before exiting
+    print("powering down radio and exiting.")
+    radio.powerDown()
