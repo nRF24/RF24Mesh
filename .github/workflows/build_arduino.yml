@@ -12,6 +12,10 @@ on:
       - ".github/workflows/build_arduino.yml"
       - "examples/**"
 
+env:
+  # convenient variable used multiple times
+  SKETCHES_REPORTS: sketches-reports
+
 jobs:
   check_formatting:
     runs-on: ubuntu-latest
@@ -42,7 +46,6 @@ jobs:
           - "arduino:avr:yun"
           - "arduino:avr:uno"
           - "arduino:avr:diecimila"
-          - "arduino:avr:nano"
           - "arduino:avr:mega"
           - "arduino:avr:megaADK"
           - "arduino:avr:leonardo"
@@ -65,7 +68,6 @@ jobs:
           - "arduino:avr:unowifi"
           - "arduino:mbed:nano33ble"
           - "arduino:samd:mkr1000"
-          - "arduino:samd:mkrzero"
           - "arduino:samd:mkrwifi1010"
           - "arduino:samd:nano_33_iot"
           - "arduino:samd:mkrfox1200"
@@ -80,6 +82,15 @@ jobs:
           - "arduino:samd:tian"
           - "arduino:megaavr:uno2018"
           # - "arduino:megaavr:nano4809"  # board not found
+        # By default, don't generate size deltas data.
+        enable-deltas-report: 
+          - false
+        # Generate size deltas data for this board
+        include:
+          - fqbn: arduino:avr:nano
+            enable-deltas-report: true
+          - fqbn: arduino:samd:mkrzero
+            enable-deltas-report: true
 
     steps:
       - name: Checkout
@@ -101,3 +112,28 @@ jobs:
             - source-path: ./
           # - name: RF24Network
           fqbn: ${{ matrix.fqbn }}
+          enable-deltas-report: ${{ matrix.enable-deltas-report }}
+          sketches-report-path: ${{ env.SKETCHES_REPORTS }}
+      # This step is needed to pass the size data to the report job 
+      - name: Upload sketches report to workflow artifact
+        if: ${{ matrix.enable-deltas-report }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.SKETCHES_REPORTS }}
+          path: ${{ env.SKETCHES_REPORTS }}
+
+  # When using a matrix to compile for multiple boards, it's necessary to use a separate job for the deltas report
+  report:
+    needs: [build]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download sketches reports artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.SKETCHES_REPORTS }}
+          path: ${{ env.SKETCHES_REPORTS }}
+
+      - uses: arduino/report-size-deltas@v1
+        with:
+          sketches-reports-source: ${{ env.SKETCHES_REPORTS }}
