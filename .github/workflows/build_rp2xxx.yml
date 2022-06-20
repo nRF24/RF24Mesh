@@ -45,7 +45,7 @@ jobs:
           --style=file \
           --tidy-checks='-*' \
           --files-changed-only='False' \
-          --ignore='examples|examples_RPi|'
+          --ignore='!examples_pico|'
       - name: Linter checks failed?
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
