@@ -221,7 +221,8 @@ public:
      */
     void setCallback(void (*meshCallback)(void));
 
-#define MESH_CALLBACK (if (meshCallback) meshCallback();)
+#define MESH_CALLBACK \
+    if (meshCallback) meshCallback();
 
     /**
      * Set or change a @ref _nodeID "nodeID" : node address (key : value) pair manually.
