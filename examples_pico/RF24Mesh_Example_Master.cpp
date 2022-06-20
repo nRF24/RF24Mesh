@@ -6,12 +6,12 @@
  * routing nodes as required. The master node manages the address assignments for the individual nodes
  * in a manner similar to DHCP.
  */
-#include "pico/stdlib.h"  // printf(), sleep_ms(), to_ms_since_boot(), get_absolute_time()
-#include <tusb.h>         // tud_cdc_connected()
-#include <RF24.h>         // RF24 radio object
-#include <RF24Network.h>  // RF24Network network object
-#include <RF24Mesh.h>     // RF24Mesh mesh object
-#include "defaultPins.h"  // board presumptive default pin numbers for CE_PIN and CSN_PIN
+#include "pico/stdlib.h" // printf(), sleep_ms(), to_ms_since_boot(), get_absolute_time()
+#include <tusb.h>        // tud_cdc_connected()
+#include <RF24.h>        // RF24 radio object
+#include <RF24Network.h> // RF24Network network object
+#include <RF24Mesh.h>    // RF24Mesh mesh object
+#include "defaultPins.h" // board presumptive default pin numbers for CE_PIN and CSN_PIN
 
 // instantiate an object for the nRF24L01 transceiver
 RF24 radio(CE_PIN, CSN_PIN);
@@ -42,7 +42,6 @@ bool setup()
     return true;
 }
 
-
 void loop()
 {
     // Call network.update as usual to keep the network updated
@@ -72,7 +71,6 @@ void loop()
         }
     }
 }
-
 
 int main()
 {

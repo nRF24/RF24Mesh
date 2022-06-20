@@ -35,7 +35,7 @@ RF24Mesh mesh(radio, network);
 
 uint32_t millisTimer = 0;
 uint32_t stringTimer = 0;
-char dataStr[] = {"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"};
+char dataStr[] = { "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" };
 char tmpStr[sizeof(dataStr) + 1];
 uint8_t strCtr = 1;
 
@@ -59,8 +59,7 @@ void setup() {
         // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
         Serial.println(F("Connecting to the mesh..."));
       }
-    }
-    else {
+    } else {
       Serial.println(F("Radio hardware not responding."));
       while (1) {
         // hold in an infinite loop
@@ -107,7 +106,7 @@ void loop() {
       Serial.print(mills);
       int _ID = 0;
       _ID = mesh.getNodeID(hdr.from_node);
-      if ( _ID > 0) {
+      if (_ID > 0) {
         if (_ID == nodeID) {
           Serial.println(F(" from master."));
         } else {
@@ -131,7 +130,7 @@ void loop() {
 
 
   // Send to the master node every second
-  if (millis() - millisTimer >= 1000 ) {
+  if (millis() - millisTimer >= 1000) {
     millisTimer = millis();
 
     // Send an 'M' type to other Node containing the current millis()
@@ -145,11 +144,12 @@ void loop() {
         Serial.println(F("Send fail, Test OK"));
       }
     } else {
-      Serial.print(F("Send OK: ")); Serial.println(millisTimer);
+      Serial.print(F("Send OK: "));
+      Serial.println(millisTimer);
     }
   }
 
-  if (millis() - stringTimer >= delayTime ) {
+  if (millis() - stringTimer >= delayTime) {
     stringTimer = millis();
     //Copy the current number of characters to the temporary array
     memcpy(tmpStr, dataStr, strCtr);

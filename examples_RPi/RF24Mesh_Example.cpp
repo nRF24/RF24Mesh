@@ -18,57 +18,57 @@ RF24Mesh mesh(radio, network);
 
 uint32_t displayTimer = 0;
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 
-  // Set the nodeID to 0 for the master node
-  mesh.setNodeID(4);
-  // Connect to the mesh
-  printf("start nodeID %d\n", mesh.getNodeID());
-  if (!mesh.begin()) {
-    if (radio.isChipConnected()) {
-      do {
-        // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
-        printf("Could not connect to network.\nConnecting to the mesh...\n");
-      } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
+    // Set the nodeID to 0 for the master node
+    mesh.setNodeID(4);
+    // Connect to the mesh
+    printf("start nodeID %d\n", mesh.getNodeID());
+    if (!mesh.begin()) {
+        if (radio.isChipConnected()) {
+            do {
+                // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
+                printf("Could not connect to network.\nConnecting to the mesh...\n");
+            } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
+        }
+        else {
+            printf("Radio hardware not responding.\n");
+            return 0;
+        }
     }
-    else {
-      printf("Radio hardware not responding.\n");
-      return 0;
-    }
-  }
-  radio.printDetails();
+    radio.printDetails();
 
-  while (1)
-  {
-    // Call mesh.update to keep the network updated
-    mesh.update();
-
-    // Send the current millis() to the master node every second
-    if (millis() - displayTimer >= 1000)
+    while (1)
     {
-      displayTimer = millis();
+        // Call mesh.update to keep the network updated
+        mesh.update();
 
-      if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer)))
-      {
-        // If a write fails, check connectivity to the mesh network
-        if (!mesh.checkConnection())
+        // Send the current millis() to the master node every second
+        if (millis() - displayTimer >= 1000)
         {
-          // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
-          printf("Renewing Address\n");
-          mesh.renewAddress();
+            displayTimer = millis();
+
+            if (!mesh.write(&displayTimer, 'M', sizeof(displayTimer)))
+            {
+                // If a write fails, check connectivity to the mesh network
+                if (!mesh.checkConnection())
+                {
+                    // The address could be refreshed per a specified timeframe or only when sequential writes fail, etc.
+                    printf("Renewing Address\n");
+                    mesh.renewAddress();
+                }
+                else
+                {
+                    printf("Send fail, Test OK\n");
+                }
+            }
+            else
+            {
+                printf("Send OK: %u\n", displayTimer);
+            }
         }
-        else
-        {
-          printf("Send fail, Test OK\n");
-        }
-      }
-      else
-      {
-        printf("Send OK: %u\n", displayTimer);
-      }
+        delay(1);
     }
-    delay(1);
-  }
-  return 0;
+    return 0;
 }
