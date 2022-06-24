@@ -42,7 +42,6 @@ void setup() {
       // hold in an infinite loop
     }
   }
-
 }
 
 
@@ -64,8 +63,14 @@ void loop() {
     uint32_t dat = 0;
     switch (header.type) {
       // Display the incoming millis() values from the sensor nodes
-      case 'M': network.read(header, &dat, sizeof(dat)); Serial.println(dat); break;
-      default: network.read(header, 0, 0); Serial.println(header.type); break;
+      case 'M':
+        network.read(header, &dat, sizeof(dat));
+        Serial.println(dat);
+        break;
+      default:
+        network.read(header, 0, 0);
+        Serial.println(header.type);
+        break;
     }
   }
 

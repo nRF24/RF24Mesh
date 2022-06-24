@@ -55,7 +55,6 @@ void setup() {
   // either node, to the master node.
   mesh.setStaticAddress(23, 02);
   mesh.setStaticAddress(24, 03);
-
 }
 
 uint32_t displayTimer = 0;
@@ -78,12 +77,16 @@ void loop() {
     uint32_t dat = 0;
     switch (header.type) {
       // Display the incoming millis() values from the sensor nodes
-      case 'M': network.read(header, &dat, sizeof(dat));
+      case 'M':
+        network.read(header, &dat, sizeof(dat));
         Serial.print(dat);
         Serial.print(" from RF24Network address 0");
         Serial.println(header.from_node, OCT);
         break;
-      default: network.read(header, 0, 0); Serial.println(header.type); break;
+      default:
+        network.read(header, 0, 0);
+        Serial.println(header.type);
+        break;
     }
   }
 

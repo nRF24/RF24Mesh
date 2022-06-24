@@ -16,7 +16,7 @@
 #ifndef MESH_MAX_CHILDREN
     #define MESH_MAX_CHILDREN 4
 #endif // MESH_MAX_CHILDREN
-#if defined (RF24_TINY)
+#if defined(RF24_TINY)
     #define MESH_NOMASTER
 #endif
 
@@ -88,7 +88,7 @@
 //#define MESH_MAX_ADDRESSES 255 /* UNUSED Determines the max size of the array used for storing addresses on the Master Node */
 //#define MESH_ADDRESS_HOLD_TIME 30000 /* UNUSED How long before a released address becomes available */
 
-#if (defined (__linux) || defined (linux)) && !defined (__ARDUINO_X86__) && !defined (USE_RF24_LIB_SRC)
+#if (defined(__linux) || defined(linux)) && !defined(__ARDUINO_X86__) && !defined(USE_RF24_LIB_SRC)
     #include <RF24/RF24_config.h>
 
 //ATXMega
@@ -98,15 +98,14 @@
     #include <RF24_config.h>
 #endif
 
-#if defined (MESH_DEBUG_MINIMAL)
-    #define IF_MESH_DEBUG_MINIMAL(x) ({x;})
+#if defined(MESH_DEBUG_MINIMAL)
+    #define IF_MESH_DEBUG_MINIMAL(x) ({ x; })
 #else
     #define IF_MESH_DEBUG_MINIMAL(x)
 #endif
 
-
-#if defined (MESH_DEBUG)
-    #define IF_MESH_DEBUG(x) ({x;})
+#if defined(MESH_DEBUG)
+    #define IF_MESH_DEBUG(x) ({ x; })
 #else
     #define IF_MESH_DEBUG(x)
 #endif

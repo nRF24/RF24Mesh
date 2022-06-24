@@ -5,7 +5,6 @@
 
 namespace bp = boost::python;
 
-
 // ******************** explicit wrappers **************************
 // where needed, especially where buffer is involved
 
@@ -15,9 +14,9 @@ void throw_ba_exception(void)
     bp::throw_error_already_set();
 }
 
-char *get_bytes_or_bytearray_str(bp::object buf)
+char* get_bytes_or_bytearray_str(bp::object buf)
 {
-    PyObject *py_ba;
+    PyObject* py_ba;
     py_ba = buf.ptr();
     if (PyByteArray_Check(py_ba))
         return PyByteArray_AsString(py_ba);
@@ -31,7 +30,7 @@ char *get_bytes_or_bytearray_str(bp::object buf)
 
 int get_bytes_or_bytearray_ln(bp::object buf)
 {
-    PyObject *py_ba;
+    PyObject* py_ba;
     py_ba = buf.ptr();
     if (PyByteArray_Check(py_ba))
         return PyByteArray_Size(py_ba);
@@ -45,17 +44,17 @@ int get_bytes_or_bytearray_ln(bp::object buf)
 
 bool write_wrap1(RF24Mesh& ref, bp::object buf, uint8_t msg_type)
 {
-	return ref.write(get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf));
+    return ref.write(get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf));
 }
 
 bool write_wrap2(RF24Mesh& ref, bp::object buf, uint8_t msg_type, uint8_t nodeID)
 {
-	return ref.write(get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf), nodeID);
+    return ref.write(get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf), nodeID);
 }
 
-bool write_to_node_wrap(RF24Mesh& ref, uint16_t to_node,  bp::object buf, uint8_t msg_type)
+bool write_to_node_wrap(RF24Mesh& ref, uint16_t to_node, bp::object buf, uint8_t msg_type)
 {
-	return ref.write(to_node, get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf));
+    return ref.write(to_node, get_bytes_or_bytearray_str(buf), msg_type, get_bytes_or_bytearray_ln(buf));
 }
 
 // ******************** overload wrappers **************************

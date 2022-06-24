@@ -54,8 +54,7 @@ void setup() {
         // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
         Serial.println(F("Could not connect to network.\nConnecting to the mesh..."));
       } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
-    }
-    else {
+    } else {
       Serial.println(F("Radio hardware not responding."));
       while (1) {
         // hold in an infinite loop
@@ -90,7 +89,8 @@ void loop() {
         Serial.println("Send fail, Test OK");
       }
     } else {
-      Serial.print("Send OK: "); Serial.println(displayTimer);
+      Serial.print("Send OK: ");
+      Serial.println(displayTimer);
     }
   }
 

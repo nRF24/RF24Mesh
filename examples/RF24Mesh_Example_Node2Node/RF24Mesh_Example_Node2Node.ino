@@ -50,8 +50,7 @@ void setup() {
         // mesh.renewAddress() will return MESH_DEFAULT_ADDRESS on failure to connect
         Serial.println(F("Could not connect to network.\nConnecting to the mesh..."));
       } while (mesh.renewAddress() == MESH_DEFAULT_ADDRESS);
-    }
-    else {
+    } else {
       Serial.println(F("Radio hardware not responding."));
       while (1) {
         // hold in an infinite loop
@@ -69,10 +68,11 @@ void loop() {
     RF24NetworkHeader header;
     uint32_t mills;
     network.read(header, &mills, sizeof(mills));
-    Serial.print(F("Rcv ")); Serial.print(mills);
+    Serial.print(F("Rcv "));
+    Serial.print(mills);
     Serial.print(F(" from nodeID "));
     int _ID = mesh.getNodeID(header.from_node);
-    if ( _ID > 0) {
+    if (_ID > 0) {
       Serial.println(_ID);
     } else {
       Serial.println(F("Mesh ID Lookup Failed"));
@@ -95,5 +95,4 @@ void loop() {
       }
     }
   }
-
 }

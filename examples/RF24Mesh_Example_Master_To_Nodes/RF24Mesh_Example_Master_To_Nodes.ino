@@ -46,7 +46,6 @@ void setup() {
       // hold in an infinite loop
     }
   }
-
 }
 
 uint32_t displayTimer = 0;
@@ -88,13 +87,12 @@ void loop() {
   if (millis() - displayTimer > 5000) {
     ctr++;
     for (int i = 0; i < mesh.addrListTop; i++) {
-      payload_t payload = {millis(), ctr};
+      payload_t payload = { millis(), ctr };
       if (mesh.addrList[i].nodeID == 1) {  //Searching for node one from address list
-        payload = {ctr % 3, ctr};
+        payload = { ctr % 3, ctr };
       }
-      RF24NetworkHeader header(mesh.addrList[i].address, OCT); //Constructing a header
-      Serial.println( network.write(header, &payload, sizeof(payload)) == 1 ? F("Send OK") : F("Send Fail")); //Sending an message
-
+      RF24NetworkHeader header(mesh.addrList[i].address, OCT);                                                //Constructing a header
+      Serial.println(network.write(header, &payload, sizeof(payload)) == 1 ? F("Send OK") : F("Send Fail"));  //Sending an message
     }
     displayTimer = millis();
   }

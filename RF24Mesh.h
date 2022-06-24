@@ -22,9 +22,9 @@
 // None defined
 
 // No Network ACK types
-#define MESH_ADDR_LOOKUP 196
+#define MESH_ADDR_LOOKUP  196
 #define MESH_ADDR_RELEASE 197
-#define MESH_ID_LOOKUP 198
+#define MESH_ID_LOOKUP    198
 
 #define MESH_BLANK_ID 65535
 
@@ -57,6 +57,7 @@ class RF24Mesh
      * The mesh library and class documentation is currently in active development and usage may change.
      */
     /**@{*/
+
 public:
     /**
      * Construct the mesh:
@@ -69,7 +70,7 @@ public:
      * @param _radio The underlying radio driver instance
      * @param _network The underlying network instance
      */
-    RF24Mesh(RF24 &_radio, RF24Network &_network);
+    RF24Mesh(RF24& _radio, RF24Network& _network);
 
     /**
      * Call this in setup() to configure the mesh and request an address.  <br>
@@ -104,7 +105,7 @@ public:
      * @param nodeID **Optional**: The @ref _nodeID "nodeID" of the recipient if not sending to master.
      * @return True if success; false if failed
      */
-    bool write(const void *data, uint8_t msg_type, size_t size, uint8_t nodeID = 0);
+    bool write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID = 0);
 
     /**
      * Set a unique @ref _nodeID "nodeID" for this node.
@@ -131,7 +132,7 @@ public:
      */
     uint16_t renewAddress(uint32_t timeout = MESH_RENEWAL_TIMEOUT);
 
-    #if !defined(MESH_NOMASTER)
+#if !defined(MESH_NOMASTER)
     /**
      * This is only to be used on the master node because it manages allocation of network addresses
      * for any requesting (non-master) node's ID, similar to DHCP.
@@ -141,7 +142,7 @@ public:
      */
     void DHCP();
 
-    #endif
+#endif
 
     /**@}*/
     /**
@@ -191,7 +192,7 @@ public:
     int16_t getAddress(uint8_t nodeID);
 
     /** @brief Write to a specific node by RF24Network address. */
-    bool write(uint16_t to_node, const void *data, uint8_t msg_type, size_t size);
+    bool write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size);
 
     /**
      * Change the active radio channel after the mesh has been started.
@@ -220,7 +221,8 @@ public:
      */
     void setCallback(void (*meshCallback)(void));
 
-    #define MESH_CALLBACK if (meshCallback) { meshCallback(); }
+#define MESH_CALLBACK \
+    if (meshCallback) meshCallback();
 
     /**
      * Set or change a @ref _nodeID "nodeID" : node address (key : value) pair manually.
@@ -244,7 +246,7 @@ public:
      */
     void setAddress(uint8_t nodeID, uint16_t address, bool searchBy = false);
 
-    #if !defined(MESH_NOMASTER)
+#if !defined(MESH_NOMASTER)
     /**
      * Save the @ref addrList to a binary file named "dhcplist.txt".
      * @note This function is for use on the master node only and only on Linux or x86 platforms.
@@ -267,7 +269,7 @@ public:
     /** @deprecated For backward compatibility with older code. Use the synonymous setAddress() instead. */
     void setStaticAddress(uint8_t nodeID, uint16_t address);
 
-    #endif // !defined(MESH_NOMASTER)
+#endif // !defined(MESH_NOMASTER)
     /**@}*/
 
     /**
@@ -282,14 +284,15 @@ public:
      */
     uint8_t _nodeID;
 
-    #if !defined(MESH_NOMASTER)
+#if !defined(MESH_NOMASTER)
     /**
      * @brief A struct for storing a  @ref _nodeID "nodeID" and an address in a single element of
      * the RF24Mesh::addrList array.
      *
      * @note This array only exists on the mesh network's master node.
      */
-    typedef struct {
+    typedef struct
+    {
         /** @brief The @ref _nodeID "nodeID" of an network node (child) */
         uint8_t nodeID;
         /** @brief The logical address of an network node (child) */
@@ -308,28 +311,28 @@ public:
      * @brief A array of addrListStruct elements for assigned addresses.
      * @see addrListStruct class reference
      */
-    addrListStruct *addrList;
+    addrListStruct* addrList;
     /** @brief The number of entries in the addrListStruct of assigned addresses. */
     uint8_t addrListTop;
-    #endif
+#endif
     /**@}*/
 
 private:
-    RF24 &radio;
-    RF24Network &network;
+    RF24& radio;
+    RF24Network& network;
 
-    /** Function pionter for customized callback usage in long running algorithms. */
+    /** Function pointer for customized callback usage in long running algorithms. */
     void (*meshCallback)(void);
 
     /** Actual requesting of the address once a contact node is discovered or supplied **/
     bool requestAddress(uint8_t level);
 
-    #if !defined(MESH_NOMASTER)
+#if !defined(MESH_NOMASTER)
     /** Indicator that an address request is available. */
     bool doDHCP;
     /** Just ensures we don't re-allocate the memory buffer if restarting the mesh on master. **/
     bool addrMemAllocated;
-    #endif
+#endif
 
     /** Starts up the network layer with default address. */
     void beginDefault();
@@ -338,8 +341,6 @@ private:
     /** Returns the number of octal digits in the specified address. */
     uint8_t getLevel(uint16_t address);
 };
-
-#endif // define __RF24MESH_H__
 
 /**
  * @example RF24Mesh_Example.ino
@@ -411,3 +412,5 @@ private:
  * A very limited ncurses interface used for initial monitoring/testing of RF24Mesh
  * @image html "images/RF24Mesh_Ncurses.JPG"
  */
+
+#endif // define __RF24MESH_H__
