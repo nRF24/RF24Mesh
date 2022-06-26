@@ -16,7 +16,8 @@ sphinx:
 
 # Optionally build your docs in additional formats such as PDF
 formats:
-  - pdf
+#  - pdf
+# latex builds break for sphinx-immaterial theme
 
 # install Python requirements required to build docs
 python:
