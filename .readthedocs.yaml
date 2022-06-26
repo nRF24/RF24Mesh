@@ -15,7 +15,7 @@ sphinx:
   configuration: docs/sphinx/conf.py
 
 # Optionally build your docs in additional formats such as PDF
-formats:
+#formats:
 #  - pdf
 # latex builds break for sphinx-immaterial theme
 
