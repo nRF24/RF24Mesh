@@ -27,7 +27,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios<span id="projectnumber">&#160;1.1.7</span>
+   <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios<span id="projectnumber">&#160;1.1.8</span>
    </div>
    <div id="projectbrief">TMRh20 2020 - A user friendly mesh overlay for sensor neworks using RF24Network</div>
   </td>
@@ -124,7 +124,7 @@ var searchBox = new SearchBox("searchBox", "search",'Search','.html');
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    network.returnSysMsgs = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="classRF24Mesh.html#a38be0ba49fea6986dedd976f18865912">getNodeID</a>() &gt; 0) { <span class="comment">//Not master node</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">if</span> (!<a class="code hl_function" href="classRF24Mesh.html#a01e3844c6f04bf81bac6e45c3d75116e">renewAddress</a>(timeout)) {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="classRF24Mesh.html#a01e3844c6f04bf81bac6e45c3d75116e">renewAddress</a>(timeout) == <a class="code hl_define" href="RF24Mesh__config_8h.html#a9aa307506ecde1e60194a4eed4e073c9">MESH_DEFAULT_ADDRESS</a>) {</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        }</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    }</div>
@@ -716,7 +716,7 @@ var searchBox = new SearchBox("searchBox", "search",'Search','.html');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jul 9 2022 12:50:24 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
+Generated on Sun Jul 10 2022 14:18:36 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4
 </small></address>
 </body>
 </html>
