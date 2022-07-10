@@ -36,7 +36,7 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
     network.returnSysMsgs = true;
 
     if (getNodeID() > 0) { //Not master node
-        if (!renewAddress(timeout)) {
+        if (!renewAddress(timeout) == MESH_DEFAULT_ADDRESS) {
             return false;
         }
     }
