@@ -29,6 +29,7 @@ on:
   release:
     branches: [master]
     types: [published, edited]
+  workflow_dispatch:
 
 jobs:
   build-doxygen:
@@ -63,7 +64,7 @@ jobs:
           name: "RF24Mesh_doxygen_docs"
           path: ${{ github.workspace }}/docs/html
       - name: upload to github pages
-        if: ${{ github.event_name == 'release'}}
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master')
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
