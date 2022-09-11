@@ -16,7 +16,7 @@ mesh.setNodeID(0)
 
 # Set the PA Level to MIN and disable LNA for testing & power supply related issues
 radio.begin()
-radio.setPALevel(RF24_PA_MIN,0)
+radio.setPALevel(RF24_PA_MIN, 0)
 
 if not mesh.begin():
     # if mesh.begin() returns false for a master node,
