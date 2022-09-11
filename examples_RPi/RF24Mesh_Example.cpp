@@ -1,13 +1,13 @@
 /** RF24Mesh_Example.cpp by TMRh20
-  *
-  * Note: This sketch only functions on -RPi-
-  *
-  * This example sketch shows how to manually configure a node via RF24Mesh, and send data to the
-  * master node.
-  * In this sketch, the nodes will refresh their network address as soon as a single write fails. This allows the
-  * nodes to change position in relation to each other and the master node.
-  *
-  */
+ *
+ * Note: This sketch only functions on -RPi-
+ *
+ * This example sketch shows how to manually configure a node via RF24Mesh, and send data to the
+ * master node.
+ * In this sketch, the nodes will refresh their network address as soon as a single write fails. This allows the
+ * nodes to change position in relation to each other and the master node.
+ *
+ */
 #include "RF24Mesh/RF24Mesh.h"
 #include <RF24/RF24.h>
 #include <RF24Network/RF24Network.h>
@@ -23,6 +23,11 @@ int main(int argc, char** argv)
 
     // Set the nodeID to 0 for the master node
     mesh.setNodeID(4);
+
+    // Set the PA Level to MIN and disable LNA for testing & power supply related issues
+    radio.begin();
+    radio.setPALevel(RF24_PA_MIN, 0);
+
     // Connect to the mesh
     printf("start nodeID %d\n", mesh.getNodeID());
     if (!mesh.begin()) {
