@@ -4,7 +4,7 @@ Simplest RF24Mesh example that transmits a time stamp (in milliseconds) 1 per se
 import sys
 import time
 import struct
-from RF24 import RF24
+from RF24 import RF24, RF24_PA_MIN
 from RF24Network import RF24Network
 from RF24Mesh import RF24Mesh
 
@@ -23,6 +23,11 @@ network = RF24Network(radio)
 mesh = RF24Mesh(radio, network)
 
 mesh.setNodeID(4)
+
+# Set the PA Level to MIN and disable LNA for testing & power supply related issues
+radio.begin()
+radio.setPALevel(RF24_PA_MIN, 0)
+
 print("starting nodeID", mesh.getNodeID())
 if not mesh.begin():
     if radio.isChipConnected():

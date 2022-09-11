@@ -1,15 +1,15 @@
 /** RF24Mesh_Example_Master.ino by TMRh20
-  *
-  * Note: This sketch only functions on -Arduino Due-
-  *
-  * This example sketch shows how to manually configure a node via RF24Mesh as a master node, which
-  * will receive all data from sensor nodes.
-  *
-  * The nodes can change physical or logical position in the network, and reconnect through different
-  * routing nodes as required. The master node manages the address assignments for the individual nodes
-  * in a manner similar to DHCP.
-  *
-  */
+ *
+ * Note: This sketch only functions on -Arduino Due-
+ *
+ * This example sketch shows how to manually configure a node via RF24Mesh as a master node, which
+ * will receive all data from sensor nodes.
+ *
+ * The nodes can change physical or logical position in the network, and reconnect through different
+ * routing nodes as required. The master node manages the address assignments for the individual nodes
+ * in a manner similar to DHCP.
+ *
+ */
 #include "RF24Mesh/RF24Mesh.h"
 #include <RF24/RF24.h>
 #include <RF24Network/RF24Network.h>
@@ -22,6 +22,11 @@ int main(int argc, char** argv)
 {
     // Set the nodeID to 0 for the master node
     mesh.setNodeID(0);
+
+    // Set the PA Level to MIN and disable LNA for testing & power supply related issues
+    radio.begin();
+    radio.setPALevel(RF24_PA_MIN, 0);
+
     // Connect to the mesh
     printf("start\n");
     if (!mesh.begin()) {

@@ -46,6 +46,10 @@ void setup() {
   // Set the nodeID manually
   mesh.setNodeID(nodeID);
 
+  // Set the PA Level to MIN and disable LNA for testing & power supply related issues
+  radio.begin();
+  radio.setPALevel(RF24_PA_MIN, 0);
+
   // Connect to the mesh
   Serial.println(F("Connecting to the mesh..."));
   if (!mesh.begin()) {
