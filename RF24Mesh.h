@@ -40,13 +40,20 @@
     #define RF24_LINUX
 #else
     #include <RF24.h>
+    #if defined ARDUINO_ARCH_NRF52840 || defined ARDUINO_ARCH_NRF52833
+        #include <nrf_to_nrf.h>
+    #endif
     #include <RF24Network.h>
 #endif
 
 #include <stddef.h>
 #include <stdint.h>
 
+#if defined NRF52_RADIO_LIBRARY
+class nrf_to_nrf;
+#else
 class RF24;
+#endif
 class RF24Network;
 
 class RF24Mesh
@@ -70,8 +77,12 @@ public:
      * @param _radio The underlying radio driver instance
      * @param _network The underlying network instance
      */
-    RF24Mesh(RF24& _radio, RF24Network& _network);
 
+#if defined NRF52_RADIO_LIBRARY
+    RF24Mesh(nrf_to_nrf& _radio, RF24Network& _network);
+#else
+    RF24Mesh(RF24& _radio, RF24Network& _network);
+#endif
     /**
      * Call this in setup() to configure the mesh and request an address.  <br>
      *
@@ -318,7 +329,11 @@ public:
     /**@}*/
 
 private:
+#if defined NRF52_RADIO_LIBRARY
+    nrf_to_nrf& radio;
+#else
     RF24& radio;
+#endif
     RF24Network& network;
 
     /** Function pointer for customized callback usage in long running algorithms. */
