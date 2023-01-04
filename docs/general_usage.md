@@ -1,5 +1,7 @@
 # General Usage
-<!-- markdownlint-disable MD024 -->
+
+@tableofcontents
+
 ## Network Design Options
 
 1. **Static Network** (No Mesh)
