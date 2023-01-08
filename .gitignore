@@ -21,6 +21,10 @@ build/
 # ignore PlatformIO packages
 *.tar.gz
 
+# ignore python venv
+.env/
+.venv/
+
 # Cmake build-in-source generated stuff
 CMakeCache.txt
 CPackConfig.cmake
