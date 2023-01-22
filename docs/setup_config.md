@@ -1,5 +1,7 @@
 # Setup And Config
 
+@tableofcontents
+
 The initial testing version of RF24Mesh is built as a simple overlay for RF24Network. Users
 currently need to be familiar with the basics of sending and receiving data via
 RF24Network, but do not need to understand the topology, routing or addressing systems.

@@ -1,5 +1,7 @@
 # Mesh Networking Layer for RF24 Radios
 
+@tableofcontents
+
 This class intends to provide a simple and seamless 'mesh' layer for sensor networks,
 allowing automatic and dynamic configuration that can be customized to suit many scenarios.
 It is currently designed to interface directly with with the

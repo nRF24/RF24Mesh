@@ -1,5 +1,5 @@
 
-:hero: Automated Networking for nrf24L01 radios
+:hero: Mesh Networking Layer for nRF24L01 radios
 
 Introduction
 =============
