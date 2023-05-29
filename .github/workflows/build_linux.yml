@@ -44,6 +44,7 @@ jobs:
     uses: nRF24/.github/.github/workflows/build_linux_cmake.yaml@main
     with:
       rf24mesh-ref: ${{ github.sha }}
+      rf24network-ref: 'template-attempt2' # remove me before merging
       compiler: ${{ matrix.toolchain.compiler }}
       usr-dir: ${{ matrix.toolchain.usr_dir }}
       examples-path: examples_RPi
