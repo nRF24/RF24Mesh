@@ -50,15 +50,25 @@
 #include <stdint.h>
 
 class RF24;
-#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840)
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833)
 class nrf_to_nrf;
 #endif
 
-template<class ESB_Radio>
-class ESB_Network;
+template<class radio_t>
+class ESBNetwork;
 
-template<class network_t = ESB_Network<RF24>, class radio_t = RF24>
-class ESB_Mesh
+/**
+ * @tparam network_t The `network` object's type. Defaults to `RF24Network` for legacy behavior.
+ * This new abstraction is really meant for using the nRF52840 SoC as a drop-in replacement
+ * for the nRF24L01 radio. For more detail, see the
+ * [nrf_to_nrf Arduino library](https://github.com/TMRh20/nrf_to_nrf).
+ * @tparam radio_t The `radio` object's type. Defaults to `RF24` for legacy behavior.
+ * This new abstraction is really meant for using the nRF52840 SoC as a drop-in replacement
+ * for the nRF24L01 radio. For more detail, see the
+ * [nrf_to_nrf Arduino library](https://github.com/TMRh20/nrf_to_nrf).
+ */
+template<class network_t = ESBNetwork<RF24>, class radio_t = RF24>
+class ESBMesh
 {
     /**
      * @name RF24Mesh
@@ -79,7 +89,7 @@ public:
      * @param _radio The underlying radio driver instance
      * @param _network The underlying network instance
      */
-    ESB_Mesh(radio_t& _radio, network_t& _network);
+    ESBMesh(radio_t& _radio, network_t& _network);
 
     /**
      * Call this in setup() to configure the mesh and request an address.  <br>
@@ -119,7 +129,7 @@ public:
     /**
      * Set a unique @ref _nodeID "nodeID" for this node.
      *
-     * This needs to be called before ESB_Mesh::begin(). The parameter value passed can be fetched
+     * This needs to be called before ESBMesh::begin(). The parameter value passed can be fetched
      * via serial connection, EEPROM, etc when configuring a large number of nodes.
      * @note If using RF24Gateway and/or RF24Ethernet, nodeIDs 0 & 1 are used by the master node.
      * @param nodeID Can be any unique value ranging from 1 to 255 (reserving 0 for the master node).
@@ -147,7 +157,7 @@ public:
      * for any requesting (non-master) node's ID, similar to DHCP.
      *
      * @warning On master nodes, It is required to call this function immediately after calling
-     * ESB_Mesh::update() to ensure address requests are handled appropriately.
+     * ESBMesh::update() to ensure address requests are handled appropriately.
      */
     void DHCP();
 
@@ -296,7 +306,7 @@ public:
 #if !defined(MESH_NOMASTER)
     /**
      * @brief A struct for storing a  @ref _nodeID "nodeID" and an address in a single element of
-     * the ESB_Mesh::addrList array.
+     * the ESBMesh::addrList array.
      *
      * @note This array only exists on the mesh network's master node.
      */
@@ -351,9 +361,21 @@ private:
     uint8_t getLevel(uint16_t address);
 };
 
-typedef ESB_Mesh<ESB_Network<RF24>, RF24> RF24Mesh;
-#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840)
-typedef ESB_Mesh<ESB_Network<nrf_to_nrf>, nrf_to_nrf> RF52Mesh;
+/**
+ * A type definition of the template class `ESBMesh` to maintain backward compatibility.
+ * 
+ * ```.cpp
+ * RF24 radio(7, 8);
+ * RF24Network network(radio);
+ * 
+ * RF24Mesh mesh(radio, network);
+ * // is equivalent to
+ * ESBMesh<ESBNetwork<RF24>, RF24> mesh(radio, network);
+ * ```
+ */
+typedef ESBMesh<ESBNetwork<RF24>, RF24> RF24Mesh;
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833)
+typedef ESBMesh<ESBNetwork<nrf_to_nrf>, nrf_to_nrf> RF52Mesh;
 #endif
 
 /**

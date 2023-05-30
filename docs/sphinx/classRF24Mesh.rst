@@ -1,11 +1,11 @@
-ESB_Mesh class
+ESBMesh class
 ~~~~~~~~~~~~~~
 
 .. doxygentypedef:: RF24Mesh
 
-.. cpp:class:: template<network_t = ESB_Network<RF24>, radio_t = RF24> ESB_Mesh
+.. cpp:class:: template<network_t = ESBNetwork<RF24>, radio_t = RF24> ESBMesh
 
-    :tparam network_t: The ``network`` object's type. Defaults to the :class:`RF24` specialization
+    :tparam network_t: The ``network`` object's type. Defaults to the :class:`RF24Network` specialization
         for legacy behavior. This new abstraction is really meant for using the nRF52840 SoC as a
         drop-in replacement for the nRF24L01 radio. For more detail, see the
         `nrf_to_nrf Arduino library <https://github.com/TMRh20/nrf_to_nrf>`_.
@@ -14,7 +14,7 @@ ESB_Mesh class
         for the nRF24L01 radio. For more detail, see the
         `nrf_to_nrf Arduino library <https://github.com/TMRh20/nrf_to_nrf>`_.
 
-    .. doxygenfunction:: ESB_Mesh::ESB_Mesh
+    .. doxygenfunction:: ESBMesh::ESBMesh
 
     .. seealso::
         - :cpp:class:`RF24` for the ``radio`` object
@@ -23,51 +23,51 @@ ESB_Mesh class
 Basic API
 ============
 
-.. doxygenfunction:: ESB_Mesh::begin
+.. doxygenfunction:: ESBMesh::begin
 
 .. seealso::
     :cpp:enum:`rf24_datarate_e`, :external:cpp:func:`RF24::setChannel()`, :c:macro:`MESH_DEFAULT_CHANNEL`, :c:macro:`MESH_RENEWAL_TIMEOUT`
 
-.. doxygenfunction:: ESB_Mesh::update
+.. doxygenfunction:: ESBMesh::update
 
 .. seealso::
     Review :cpp:func:`RF24Network::update()` for more details.
 
-.. doxygenfunction:: ESB_Mesh::write (const void *data, uint8_t msg_type, size_t size, uint8_t nodeID=0)
+.. doxygenfunction:: ESBMesh::write (const void *data, uint8_t msg_type, size_t size, uint8_t nodeID=0)
 
 .. seealso::
     Review :cpp:var:`RF24NetworkHeader::type` for more details about available message types.
 
-.. doxygenfunction:: ESB_Mesh::renewAddress
-.. doxygenfunction:: ESB_Mesh::setNodeID
-.. doxygenvariable:: ESB_Mesh::_nodeID
+.. doxygenfunction:: ESBMesh::renewAddress
+.. doxygenfunction:: ESBMesh::setNodeID
+.. doxygenvariable:: ESBMesh::_nodeID
 
 Advanced API
 ============
 
-.. doxygenvariable:: ESB_Mesh::mesh_address
-.. doxygenfunction:: ESB_Mesh::getNodeID
-.. doxygenfunction:: ESB_Mesh::checkConnection
-.. doxygenfunction:: ESB_Mesh::releaseAddress
-.. doxygenfunction:: ESB_Mesh::getAddress
-.. doxygenfunction:: ESB_Mesh::write (uint16_t to_node, const void *data, uint8_t msg_type, size_t size)
-.. doxygenfunction:: ESB_Mesh::setChannel
+.. doxygenvariable:: ESBMesh::mesh_address
+.. doxygenfunction:: ESBMesh::getNodeID
+.. doxygenfunction:: ESBMesh::checkConnection
+.. doxygenfunction:: ESBMesh::releaseAddress
+.. doxygenfunction:: ESBMesh::getAddress
+.. doxygenfunction:: ESBMesh::write (uint16_t to_node, const void *data, uint8_t msg_type, size_t size)
+.. doxygenfunction:: ESBMesh::setChannel
 
 .. seealso:: :external:cpp:func:`RF24::setChannel()`
 
-.. doxygenfunction:: ESB_Mesh::setChild
-.. doxygenfunction:: ESB_Mesh::setCallback
-.. doxygenfunction:: ESB_Mesh::setAddress
-.. doxygenfunction:: ESB_Mesh::setStaticAddress
-.. doxygenfunction:: ESB_Mesh::DHCP
-.. doxygenfunction:: ESB_Mesh::saveDHCP
-.. doxygenfunction:: ESB_Mesh::loadDHCP
+.. doxygenfunction:: ESBMesh::setChild
+.. doxygenfunction:: ESBMesh::setCallback
+.. doxygenfunction:: ESBMesh::setAddress
+.. doxygenfunction:: ESBMesh::setStaticAddress
+.. doxygenfunction:: ESBMesh::DHCP
+.. doxygenfunction:: ESBMesh::saveDHCP
+.. doxygenfunction:: ESBMesh::loadDHCP
 
 Address List Struct
 ===================
 
-.. doxygenvariable:: ESB_Mesh::addrList
-.. doxygenvariable:: ESB_Mesh::addrListTop
+.. doxygenvariable:: ESBMesh::addrList
+.. doxygenvariable:: ESBMesh::addrListTop
 
-.. doxygenstruct:: ESB_Mesh::addrListStruct
+.. doxygenstruct:: ESBMesh::addrListStruct
     :members:
