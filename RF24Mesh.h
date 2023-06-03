@@ -86,6 +86,12 @@ public:
      * RF24Network network(radio);
      * RF24Mesh mesh(radio, network);
      * @endcode
+     * or
+     * @code
+     * nrf_to_nrf radio;
+     * RF52Network network(radio);
+     * RF52Mesh mesh(network,radio);
+     * @endcode
      * @param _radio The underlying radio driver instance
      * @param _network The underlying network instance
      */

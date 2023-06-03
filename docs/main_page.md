@@ -6,15 +6,43 @@ This class intends to provide a simple and seamless 'mesh' layer for sensor netw
 allowing automatic and dynamic configuration that can be customized to suit many scenarios.
 It is currently designed to interface directly with with the
 [RF24Network library](http://nRF24.github.io/RF24Network), an
-[OSI Network Layer](http://en.wikipedia.org/wiki/Network_layer) using nRF24L01(+) radios
-driven by the newly optimized [RF24 library](http://nRF24.github.io/RF24) fork.
+[OSI Network Layer](http://en.wikipedia.org/wiki/Network_layer) using nRF24L01(+) or NRF52x radios
+driven by the [RF24 library](http://nRF24.github.io/RF24) or [nrf_to_nrf library](https://github.com/TMRh20/nrf_to_nrf).
 
 ## Purpose/Goals
 
 - Provide a simple user interface for creating dynamic sensor networks with the RF24 and RF24Network libraries.
 - Create stable, fully automated/self-managed networks
 
-## News
+## News - 2023 API Changes
+
+Introducing **RF24Network & RF24Mesh v2.0** with some *significant API changes*, adding the use of [C++ Templates](https://cplusplus.com/doc/oldtutorial/templates/)
+in order to support a range of ESB enabled radios, most recently NRF52x radios.
+
+**Important Notes:**
+- Any network layer that uses v2 needs to have RF24Network/RF24Mesh dependencies of v2 or newer. RF24 v1.x is an exception here.
+- General usage should remain backward compatible, see the included examples of the related libraries for more info
+- Any third party libs that extend the network/mesh layer may also need to be updated to incorporate the new templated class prototypes:
+```cpp
+template<class radio_t>
+class ESBNetwork;
+  
+template<class network_t, class radio_t>
+class ESBMesh;
+```
+- Third party libs should also be able to use the backward-compatible typedef in their template:
+  - ESBGateway.h:
+  ```cpp
+  template<typename network_t, typename mesh_t>
+  class ESBGateway
+  ```
+  and inform the compiler what types they intend to support:
+  - ESBGateway.cpp:
+  ```cpp
+  template class ESBGateway<RF24Network, RF24Mesh>;
+  ```  
+- The auto installers do not perform a version check like package managers, so having the correct versions of the software is important.
+- We *will* be maintaining the v1.x versions with bugfixes etc for those who cannot or do not wish to migrate to the newer template approach.
 
 See a the list of changes on [the Github releases page](https://github.com/nRF24/RF24Mesh/releases/)
 
