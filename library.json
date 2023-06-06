@@ -7,7 +7,7 @@
         "type": "git",
         "url": "https://github.com/nRF24/RF24Mesh.git"
     },
-    "version": "1.1.8",
+    "version": "1.1.9",
     "dependencies":
     [
         {
