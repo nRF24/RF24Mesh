@@ -28,7 +28,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios<span id="projectnumber">&#160;v1.1.8</span>
+   <div id="projectname">RF24Mesh - Automated Networking for nrf24L01 radios<span id="projectnumber">&#160;v1.1.9</span>
    </div>
    <div id="projectbrief">TMRh20 2020 - A user friendly mesh overlay for sensor neworks using RF24Network</div>
   </td>
@@ -186,7 +186,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><dl class="section examples"><dt>Examples</dt><dd><a class="el" href="RF24Mesh_Example_8cpp-example.html#_a0">RF24Mesh_Example.cpp</a>, <a class="el" href="RF24Mesh_Example_8ino-example.html#_a0">RF24Mesh_Example.ino</a>, <a class="el" href="RF24Mesh_Example_Master_8cpp-example.html#_a0">RF24Mesh_Example_Master.cpp</a>, <a class="el" href="RF24Mesh_Example_Master_8ino-example.html#_a0">RF24Mesh_Example_Master.ino</a>, <a class="el" href="RF24Mesh_Example_Node2Node_8ino-example.html#_a0">RF24Mesh_Example_Node2Node.ino</a>, <a class="el" href="RF24Mesh_Example_Node2NodeExtra_8ino-example.html#_a0">RF24Mesh_Example_Node2NodeExtra.ino</a>, <a class="el" href="RF24Mesh_Ncurses_Master_8cpp-example.html#_a0">RF24Mesh_Ncurses_Master.cpp</a>, and <a class="el" href="RF24Mesh_SerialConfig_8ino-example.html#_a0">RF24Mesh_SerialConfig.ino</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00059">59</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00052">52</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8b2bde3730c955d28a269f35b610a562" name="a8b2bde3730c955d28a269f35b610a562"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8b2bde3730c955d28a269f35b610a562">&#9670;&#160;</a></span>RF24Mesh()</h2>
@@ -217,7 +217,7 @@ Public Attributes</h2></td></tr>
 <div class="fragment"><div class="line">RF24 radio(7, 8);</div>
 <div class="line">RF24Network network(radio);</div>
 <div class="line"><a class="code hl_class" href="classRF24Mesh.html">RF24Mesh</a> mesh(radio, network);</div>
-<div class="ttc" id="aclassRF24Mesh_html"><div class="ttname"><a href="classRF24Mesh.html">RF24Mesh</a></div><div class="ttdef"><b>Definition:</b> <a href="RF24Mesh_8h_source.html#l00059">RF24Mesh.h:60</a></div></div>
+<div class="ttc" id="aclassRF24Mesh_html"><div class="ttname"><a href="classRF24Mesh.html">RF24Mesh</a></div><div class="ttdef"><b>Definition:</b> <a href="RF24Mesh_8h_source.html#l00052">RF24Mesh.h:53</a></div></div>
 </div><!-- fragment --> <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">_radio</td><td>The underlying radio driver instance </td></tr>
@@ -226,7 +226,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00016">16</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00013">13</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -275,7 +275,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00028">28</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00024">24</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -296,7 +296,7 @@ Public Attributes</h2></td></tr>
 <p>Very similar to network.update(), it needs to be called regularly to keep the network and the mesh going. </p>
 <p>NO_MASTER</p>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00064">64</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00060">60</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -352,7 +352,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if success; false if failed </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00117">117</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00113">113</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -380,7 +380,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00404">404</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00400">400</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -411,7 +411,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The newly assigned RF24Network address. If the connecting process fails, then MESH_DEFAULT_ADDRESS is returned because all consciously unconnected nodes use that address. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00273">273</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00269">269</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -432,7 +432,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 <p>This is only to be used on the master node because it manages allocation of network addresses for any requesting (non-master) node's ID, similar to DHCP.</p>
 <dl class="section warning"><dt>Warning</dt><dd>On master nodes, It is required to call this function immediately after calling <a class="el" href="classRF24Mesh.html#a7a07df36e2d69a9cdaa9519e32854130">RF24Mesh::update()</a> to ensure address requests are handled appropriately. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00493">493</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00489">489</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -459,7 +459,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The unique identifier of the node in the range [1, 255] or -1 if node was not found. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00205">205</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00201">201</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -480,7 +480,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 <p>Tests connectivity of this node to the mesh. </p><dl class="section note"><dt>Note</dt><dd>If this function fails, address renewal should typically be done. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>1 if connected, 0 if mesh not responding </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00155">155</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00151">151</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -501,7 +501,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 <p>Releases the currently assigned address lease. Useful for nodes that will be sleeping etc. </p><dl class="section note"><dt>Note</dt><dd>Nodes should ensure that addresses are released successfully prior to going offline. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>True if successfully released, otherwise false. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00259">259</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00255">255</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -532,7 +532,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The RF24Network address of the node, -2 if successful but not in list, -1 if failed. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00168">168</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00164">164</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -576,7 +576,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 
 <p>Write to a specific node by RF24Network address. </p>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00107">107</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00103">103</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -602,7 +602,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00139">139</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00135">135</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -628,7 +628,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00148">148</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00144">144</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -659,7 +659,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00583">583</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00579">579</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -710,7 +710,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00419">419</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00415">415</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -730,7 +730,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </div><div class="memdoc">
 <p>Save the <a class="el" href="classRF24Mesh.html#a9a318c0e327fb099a20dbd10761f5e92">addrList</a> to a binary file named "dhcplist.txt". </p><dl class="section note"><dt>Note</dt><dd>This function is for use on the master node only and only on Linux or x86 platforms. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00479">479</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00475">475</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -750,7 +750,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </div><div class="memdoc">
 <p>Load the <a class="el" href="classRF24Mesh.html#a9a318c0e327fb099a20dbd10761f5e92">addrList</a> from a binary file named "dhcplist.txt". </p><dl class="section note"><dt>Note</dt><dd>This function is for use on the master node only and only on Linux or x86 platforms. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00456">456</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00452">452</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -781,7 +781,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </div><div class="memdoc">
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd>For backward compatibility with older code. Use the synonymous <a class="el" href="classRF24Mesh.html#af4208f157ec8a7dae4bc716236185597">setAddress()</a> instead. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00412">412</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8cpp_source.html#l00408">408</a> of file <a class="el" href="RF24Mesh_8cpp_source.html">RF24Mesh.cpp</a>.</p>
 
 </div>
 </div>
@@ -799,7 +799,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </div><div class="memdoc">
 <p>The assigned RF24Network (Octal) address of this node </p><dl class="section return"><dt>Returns</dt><dd>An unsigned 16-bit integer containing the RF24Network address in octal format. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00192">192</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00181">181</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
 
 </div>
 </div>
@@ -817,7 +817,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 <p>The unique identifying number used to differentiate mesh nodes' from their assigned network address. Ideally, this is set before calling <a class="el" href="classRF24Mesh.html#a4159edcb2a13c713cd9c524315270902">begin()</a> or <a class="el" href="classRF24Mesh.html#a01e3844c6f04bf81bac6e45c3d75116e" title="Reconnect to the mesh and renew the current RF24Network address.">renewAddress()</a>. It is up to the network administrator to make sure that this number is unique to each mesh/network node.</p>
 <p>This nodeID number is typically in the range [0, 255], but remember that <code>0</code> is reserved for the master node. Other external systems may reserve other node ID numbers, for instance RF24Gateway/RF24Ethernet reserves the node ID number <code>1</code> in addition to the master node ID <code>0</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00296">296</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00285">285</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
 
 </div>
 </div>
@@ -836,7 +836,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 <p>A array of <a class="el" href="structRF24Mesh_1_1addrListStruct.html" title="A struct for storing a nodeID and an address in a single element of the RF24Mesh::addrList array.">addrListStruct</a> elements for assigned addresses. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="structRF24Mesh_1_1addrListStruct.html" title="A struct for storing a nodeID and an address in a single element of the RF24Mesh::addrList array.">addrListStruct</a> class reference </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00325">325</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00314">314</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
 
 </div>
 </div>
@@ -854,7 +854,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 
 <p>The number of entries in the <a class="el" href="structRF24Mesh_1_1addrListStruct.html" title="A struct for storing a nodeID and an address in a single element of the RF24Mesh::addrList array.">addrListStruct</a> of assigned addresses. </p>
 
-<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00327">327</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="RF24Mesh_8h_source.html#l00316">316</a> of file <a class="el" href="RF24Mesh_8h_source.html">RF24Mesh.h</a>.</p>
 
 </div>
 </div>
@@ -865,7 +865,7 @@ Message types 1 - 64 (decimal) will NOT be acknowledged by the network, types 65
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jan 23 2023 00:13:05 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6
+Generated on Wed Jun 7 2023 00:16:46 for RF24Mesh - Automated Networking for nrf24L01 radios by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6
 </small></address>
 </body>
 </html>
