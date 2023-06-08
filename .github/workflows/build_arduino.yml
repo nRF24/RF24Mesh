@@ -34,7 +34,6 @@ jobs:
       libraries: |
         - source-url: https://github.com/nRF24/RF24.git
         - source-url: https://github.com/nRF24/RF24Network.git
-          version: template-attempt2
         - source-path: ./
         - name: nrf_to_nrf
       fqbn: ${{ matrix.fqbn }}

@@ -127,7 +127,6 @@ html_theme_options = {
     # Set the repo location to get a badge with stats
     "repo_url": "https://github.com/nRF24/RF24Mesh/",
     "repo_name": "RF24Mesh",
-    "repo_type": "github",
     # If False, expand all TOC entries
     "globaltoc_collapse": False,
 }

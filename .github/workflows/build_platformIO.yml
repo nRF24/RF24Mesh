@@ -37,7 +37,6 @@ jobs:
     with:
       example-path: ${{ matrix.example }}
       board-id: ${{ matrix.board }}
-      rf24network-ref: 'template-attempt2' # remove me before merging
     strategy:
       fail-fast: false
       matrix:
