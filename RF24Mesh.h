@@ -41,15 +41,34 @@
 #else
     #include <RF24.h>
     #include <RF24Network.h>
+    #if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840)
+        #include <nrf_to_nrf.h>
+    #endif
 #endif
 
 #include <stddef.h>
 #include <stdint.h>
 
 class RF24;
-class RF24Network;
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833)
+class nrf_to_nrf;
+#endif
 
-class RF24Mesh
+template<class radio_t>
+class ESBNetwork;
+
+/**
+ * @tparam network_t The `network` object's type. Defaults to `RF24Network` for legacy behavior.
+ * This new abstraction is really meant for using the nRF52840 SoC as a drop-in replacement
+ * for the nRF24L01 radio. For more detail, see the
+ * [nrf_to_nrf Arduino library](https://github.com/TMRh20/nrf_to_nrf).
+ * @tparam radio_t The `radio` object's type. Defaults to `RF24` for legacy behavior.
+ * This new abstraction is really meant for using the nRF52840 SoC as a drop-in replacement
+ * for the nRF24L01 radio. For more detail, see the
+ * [nrf_to_nrf Arduino library](https://github.com/TMRh20/nrf_to_nrf).
+ */
+template<class network_t = ESBNetwork<RF24>, class radio_t = RF24>
+class ESBMesh
 {
     /**
      * @name RF24Mesh
@@ -60,17 +79,25 @@ class RF24Mesh
 
 public:
     /**
-     * Construct the mesh:
-     *
+     * Construct the mesh.
+     * 
+     * v2.0 supports a backward compatible constructor:
      * @code
      * RF24 radio(7, 8);
      * RF24Network network(radio);
-     * RF24Mesh mesh(radio, network);
+     * RF24Mesh mesh(radio, network); // for nRF24L01
+     *
+     * nrf_to_nrf radio1;
+     * RF52Network network1(radio1);
+     * RF52Mesh mesh1(network1, radio1); // for nRF52xxx family
      * @endcode
+     * 
+     * @see v2.0 supports [nrf_to_nrf Arduino library](https://github.com/TMRh20/nrf_to_nrf)
+     * for nrf52 chips' internal radio.
      * @param _radio The underlying radio driver instance
      * @param _network The underlying network instance
      */
-    RF24Mesh(RF24& _radio, RF24Network& _network);
+    ESBMesh(radio_t& _radio, network_t& _network);
 
     /**
      * Call this in setup() to configure the mesh and request an address.  <br>
@@ -110,7 +137,7 @@ public:
     /**
      * Set a unique @ref _nodeID "nodeID" for this node.
      *
-     * This needs to be called before RF24Mesh::begin(). The parameter value passed can be fetched
+     * This needs to be called before ESBMesh::begin(). The parameter value passed can be fetched
      * via serial connection, EEPROM, etc when configuring a large number of nodes.
      * @note If using RF24Gateway and/or RF24Ethernet, nodeIDs 0 & 1 are used by the master node.
      * @param nodeID Can be any unique value ranging from 1 to 255 (reserving 0 for the master node).
@@ -138,7 +165,7 @@ public:
      * for any requesting (non-master) node's ID, similar to DHCP.
      *
      * @warning On master nodes, It is required to call this function immediately after calling
-     * RF24Mesh::update() to ensure address requests are handled appropriately.
+     * ESBMesh::update() to ensure address requests are handled appropriately.
      */
     void DHCP();
 
@@ -287,7 +314,7 @@ public:
 #if !defined(MESH_NOMASTER)
     /**
      * @brief A struct for storing a  @ref _nodeID "nodeID" and an address in a single element of
-     * the RF24Mesh::addrList array.
+     * the ESBMesh::addrList array.
      *
      * @note This array only exists on the mesh network's master node.
      */
@@ -318,8 +345,8 @@ public:
     /**@}*/
 
 private:
-    RF24& radio;
-    RF24Network& network;
+    radio_t& radio;
+    network_t& network;
 
     /** Function pointer for customized callback usage in long running algorithms. */
     void (*meshCallback)(void);
@@ -341,6 +368,23 @@ private:
     /** Returns the number of octal digits in the specified address. */
     uint8_t getLevel(uint16_t address);
 };
+
+/**
+ * A type definition of the template class `ESBMesh` to maintain backward compatibility.
+ * 
+ * ```.cpp
+ * RF24 radio(7, 8);
+ * RF24Network network(radio);
+ * 
+ * RF24Mesh mesh(radio, network);
+ * // is equivalent to
+ * ESBMesh<ESBNetwork<RF24>, RF24> mesh(radio, network);
+ * ```
+ */
+typedef ESBMesh<ESBNetwork<RF24>, RF24> RF24Mesh;
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833)
+typedef ESBMesh<ESBNetwork<nrf_to_nrf>, nrf_to_nrf> RF52Mesh;
+#endif
 
 /**
  * @example RF24Mesh_Example.ino

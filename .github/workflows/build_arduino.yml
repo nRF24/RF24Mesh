@@ -35,6 +35,7 @@ jobs:
         - source-url: https://github.com/nRF24/RF24.git
         - source-url: https://github.com/nRF24/RF24Network.git
         - source-path: ./
+        - name: nrf_to_nrf
       fqbn: ${{ matrix.fqbn }}
       enable-deltas-report: ${{ matrix.enable-deltas-report }}
       platforms: |
@@ -70,7 +71,7 @@ jobs:
           - "arduino:avr:chiwawa"
           - "arduino:avr:one"
           - "arduino:avr:unowifi"
-          # - "arduino:mbed:nano33ble" # pending nRF5x integration
+          - "arduino:mbed:nano33ble"
           - "arduino:samd:mkr1000"
           - "arduino:samd:mkrwifi1010"
           - "arduino:samd:nano_33_iot"

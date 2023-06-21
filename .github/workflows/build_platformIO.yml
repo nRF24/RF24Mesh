@@ -35,8 +35,8 @@ jobs:
     needs: [check_formatting, validate_lib_json]
     uses: nRF24/.github/.github/workflows/build_platformio.yaml@main
     with:
-     example-path: ${{ matrix.example }}
-     board-id: ${{ matrix.board }}
+      example-path: ${{ matrix.example }}
+      board-id: ${{ matrix.board }}
     strategy:
       fail-fast: false
       matrix:

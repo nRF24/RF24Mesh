@@ -25,6 +25,9 @@ build/
 .env/
 .venv/
 
+# ignore python build artifacts
+*.egg-info/
+
 # Cmake build-in-source generated stuff
 CMakeCache.txt
 CPackConfig.cmake

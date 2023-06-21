@@ -1,7 +1,7 @@
 /**
  * @file RF24Mesh.cpp
  *
- * Class definitions for RF24Mesh
+ * Class definitions for ESBMesh
  */
 
 #include "RF24Mesh.h"
@@ -10,7 +10,8 @@
     #include <fstream>
 #endif
 
-RF24Mesh::RF24Mesh(RF24& _radio, RF24Network& _network) : radio(_radio), network(_network)
+template<class network_t, class radio_t>
+ESBMesh<network_t, radio_t>::ESBMesh(radio_t& _radio, network_t& _network) : radio(_radio), network(_network)
 {
     setCallback(NULL);
     meshStarted = false;
@@ -21,7 +22,8 @@ RF24Mesh::RF24Mesh(RF24& _radio, RF24Network& _network) : radio(_radio), network
 
 /*****************************************************/
 
-bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout)
+template<class network_t, class radio_t>
+bool ESBMesh<network_t, radio_t>::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeout)
 {
     //delay(1); // Found problems w/SPIDEV & ncurses. Without this, getch() returns a stream of garbage
     if (meshStarted) {
@@ -57,7 +59,8 @@ bool RF24Mesh::begin(uint8_t channel, rf24_datarate_e data_rate, uint32_t timeou
 
 /*****************************************************/
 
-uint8_t RF24Mesh::update()
+template<class network_t, class radio_t>
+uint8_t ESBMesh<network_t, radio_t>::update()
 {
     uint8_t type = network.update();
     if (mesh_address == MESH_DEFAULT_ADDRESS) return type;
@@ -100,7 +103,8 @@ uint8_t RF24Mesh::update()
 
 /*****************************************************/
 
-bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size)
+template<class network_t, class radio_t>
+bool ESBMesh<network_t, radio_t>::write(uint16_t to_node, const void* data, uint8_t msg_type, size_t size)
 {
     if (mesh_address == MESH_DEFAULT_ADDRESS) return 0;
 
@@ -110,7 +114,8 @@ bool RF24Mesh::write(uint16_t to_node, const void* data, uint8_t msg_type, size_
 
 /*****************************************************/
 
-bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID)
+template<class network_t, class radio_t>
+bool ESBMesh<network_t, radio_t>::write(const void* data, uint8_t msg_type, size_t size, uint8_t nodeID)
 {
     if (mesh_address == MESH_DEFAULT_ADDRESS) return 0;
 
@@ -132,7 +137,8 @@ bool RF24Mesh::write(const void* data, uint8_t msg_type, size_t size, uint8_t no
 
 /*****************************************************/
 
-void RF24Mesh::setChannel(uint8_t _channel)
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::setChannel(uint8_t _channel)
 {
     radio.stopListening();
     radio.setChannel(_channel);
@@ -141,14 +147,16 @@ void RF24Mesh::setChannel(uint8_t _channel)
 
 /*****************************************************/
 
-void RF24Mesh::setChild(bool allow)
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::setChild(bool allow)
 {
     network.networkFlags = allow ? network.networkFlags & ~FLAG_NO_POLL : network.networkFlags | FLAG_NO_POLL;
 }
 
 /*****************************************************/
 
-bool RF24Mesh::checkConnection()
+template<class network_t, class radio_t>
+bool ESBMesh<network_t, radio_t>::checkConnection()
 {
     // getAddress() doesn't use auto-ack; do a double-check to manually retry 1 more time
     if (getAddress(_nodeID) < 1) {
@@ -161,7 +169,8 @@ bool RF24Mesh::checkConnection()
 
 /*****************************************************/
 
-int16_t RF24Mesh::getAddress(uint8_t nodeID)
+template<class network_t, class radio_t>
+int16_t ESBMesh<network_t, radio_t>::getAddress(uint8_t nodeID)
 { // Master will return and send 00 address for a nodeID with address 0, -1 if not found
 
     //if (nodeID == _nodeID) return mesh_address;
@@ -198,7 +207,8 @@ int16_t RF24Mesh::getAddress(uint8_t nodeID)
 
 /*****************************************************/
 
-int16_t RF24Mesh::getNodeID(uint16_t address)
+template<class network_t, class radio_t>
+int16_t ESBMesh<network_t, radio_t>::getNodeID(uint16_t address)
 {
     if (address == MESH_BLANK_ID) return _nodeID;
     if (address == 0) return 0;
@@ -231,7 +241,8 @@ int16_t RF24Mesh::getNodeID(uint16_t address)
 
 /*****************************************************/
 
-uint8_t RF24Mesh::getLevel(uint16_t address)
+template<class network_t, class radio_t>
+uint8_t ESBMesh<network_t, radio_t>::getLevel(uint16_t address)
 {
     uint8_t count = 0;
     while (address) {
@@ -243,7 +254,8 @@ uint8_t RF24Mesh::getLevel(uint16_t address)
 
 /*****************************************************/
 
-void RF24Mesh::beginDefault()
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::beginDefault()
 {
     radio.stopListening();
     network.begin(MESH_DEFAULT_ADDRESS);
@@ -252,7 +264,8 @@ void RF24Mesh::beginDefault()
 
 /*****************************************************/
 
-bool RF24Mesh::releaseAddress()
+template<class network_t, class radio_t>
+bool ESBMesh<network_t, radio_t>::releaseAddress()
 {
     if (mesh_address == MESH_DEFAULT_ADDRESS) return 0;
 
@@ -266,7 +279,8 @@ bool RF24Mesh::releaseAddress()
 
 /*****************************************************/
 
-uint16_t RF24Mesh::renewAddress(uint32_t timeout)
+template<class network_t, class radio_t>
+uint16_t ESBMesh<network_t, radio_t>::renewAddress(uint32_t timeout)
 {
     if (radio.available()) network.update();
 
@@ -295,7 +309,8 @@ uint16_t RF24Mesh::renewAddress(uint32_t timeout)
 
 /*****************************************************/
 
-bool RF24Mesh::requestAddress(uint8_t level)
+template<class network_t, class radio_t>
+bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 {
     RF24NetworkHeader header(MESH_MULTICAST_ADDRESS, NETWORK_POLL);
     //Find another radio, starting with level 0 multicast
@@ -397,7 +412,8 @@ bool RF24Mesh::requestAddress(uint8_t level)
 
 /*****************************************************/
 
-void RF24Mesh::setNodeID(uint8_t nodeID)
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::setNodeID(uint8_t nodeID)
 {
     _nodeID = nodeID;
 }
@@ -405,14 +421,16 @@ void RF24Mesh::setNodeID(uint8_t nodeID)
 /*****************************************************/
 #if !defined(MESH_NOMASTER)
 
-void RF24Mesh::setStaticAddress(uint8_t nodeID, uint16_t address)
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::setStaticAddress(uint8_t nodeID, uint16_t address)
 {
     setAddress(nodeID, address);
 }
 
 /*****************************************************/
 
-void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 {
     //Look for the node in the list
     for (uint8_t i = 0; i < addrListTop; i++) {
@@ -449,7 +467,8 @@ void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 
 /*****************************************************/
 
-void RF24Mesh::loadDHCP()
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::loadDHCP()
 {
 
     #if defined(__linux) && !defined(__ARDUINO_X86__)
@@ -472,7 +491,8 @@ void RF24Mesh::loadDHCP()
 
 /*****************************************************/
 
-void RF24Mesh::saveDHCP()
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::saveDHCP()
 {
     #if defined(__linux) && !defined(__ARDUINO_X86__)
     std::ofstream outfile("dhcplist.txt", std::ofstream::binary | std::ofstream::trunc);
@@ -486,7 +506,8 @@ void RF24Mesh::saveDHCP()
 
 /*****************************************************/
 
-void RF24Mesh::DHCP()
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::DHCP()
 {
     if (doDHCP)
         doDHCP = false;
@@ -576,10 +597,17 @@ void RF24Mesh::DHCP()
 
 #endif // !MESH_NOMASTER
 
-void RF24Mesh::setCallback(void (*meshCallback)(void))
+template<class network_t, class radio_t>
+void ESBMesh<network_t, radio_t>::setCallback(void (*meshCallback)(void))
 {
 
     this->meshCallback = meshCallback;
 }
 
 /*****************************************************/
+
+// ensure the compiler is aware of the possible datatype for the template class
+template class ESBMesh<ESBNetwork<RF24>, RF24>;
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840)
+template class ESBMesh<ESBNetwork<nrf_to_nrf>, nrf_to_nrf>;
+#endif
