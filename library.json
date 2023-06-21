@@ -18,7 +18,8 @@
         {
             "name": "RF24Network",
             "authors": "nRF24",
-            "frameworks": "arduino"
+            "frameworks": "arduino",
+            "version": ">=2.0.0"
         }
     ],
     "export":
