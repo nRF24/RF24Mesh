@@ -44,6 +44,7 @@ jobs:
     uses: nRF24/.github/.github/workflows/build_linux_cmake.yaml@main
     with:
       rf24network-ref: v1.x
+      rf24mesh-ref: ${{ github.sha }}
       compiler: ${{ matrix.toolchain.compiler }}
       usr-dir: ${{ matrix.toolchain.usr_dir }}
       examples-path: examples_RPi
