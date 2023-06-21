@@ -34,6 +34,7 @@ jobs:
       libraries: |
         - source-url: https://github.com/nRF24/RF24.git
         - source-url: https://github.com/nRF24/RF24Network.git
+          version: v1.x
         - source-path: ./
       fqbn: ${{ matrix.fqbn }}
       enable-deltas-report: ${{ matrix.enable-deltas-report }}

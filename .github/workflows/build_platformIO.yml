@@ -37,6 +37,7 @@ jobs:
     with:
      example-path: ${{ matrix.example }}
      board-id: ${{ matrix.board }}
+     rf24network-ref: v1.x
     strategy:
       fail-fast: false
       matrix:

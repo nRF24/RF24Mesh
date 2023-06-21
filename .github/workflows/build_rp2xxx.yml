@@ -30,6 +30,7 @@ jobs:
     uses: nRF24/.github/.github/workflows/build_pico_sdk.yaml@main
     with:
       board-id: ${{ matrix.board }}
+      rf24network-ref: v1.x
       rf24mesh-ref: ${{ github.sha }}
     strategy:
       fail-fast: false
