@@ -1,12 +1,9 @@
 var searchData=
 [
-  ['savedhcp_0',['saveDHCP',['../classRF24Mesh.html#aa9448ca15e501d0bae687c5428c7cc12',1,'RF24Mesh']]],
-  ['setaddress_1',['setAddress',['../classRF24Mesh.html#af4208f157ec8a7dae4bc716236185597',1,'RF24Mesh']]],
-  ['setcallback_2',['setCallback',['../classRF24Mesh.html#ab2d6861a17301e6f0010ca99ea9279df',1,'RF24Mesh']]],
-  ['setchannel_3',['setChannel',['../classRF24Mesh.html#ab4d6a0a2146215b0e54dff4e1dcb08d1',1,'RF24Mesh']]],
-  ['setchild_4',['setChild',['../classRF24Mesh.html#ae183c358915a1b7fbf1b19db8ba66a16',1,'RF24Mesh']]],
-  ['setnodeid_5',['setNodeID',['../classRF24Mesh.html#a9d3e662216ffd890e019537a95297ed4',1,'RF24Mesh']]],
-  ['setstaticaddress_6',['setStaticAddress',['../classRF24Mesh.html#aaa74fedf955eca2504b7c8715daba271',1,'RF24Mesh']]],
-  ['setup_20and_20config_7',['Setup And Config',['../md_docs_setup_config.html',1,'']]],
-  ['setup_5fconfig_2emd_8',['setup_config.md',['../setup__config_8md.html',1,'']]]
+  ['releaseaddress_0',['releaseAddress',['../classESBMesh.html#a63bf04a5a8c9a5c66618dd95f8e3af99',1,'ESBMesh']]],
+  ['renewaddress_1',['renewAddress',['../classESBMesh.html#a234862c9d9729b3ca11fcb9b29ec55b1',1,'ESBMesh']]],
+  ['rf24mesh_2',['RF24Mesh',['../RF24Mesh_8h.html#a8398dea5b5f58f25a62261a411e48a10',1,'RF24Mesh.h']]],
+  ['rf24mesh_2ecpp_3',['RF24Mesh.cpp',['../RF24Mesh_8cpp.html',1,'']]],
+  ['rf24mesh_2eh_4',['RF24Mesh.h',['../RF24Mesh_8h.html',1,'']]],
+  ['rf24mesh_5fconfig_2eh_5',['RF24Mesh_config.h',['../RF24Mesh__config_8h.html',1,'']]]
 ];
