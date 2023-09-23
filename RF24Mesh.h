@@ -367,6 +367,7 @@ private:
     bool meshStarted;
     /** Returns the number of octal digits in the specified address. */
     uint8_t getLevel(uint16_t address);
+    uint8_t meshChannel;
 };
 
 /**

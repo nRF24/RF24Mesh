@@ -33,6 +33,7 @@ bool ESBMesh<network_t, radio_t>::begin(uint8_t channel, rf24_datarate_e data_ra
     if (!radio.begin())
         return 0;
     radio.setChannel(channel);
+    meshChannel = channel;
     radio.setDataRate(data_rate);
     network.returnSysMsgs = true;
 
@@ -258,6 +259,7 @@ template<class network_t, class radio_t>
 void ESBMesh<network_t, radio_t>::beginDefault()
 {
     radio.stopListening();
+    radio.setChannel(meshChannel);
     network.begin(MESH_DEFAULT_ADDRESS);
     mesh_address = MESH_DEFAULT_ADDRESS;
 }
@@ -398,6 +400,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
     mesh_address = newAddress;
 
     radio.stopListening();
+    radio.setChannel(meshChannel);
     network.begin(mesh_address);
 
     // getNodeID() doesn't use auto-ack; do a double-check to manually retry 1 more time
