@@ -2,7 +2,7 @@ name: Pico SDK build
 
 on:
   push:
-    branches: [master, 1.x]
+    branches: [master, v1.x]
     paths:
       - ".github/workflows/build_rp2xxx.yml"
       - "*.h"
@@ -11,8 +11,7 @@ on:
       - "cmake/"
       - "examples_pico/*"
   pull_request:
-    branches: [master, 1.x]
-    types: [opened, reopened]
+    branches: [master, v1.x]
     paths:
       - ".github/workflows/build_rp2xxx.yml"
       - "*.h"
@@ -22,13 +21,8 @@ on:
       - "examples_pico/*"
 
 jobs:
-  check_formatting:
-    uses: nRF24/.github/.github/workflows/cpp_lint.yaml@main
-    with:
-      ignore: '!examples_pico|'
 
   build:
-    needs: check_formatting
     uses: nRF24/.github/.github/workflows/build_pico_sdk.yaml@main
     with:
       board-id: ${{ matrix.board }}

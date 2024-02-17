@@ -2,27 +2,20 @@ name: Arduino CLI build
 
 on:
   pull_request:
-    branches: [master, 1.x]
-    types: [opened, reopened]
+    branches: [master, v1.x]
     paths:
       - ".github/workflows/build_arduino.yml"
       - "examples/**"
 
   push:
-    branches: [master, 1.x]
+    branches: [master, v1.x]
     paths:
       - ".github/workflows/build_arduino.yml"
       - "examples/**"
 
 jobs:
-  check_formatting:
-    uses: nRF24/.github/.github/workflows/cpp_lint.yaml@main
-    with:
-      ignore: '!examples|'
-      extensions: ino
 
   build:
-    needs: check_formatting
     uses: nRF24/.github/.github/workflows/build_arduino.yaml@main
     with:
       sketch-paths: |
