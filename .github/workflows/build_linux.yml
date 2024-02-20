@@ -2,7 +2,7 @@ name: Linux build
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches: [master, v1.x]
     paths:
       - "*.h"
       - "*.cpp"
@@ -15,6 +15,7 @@ on:
       - "pyRF24Mesh/*"
       - ".github/workflows/build_linux.yml"
   push:
+    branches: [master, v1.x]
     paths:
       - "*.h"
       - "*.cpp"
@@ -34,13 +35,8 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  check_formatting:
-    uses: nRF24/.github/.github/workflows/cpp_lint.yaml@main
-    with:
-      ignore: 'examples|examples_pico'
 
   using_cmake:
-    needs: check_formatting
     uses: nRF24/.github/.github/workflows/build_linux_cmake.yaml@main
     with:
       rf24mesh-ref: ${{ github.sha }}

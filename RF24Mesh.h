@@ -80,7 +80,7 @@ class ESBMesh
 public:
     /**
      * Construct the mesh.
-     * 
+     *
      * v2.0 supports a backward compatible constructor:
      * @code
      * RF24 radio(7, 8);
@@ -91,7 +91,7 @@ public:
      * RF52Network network1(radio1);
      * RF52Mesh mesh1(network1, radio1); // for nRF52xxx family
      * @endcode
-     * 
+     *
      * @see v2.0 supports [nrf_to_nrf Arduino library](https://github.com/TMRh20/nrf_to_nrf)
      * for nrf52 chips' internal radio.
      * @param _radio The underlying radio driver instance
@@ -371,11 +371,11 @@ private:
 
 /**
  * A type definition of the template class `ESBMesh` to maintain backward compatibility.
- * 
+ *
  * ```.cpp
  * RF24 radio(7, 8);
  * RF24Network network(radio);
- * 
+ *
  * RF24Mesh mesh(radio, network);
  * // is equivalent to
  * ESBMesh<ESBNetwork<RF24>, RF24> mesh(radio, network);
