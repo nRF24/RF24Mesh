@@ -1,24 +1,24 @@
 
 /*
-* RF24Mesh Master Node Monitoring Tool
-* This is a generic tool for master nodes running RF24Mesh that will display address
-* assignments, and information regarding incoming data, regardless of the specific
-* configuration details.
-*
-* Requirements: NCurses
-* Install NCurses: apt-get install libncurses5-dev
-* Setup:
-* 1: make
-* 2: sudo ./RF24Mesh_Ncurses_Master
-*
-* NOTE: DEBUG MUST BE DISABLED IN RF24Mesh_config.h
-*
-* Once configured and running, the interface will display the header information, data rate,
-* and address assignments for all connected nodes.*
-* The master node will also continuously ping each of the child nodes, one per second, while indicating
-* the results.
-*
-*/
+ * RF24Mesh Master Node Monitoring Tool
+ * This is a generic tool for master nodes running RF24Mesh that will display address
+ * assignments, and information regarding incoming data, regardless of the specific
+ * configuration details.
+ *
+ * Requirements: NCurses
+ * Install NCurses: apt-get install libncurses5-dev
+ * Setup:
+ * 1: make
+ * 2: sudo ./RF24Mesh_Ncurses_Master
+ *
+ * NOTE: DEBUG MUST BE DISABLED IN RF24Mesh_config.h
+ *
+ * Once configured and running, the interface will display the header information, data rate,
+ * and address assignments for all connected nodes.*
+ * The master node will also continuously ping each of the child nodes, one per second, while indicating
+ * the results.
+ *
+ */
 
 #include <ncurses.h>
 #include "RF24Mesh/RF24Mesh.h"
