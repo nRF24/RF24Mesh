@@ -2,6 +2,7 @@ name: build Docs
 
 on:
   pull_request:
+    branches: [master, 1.x]
     types: [opened, reopened]
     paths:
       - "*.h"
@@ -15,6 +16,7 @@ on:
       - "Doxyfile"
       - "library.properties" # get lib version from here
   push:
+    branches: [master, 1.x]
     paths:
       - "*.h"
       - "docs/**"
@@ -27,7 +29,6 @@ on:
       - "Doxyfile"
       - "library.properties" # get lib version from here
   release:
-    branches: [master]
     types: [published, edited]
   workflow_dispatch:
 
