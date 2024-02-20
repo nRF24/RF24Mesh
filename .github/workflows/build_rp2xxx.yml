@@ -2,6 +2,7 @@ name: Pico SDK build
 
 on:
   push:
+    branches: [master, 1.x]
     paths:
       - ".github/workflows/build_rp2xxx.yml"
       - "*.h"
@@ -10,6 +11,7 @@ on:
       - "cmake/"
       - "examples_pico/*"
   pull_request:
+    branches: [master, 1.x]
     types: [opened, reopened]
     paths:
       - ".github/workflows/build_rp2xxx.yml"
