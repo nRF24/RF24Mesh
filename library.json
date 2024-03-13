@@ -1,7 +1,7 @@
 {
     "name": "RF24Mesh",
     "keywords": "rf, radio, wireless, spi, mesh, network",
-    "description": "A simple and seamless 'mesh' layer for sensor networks. Designed to interface directly with with the RF24Network Development library, an OSI Network Layer using nRF24L01(+) radios driven by the newly optimized RF24 library fork.",
+    "description": "A simple and seamless 'mesh' layer for sensor networks. Designed to interface directly with with the RF24Network library, an OSI Network Layer using nRF24L01(+) and nRF52x radios.",
     "license": "GPL-2.0-only",
     "repository": {
         "type": "git",
@@ -42,6 +42,7 @@
         "atmelmegaavr",
         "espressif32",
         "espressif8266",
-        "ststm32"
+        "ststm32",
+        "nordicnrf52"
     ]
 }
