@@ -14,7 +14,7 @@ connected together.
 
 - 1 Raspberry Pi or Arduino to act as the Master Node
 - 1 or more Arduino, Raspberry Pi, etc. (Sensor Nodes)
-- 2 or more NRF24L01+ radio modules
+- 2 or more NRF24L01+ or the above with NRF52x radio modules
 - 1 or more various sensors for your sensor nodes
 
 ### Software Requirements
