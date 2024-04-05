@@ -80,8 +80,8 @@ multi-node radio network.
 ## How to learn more
 
 - Try it out!
-- [Setup and Configuration](md_docs_setup_config.html)
-- [Usage & Overview](md_docs_general_usage.html)
+- [Setup and Configuration](setup_config.md)
+- [Usage & Overview](general_usage.md)
 - [RF24Mesh Class Documentation](classRF24Mesh.html)
 - [RF24 Network Class Documentation](http://nRF24.github.io/RF24Network/)
 - [RF24Ethernet: TCP/IP based Mesh over RF24](http://nRF24.github.io/RF24Ethernet/)

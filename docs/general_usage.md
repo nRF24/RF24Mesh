@@ -6,7 +6,7 @@
 
 1. **Static Network** (No Mesh)
 
-   RF24Network can be configured manually, with a static design. RF24Mesh is not used at all. See [Network addressing](http://nRF24.github.io/RF24Network/md_docs_addressing.html)
+   RF24Network can be configured manually, with a static design. RF24Mesh is not used at all. See [Network addressing](http://nRF24.github.io/RF24Network/md_docs_2addressing.html)
 2. **Static Network w/Dynamic Assignment**
 
    RF24Mesh is only used to acquire an address on startup. Nodes are generally expected to remain stationary. Changes to
