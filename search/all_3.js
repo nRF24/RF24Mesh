@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['checkconnection_0',['checkConnection',['../classESBMesh.html#a3fd97b30a03d51b88825e2c5b460067a',1,'ESBMesh']]],
-  ['contributing_1',['CONTRIBUTING',['../md_CONTRIBUTING.html',1,'']]],
-  ['contributing_2emd_2',['CONTRIBUTING.md',['../CONTRIBUTING_8md.html',1,'']]]
+  ['begin_0',['begin',['../classESBMesh.html#a44cf6f2b41525b2bc4ba1750364fd8b8',1,'ESBMesh']]]
 ];

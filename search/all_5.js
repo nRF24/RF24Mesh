@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['esbmesh_0',['ESBMesh',['../classESBMesh.html',1,'ESBMesh&lt; network_t, radio_t &gt;'],['../classESBMesh.html#a93a2718b62a65f72e1e0eea61fbfb0c0',1,'ESBMesh::ESBMesh()']]],
-  ['esbnetwork_1',['ESBNetwork',['../classESBNetwork.html',1,'']]],
-  ['esbnetwork_3c_20rf24_20_3e_2',['ESBNetwork&lt; RF24 &gt;',['../classESBNetwork.html',1,'']]]
+  ['deprecated_20list_0',['Deprecated List',['../deprecated.html',1,'']]],
+  ['design_20options_1',['Network Design Options',['../md_docs_2general__usage.html#autotoc_md1',1,'']]],
+  ['dhcp_2',['DHCP',['../classESBMesh.html#a5c5b72dc870d3134634dfdcf54f0172a',1,'ESBMesh']]],
+  ['does_20it_20work_3',['How does it work?',['../index.html#autotoc_md12',1,'']]]
 ];
