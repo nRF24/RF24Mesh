@@ -29,10 +29,10 @@ connected together.
 2. Configure and test the hardware using examples from RF24 and RF24Network prior to attempting to use RF24Mesh
    - In Arduino IDE
       - File > Examples > RF24 > GettingStarted
-        @see [Arduino Support page](http://nRF24.github.io/RF24/md_docs_arduino.html)
+        @see [Arduino Support page](http://nRF24.github.io/RF24/md_docs_2arduino.html)
    - For a Raspberry Pi
-      - An installer is provided: [Linux Installation](http://nRF24.github.io/RF24/md_docs_linux_install.html)
-        @see [General Linux/RPi setup and configuration page](http://nRF24.github.io/RF24/md_docs_rpi_general.html)
+      - An installer is provided: [Linux Installation](http://nRF24.github.io/RF24/md_docs_2linux__install.html)
+        @see [General Linux/RPi setup and configuration page](http://nRF24.github.io/RF24/md_docs_2rpi__general.html)
 3. Once testing is complete:
    - In Arduino IDE
       - File > Examples > RF24Mesh > RF24Mesh_Example
@@ -65,4 +65,4 @@ The @ref MESH_MAX_CHILDREN option restricts the maximum number of child nodes/no
 
 The MESH_NOMASTER macro optionally reduces program space and memory usage. Can be used on any node except for the master (nodeID 0)
 
-@see [General Usage](md_docs_general_usage.html) for information on how to work with the mesh once connected
+@see [General Usage](general_usage.md) for information on how to work with the mesh once connected
