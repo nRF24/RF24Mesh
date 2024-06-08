@@ -355,8 +355,10 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 
     IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Got poll from level %d count %d\n"), millis(), level, pollCount));
 
-    bool gotResponse = 0;
     for (uint8_t i = 0; i < pollCount; i++) {
+
+        bool gotResponse = 0;
+
         // Request an address via the contact node
         header.type = NETWORK_REQ_ADDRESS;
         header.reserved = _nodeID;
