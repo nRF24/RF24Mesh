@@ -377,37 +377,38 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
                     uint16_t mask = 0xFFFF;
                     newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
                     if (newAddy == contactNode[i]) {                      // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
-                        i = pollCount;                                    // address to evalute whether 'subnet' of the assigned address matches the contact node address.
-                        gotResponse = 1;
+                        gotResponse = 1;                                  // address to evalute whether 'subnet' of the assigned address matches the contact node address.
                         break;
                     }
                 }
             }
             MESH_CALLBACK
         }
+
+        if (!gotResponse) {
+            continue;
+        }
+
+        uint16_t newAddress = 0;
+        memcpy(&newAddress, network.frame_buffer + sizeof(RF24NetworkHeader), sizeof(newAddress));
+
+        IF_MESH_DEBUG(printf_P(PSTR("Set address 0%o rcvd 0%o\n"), mesh_address, newAddress));
+        mesh_address = newAddress;
+
+        radio.stopListening();
+        network.begin(mesh_address);
+
+        // getNodeID() doesn't use auto-ack; do a double-check to manually retry 1 more time
+        if (getNodeID(mesh_address) != _nodeID) {
+            if (getNodeID(mesh_address) != _nodeID) {
+                beginDefault();
+                continue;
+            }
+        }
+        return 1;
     } // end for
 
-    if (!gotResponse) {
-        return 0;
-    }
-
-    uint16_t newAddress = 0;
-    memcpy(&newAddress, network.frame_buffer + sizeof(RF24NetworkHeader), sizeof(newAddress));
-
-    IF_MESH_DEBUG(printf_P(PSTR("Set address 0%o rcvd 0%o\n"), mesh_address, newAddress));
-    mesh_address = newAddress;
-
-    radio.stopListening();
-    network.begin(mesh_address);
-
-    // getNodeID() doesn't use auto-ack; do a double-check to manually retry 1 more time
-    if (getNodeID(mesh_address) != _nodeID) {
-        if (getNodeID(mesh_address) != _nodeID) {
-            beginDefault();
-            return 0;
-        }
-    }
-    return 1;
+    return 0;
 }
 
 /*****************************************************/
