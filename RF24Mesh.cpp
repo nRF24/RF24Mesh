@@ -314,46 +314,42 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 {
     RF24NetworkHeader header(MESH_MULTICAST_ADDRESS, NETWORK_POLL);
     //Find another radio, starting with level 0 multicast
-    IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Poll\n"), millis()));
+    IF_MESH_DEBUG(printf_P(PSTR("MSH Poll Level %d\n"), level));
     network.multicast(header, 0, 0, level);
 
-    uint32_t timr = millis();
+    uint32_t pollTimeout = millis() + 55;
 #define MESH_MAXPOLLS 4
     uint16_t contactNode[MESH_MAXPOLLS];
     uint8_t pollCount = 0;
 
-    while (1) {
+    while (millis() < pollTimeout && pollCount < MESH_MAXPOLLS) {
 #if defined(MESH_DEBUG)
         bool goodSignal = radio.testRPD();
 #endif
-
         if (network.update() == NETWORK_POLL) {
+            uint16_t contact = 0;
+            memcpy(&contact, &network.frame_buffer[0], sizeof(contact));
 
-            memcpy(&contactNode[pollCount], &network.frame_buffer[0], sizeof(uint16_t));
-            if (pollCount > 0 && contactNode[pollCount] != contactNode[pollCount - 1]) { //Drop duplicate polls to help prevent duplicate requests
-                ++pollCount;
+            // Drop duplicate polls to help prevent duplicate requests
+            bool isDupe = false;
+            for (uint8_t i = 0; i < pollCount; ++i) {
+                if (contact == contactNode[i]) {
+                    isDupe = true;
+                    break;
+                }
             }
-            else {
+            if (!isDupe) {
+                contactNode[pollCount] = contact;
                 ++pollCount;
+                IF_MESH_DEBUG(printf_P(PSTR("MSH Poll %c -64dbm from 0%o \n"), (goodSignal ? '>' : '<'), contact));
             }
 
-            IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Poll %c -64dbm\n"), millis(), (goodSignal ? '>' : '<')));
         } // end if
 
-        if (millis() - timr > 55 || pollCount >= MESH_MAXPOLLS) {
-            if (!pollCount) {
-                IF_MESH_DEBUG(printf_P(PSTR("%u: MSH No poll from level %d\n"), millis(), level));
-                return 0;
-            }
-            else {
-                IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Poll OK\n"), millis()));
-                break;
-            }
-        }
         MESH_CALLBACK
     } // end while
 
-    IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Got poll from level %d count %d\n"), millis(), level, pollCount));
+    IF_MESH_DEBUG(printf_P(PSTR("MSH Polls from level %d: %d\n"), level, pollCount));
 
     for (uint8_t i = 0; i < pollCount; i++) {
 
@@ -367,11 +363,11 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
         // Do a direct write (no ack) to the contact node. Include the nodeId and address.
         network.write(header, 0, 0, contactNode[i]);
 
-        IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Request address from: 0%o\n"), millis(), contactNode[i]));
+        IF_MESH_DEBUG(printf_P(PSTR("MSH Request address from: 0%o\n"), contactNode[i]));
 
-        timr = millis();
+        uint32_t timeout = millis() + 225;
 
-        while (millis() - timr < 225) {
+        while (millis() < timeout) {
             if (network.update() == NETWORK_ADDR_RESPONSE) {
                 if (network.frame_buffer[7] == _nodeID) {
                     uint16_t newAddy = 0;
@@ -394,7 +390,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
         uint16_t newAddress = 0;
         memcpy(&newAddress, network.frame_buffer + sizeof(RF24NetworkHeader), sizeof(newAddress));
 
-        IF_MESH_DEBUG(printf_P(PSTR("Set address 0%o rcvd 0%o\n"), mesh_address, newAddress));
+        IF_MESH_DEBUG(printf_P(PSTR("Set address: Current: 0%o New: 0%o\n"), mesh_address, newAddress));
         mesh_address = newAddress;
 
         radio.stopListening();
@@ -524,7 +520,7 @@ void ESBMesh<network_t, radio_t>::DHCP()
 
     // Get the unique id of the requester (ID is in header.reserved)
     if (!header.reserved || header.type != NETWORK_REQ_ADDRESS) {
-        IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Invalid id or type rcvd\n"), millis()));
+        IF_MESH_DEBUG(printf_P(PSTR("MSH Invalid id or type rcvd\n")));
         return;
     }
 
