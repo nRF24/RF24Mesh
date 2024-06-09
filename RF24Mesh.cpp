@@ -317,12 +317,12 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
     IF_MESH_DEBUG(printf_P(PSTR("MSH Poll Level %d\n"), level));
     network.multicast(header, 0, 0, level);
 
-    uint32_t pollTimeout = millis() + 55;
+    uint32_t timeout = millis() + 55;
 #define MESH_MAXPOLLS 4
     uint16_t contactNode[MESH_MAXPOLLS];
     uint8_t pollCount = 0;
 
-    while (millis() < pollTimeout && pollCount < MESH_MAXPOLLS) {
+    while (millis() < timeout && pollCount < MESH_MAXPOLLS) {
 #if defined(MESH_DEBUG)
         bool goodSignal = radio.testRPD();
 #endif
@@ -351,6 +351,8 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 
     IF_MESH_DEBUG(printf_P(PSTR("MSH Polls from level %d: %d\n"), level, pollCount));
 
+    if (!pollCount) return 0;
+
     for (uint8_t i = 0; i < pollCount; i++) {
 
         bool gotResponse = 0;
@@ -365,7 +367,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 
         IF_MESH_DEBUG(printf_P(PSTR("MSH Request address from: 0%o\n"), contactNode[i]));
 
-        uint32_t timeout = millis() + 225;
+        timeout = millis() + 225;
 
         while (millis() < timeout) {
             if (network.update() == NETWORK_ADDR_RESPONSE) {
