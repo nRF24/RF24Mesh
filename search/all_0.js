@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_5fnodeid_0',['_nodeID',['../classRF24Mesh.html#a2300185e6d7f132e22cbcb1ea470d5ae',1,'RF24Mesh']]]
+  ['2023_20api_20changes_0',['News - 2023 API Changes',['../index.html#autotoc_md10',1,'']]]
 ];
