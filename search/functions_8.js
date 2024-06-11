@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update_0',['update',['../classESBMesh.html#a8712ca20a10d2c5f97a2f0687aaab7bb',1,'ESBMesh']]]
+  ['write_0',['write',['../classRF24Mesh.html#a34535daf39ead14698f3718037358394',1,'RF24Mesh::write(const void *data, uint8_t msg_type, size_t size, uint8_t nodeID=0)'],['../classRF24Mesh.html#ad294234c41f303881aa24c74782eecd7',1,'RF24Mesh::write(uint16_t to_node, const void *data, uint8_t msg_type, size_t size)']]]
 ];

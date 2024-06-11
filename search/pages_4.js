@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['general_20usage_0',['General Usage',['../md_docs_2general__usage.html',1,'']]]
+  ['setup_20and_20config_0',['Setup And Config',['../md_docs_setup_config.html',1,'']]]
 ];

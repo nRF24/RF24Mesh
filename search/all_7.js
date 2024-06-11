@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['for_20rf24_20radios_0',['Mesh Networking Layer for RF24 Radios',['../index.html',1,'']]]
+  ['loaddhcp_0',['loadDHCP',['../classRF24Mesh.html#a764ba5fe2faecc77dd5f4b87dd0ceaa1',1,'RF24Mesh']]]
 ];
