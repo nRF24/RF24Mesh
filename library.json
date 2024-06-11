@@ -7,9 +7,8 @@
         "type": "git",
         "url": "https://github.com/nRF24/RF24Mesh.git"
     },
-    "version": "2.0.0",
-    "dependencies":
-    [
+    "version": "2.0.1",
+    "dependencies": [
         {
             "name": "RF24",
             "authors": "nRF24",
@@ -22,8 +21,7 @@
             "version": ">=2.0.0"
         }
     ],
-    "export":
-    {
+    "export": {
         "exclude": [
             ".github/*",
             "keywords.txt",
