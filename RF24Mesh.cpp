@@ -314,7 +314,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 {
     RF24NetworkHeader header(MESH_MULTICAST_ADDRESS, NETWORK_POLL);
     //Find another radio, starting with level 0 multicast
-    IF_MESH_DEBUG(printf_P(PSTR("MSH Poll Level %d\n"), level));
+    IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Poll Level %d\n"), level));
     network.multicast(header, 0, 0, level);
 
     uint32_t timeout = millis() + 55;
@@ -323,7 +323,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
     uint8_t pollCount = 0;
 
     while (millis() < timeout && pollCount < MESH_MAXPOLLS) {
-#if defined(MESH_DEBUG)
+#if defined(RF24MESH_DEBUG)
         bool goodSignal = radio.testRPD();
 #endif
         if (network.update() == NETWORK_POLL) {
@@ -341,7 +341,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
             if (!isDupe) {
                 contactNode[pollCount] = contact;
                 ++pollCount;
-                IF_MESH_DEBUG(printf_P(PSTR("MSH Poll %c -64dbm from 0%o \n"), (goodSignal ? '>' : '<'), contact));
+                IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Poll %c -64dbm from 0%o \n"), (goodSignal ? '>' : '<'), contact));
             }
 
         } // end if
@@ -349,7 +349,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
         MESH_CALLBACK
     } // end while
 
-    IF_MESH_DEBUG(printf_P(PSTR("MSH Polls from level %d: %d\n"), level, pollCount));
+    IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Polls from level %d: %d\n"), level, pollCount));
 
     if (!pollCount) return 0;
 
@@ -365,7 +365,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
         // Do a direct write (no ack) to the contact node. Include the nodeId and address.
         network.write(header, 0, 0, contactNode[i]);
 
-        IF_MESH_DEBUG(printf_P(PSTR("MSH Request address from: 0%o\n"), contactNode[i]));
+        IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Request address from: 0%o\n"), contactNode[i]));
 
         timeout = millis() + 225;
 
@@ -392,7 +392,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
         uint16_t newAddress = 0;
         memcpy(&newAddress, network.frame_buffer + sizeof(RF24NetworkHeader), sizeof(newAddress));
 
-        IF_MESH_DEBUG(printf_P(PSTR("Set address: Current: 0%o New: 0%o\n"), mesh_address, newAddress));
+        IF_RF24MESH_DEBUG(printf_P(PSTR("Set address: Current: 0%o New: 0%o\n"), mesh_address, newAddress));
         mesh_address = newAddress;
 
         radio.stopListening();
@@ -522,7 +522,7 @@ void ESBMesh<network_t, radio_t>::DHCP()
 
     // Get the unique id of the requester (ID is in header.reserved)
     if (!header.reserved || header.type != NETWORK_REQ_ADDRESS) {
-        IF_MESH_DEBUG(printf_P(PSTR("MSH Invalid id or type rcvd\n")));
+        IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Invalid id or type rcvd\n")));
         return;
     }
 
@@ -546,7 +546,7 @@ void ESBMesh<network_t, radio_t>::DHCP()
         extraChild = 1;
     }
 
-    // IF_MESH_DEBUG(printf_P(PSTR("%u: MSH Rcv addr req from_id %d\n"), millis(), header.reserved));
+    // IF_RF24MESH_DEBUG(printf_P(PSTR("%u: MSH Rcv addr req from_id %d\n"), millis(), header.reserved));
 
     for (int i = MESH_MAX_CHILDREN + extraChild; i > 0; i--) { // For each of the possible addresses (5 max)
 
@@ -556,7 +556,7 @@ void ESBMesh<network_t, radio_t>::DHCP()
         if (newAddress == MESH_DEFAULT_ADDRESS) continue;
 
         for (uint8_t i = 0; i < addrListTop; i++) {
-            IF_MESH_DEBUG_MINIMAL(printf_P(PSTR("ID: %d ADDR: 0%o\n"), addrList[i].nodeID, addrList[i].address));
+            IF_RF24MESH_DEBUG_MINIMAL(printf_P(PSTR("ID: %d ADDR: 0%o\n"), addrList[i].nodeID, addrList[i].address));
             if (addrList[i].address == newAddress && addrList[i].nodeID != header.reserved) {
                 found = true;
                 break;
@@ -585,11 +585,11 @@ void ESBMesh<network_t, radio_t>::DHCP()
                 network.write(header, &newAddress, sizeof(newAddress), header.to_node);
             }
 
-            IF_MESH_DEBUG(printf_P(PSTR("Sent to 0%o phys: 0%o new: 0%o id: %d\n"), header.to_node, MESH_DEFAULT_ADDRESS, newAddress, header.reserved));
+            IF_RF24MESH_DEBUG(printf_P(PSTR("Sent to 0%o phys: 0%o new: 0%o id: %d\n"), header.to_node, MESH_DEFAULT_ADDRESS, newAddress, header.reserved));
             break;
         }
         else {
-            IF_MESH_DEBUG(printf_P(PSTR("not allocated\n")));
+            IF_RF24MESH_DEBUG(printf_P(PSTR("not allocated\n")));
         }
     } // end for
 }

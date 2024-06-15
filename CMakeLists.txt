@@ -21,8 +21,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/GetLibInfo.cmake) # sets the variable Li
 
 # allow using CMake options to adjust RF24Network_config.h without modiying source code
 option(MESH_NOMASTER "exclude compiling code that is strictly for master nodes" OFF)
-option(MESH_DEBUG "enable/disable debugging output" OFF)
-option(MESH_DEBUG_MINIMAL "enable/disable minimal debugging output" OFF)
+option(RF24MESH_DEBUG "enable/disable debugging output" OFF)
+option(RF24MESH_DEBUG_MINIMAL "enable/disable minimal debugging output" OFF)
 
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(${LibTargetName}_project_options INTERFACE)
@@ -110,13 +110,13 @@ if(MESH_NOMASTER)
     message(STATUS "MESH_NOMASTER asserted")
     target_compile_definitions(${LibTargetName} PUBLIC MESH_NOMASTER)
 endif()
-if(MESH_DEBUG)
-    message(STATUS "MESH_DEBUG asserted")
-    target_compile_definitions(${LibTargetName} PUBLIC MESH_DEBUG)
+if(RF24MESH_DEBUG)
+    message(STATUS "RF24MESH_DEBUG asserted")
+    target_compile_definitions(${LibTargetName} PUBLIC RF24MESH_DEBUG)
 endif()
-if(MESH_DEBUG_MINIMAL)
-    message(STATUS "MESH_DEBUG_MINIMAL asserted")
-    target_compile_definitions(${LibTargetName} PUBLIC MESH_DEBUG_MINIMAL)
+if(RF24MESH_DEBUG_MINIMAL)
+    message(STATUS "RF24MESH_DEBUG_MINIMAL asserted")
+    target_compile_definitions(${LibTargetName} PUBLIC RF24MESH_DEBUG_MINIMAL)
 endif()
 # for the following, we let the default be configured in source code
 if(DEFINED MESH_MAX_CHILDREN)
