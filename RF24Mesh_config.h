@@ -56,8 +56,8 @@
 
 /**************************/
 /***       Debug        ***/
-//#define MESH_DEBUG_MINIMAL /** Uncomment for the Master Node to print out address assignments as they are assigned */
-//#define MESH_DEBUG         /** Uncomment to enable debug output to serial **/
+//#define RF24MESH_DEBUG_MINIMAL /** Uncomment for the Master Node to print out address assignments as they are assigned */
+//#define RF24MESH_DEBUG         /** Uncomment to enable debug output to serial **/
 /**************************/
 
 /*** Other Configuration ***/
@@ -98,16 +98,16 @@
     #include <RF24_config.h>
 #endif
 
-#if defined(MESH_DEBUG_MINIMAL)
-    #define IF_MESH_DEBUG_MINIMAL(x) ({ x; })
+#if defined(RF24MESH_DEBUG_MINIMAL)
+    #define IF_RF24MESH_DEBUG_MINIMAL(x) ({ x; })
 #else
-    #define IF_MESH_DEBUG_MINIMAL(x)
+    #define IF_RF24MESH_DEBUG_MINIMAL(x)
 #endif
 
-#if defined(MESH_DEBUG)
-    #define IF_MESH_DEBUG(x) ({ x; })
+#if defined(RF24MESH_DEBUG)
+    #define IF_RF24MESH_DEBUG(x) ({ x; })
 #else
-    #define IF_MESH_DEBUG(x)
+    #define IF_RF24MESH_DEBUG(x)
 #endif
 
 #endif // __RF24MESH_CONFIG_H__
