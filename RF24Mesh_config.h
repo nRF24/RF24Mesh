@@ -54,6 +54,16 @@
     #define MESH_MEM_ALLOC_SIZE 10
 #endif // MESH_MEM_ALLOC_SIZE
 
+/**
+ * @brief Number of attempts to verify a connection
+ *
+ * On child nodes, when calling `mesh.checkConnection();`, configure how many attempts will be made to contact the master node to verify connectivity
+ * Raising this number can result in a more stable mesh, since nodes can more easily verify that a connection is active
+ */
+#ifndef MESH_CONNECTION_CHECK_ATTEMPTS
+    #define MESH_CONNECTION_CHECK_ATTEMPTS 3
+#endif
+
 /**************************/
 /***       Debug        ***/
 //#define RF24MESH_DEBUG_MINIMAL /** Uncomment for the Master Node to print out address assignments as they are assigned */
