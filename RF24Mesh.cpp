@@ -167,10 +167,10 @@ bool ESBMesh<network_t, radio_t>::checkConnection()
             case -1: continue;     // Write failed or timed out
             case 0: return false;  // This is a master node
             default:
-                if ((uint16_t)result == mesh_address) {
+                if ((uint16_t)result == mesh_address) { // Successful address lookup if result == RF24Network address
                     return true;
                 }
-                break; // Successful address lookup if result == RF24Network address
+                break;
         }
     }
     return false;
