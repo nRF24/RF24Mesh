@@ -163,9 +163,9 @@ bool ESBMesh<network_t, radio_t>::checkConnection()
 
         int16_t result = getAddress(_nodeID);
         switch (result) {
-            case -2: return false; break; // Address not found in list or is default
-            case -1: continue; break;     // Write failed or timed out
-            case 0: return false; break;  // This is a master node
+            case -2: return false; // Address not found in list or is default
+            case -1: continue;     // Write failed or timed out
+            case 0: return false;  // This is a master node
             default:
                 if ((uint16_t)result == mesh_address) {
                     return true;
