@@ -159,12 +159,21 @@ template<class network_t, class radio_t>
 bool ESBMesh<network_t, radio_t>::checkConnection()
 {
     // getAddress() doesn't use auto-ack; do a double-check to manually retry 1 more time
-    if (getAddress(_nodeID) < 1) {
-        if (getAddress(_nodeID) < 1) {
-            return false;
+    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; i++) {
+
+        int16_t result = getAddress(_nodeID);
+        switch (result) {
+            case -2: return false; // Address not found in list or is default
+            case -1: continue;     // Write failed or timed out
+            case 0: return false;  // This is a master node
+            default:
+                if ((uint16_t)result == mesh_address) { // Successful address lookup if result == RF24Network address
+                    return true;
+                }
+                break;
         }
     }
-    return true;
+    return false;
 }
 
 /*****************************************************/
