@@ -296,6 +296,14 @@ public:
     /** @deprecated For backward compatibility with older code. Use the synonymous setAddress() instead. */
     void setStaticAddress(uint8_t nodeID, uint16_t address);
 
+    /**
+     * Releases the specified address if leased to a mesh node's ID. This is specific to master nodes, so
+     * network administrators can manage assigned addresses without involving a transaction with nodes that
+     * might be appropriating them.
+     * @return True if successfully released, otherwise false.
+     */
+    bool releaseAddress(uint16_t address);
+
 #endif // !defined(MESH_NOMASTER)
     /**@}*/
 

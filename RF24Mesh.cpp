@@ -89,11 +89,7 @@ uint8_t ESBMesh<network_t, radio_t>::update()
         }
         else if (type == MESH_ADDR_RELEASE) {
             uint16_t* fromAddr = (uint16_t*)network.frame_buffer;
-            for (uint8_t i = 0; i < addrListTop; i++) {
-                if (addrList[i].address == *fromAddr) {
-                    addrList[i].address = 0;
-                }
-            }
+            releaseAddress(*fromAddr);
         }
     }
 #endif //!NO_MASTER
@@ -285,6 +281,22 @@ bool ESBMesh<network_t, radio_t>::releaseAddress()
     }
     return 0;
 }
+
+/*****************************************************/
+
+#ifndef MESH_NO_MASTER
+template<class network_t, class radio_t>
+bool ESBMesh<network_t, radio_t>::releaseAddress(uint16_t address)
+{
+    for (uint8_t i = 0; i < addrListTop; ++i) {
+        if (addrList[i].address == address) {
+            addrList[i].address = 0;
+            return true;
+        }
+    }
+    return false;
+}
+#endif
 
 /*****************************************************/
 
