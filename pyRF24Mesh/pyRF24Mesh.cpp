@@ -87,10 +87,10 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             //uint16_t renewAddress(uint32_t timeout=MESH_RENEWAL_TIMEOUT);
             .def("renewAddress", &RF24Mesh::renewAddress, getNodeID_overload(bp::args("timeout")))
             //bool releaseAddress();
-            .def("releaseAddress", (bool (RF24Mesh::*)())&RF24Mesh::releaseAddress)
+            .def("releaseAddress", (bool(RF24Mesh::*)()) & RF24Mesh::releaseAddress)
 #ifndef MESH_NO_MASTER
             //bool releaseAddress(uint16_t address);
-            .def("releaseAddress", (bool (RF24Mesh::*)(uint16_t))&RF24Mesh::releaseAddress, (bp::args("address")))
+            .def("releaseAddress", (bool(RF24Mesh::*)(uint16_t)) & RF24Mesh::releaseAddress, (bp::args("address")))
 #endif
             //int16_t getAddress(uint8_t nodeID);
             .def("getAddress", &RF24Mesh::getAddress, (bp::arg("nodeID")))
