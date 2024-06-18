@@ -216,7 +216,7 @@ void drawTopology()
     wclear(topoPad);
     wattroff(topoPad, COLOR_PAIR(1));
     mvprintw(17, 10, "Mesh Topology");
-    mvwprintw(topoPad, nodeY > 15 ? nodeY - 16 : 0, 0, "");
+    mvwaddch(topoPad, nodeY > 15 ? nodeY - 16 : 0, 0, 0);
     wattron(topoPad, COLOR_PAIR(1));
     int topoPadmaxX;
     topoPadmaxX = getmaxx(topoPad);
@@ -238,9 +238,7 @@ void drawTopology()
 
             for (int j = 0; j < mesh.addrListTop; j++) {
                 if (mesh.addrList[j].address == i) {
-                    int y = 0;
-                    int x = 0;
-                    getyx(topoPad, y, x);
+                    int x = getcurx(topoPad);
                     if (x >= topoPadmaxX) wprintw(topoPad, "\n");
                     wprintw(topoPad, "0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
                 }
@@ -258,9 +256,7 @@ void drawTopology()
 
             for (int j = 0; j < mesh.addrListTop; j++) {
                 if (mesh.addrList[j].address == i) {
-                    int y = 0;
-                    int x = 0;
-                    getyx(topoPad, y, x);
+                    int x = getcurx(topoPad);
                     if (x >= topoPadmaxX) wprintw(topoPad, "\n");
                     wprintw(topoPad, "0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
                 }
@@ -278,9 +274,7 @@ void drawTopology()
 
             for (int j = 0; j < mesh.addrListTop; j++) {
                 if (mesh.addrList[j].address == i) {
-                    int y = 0;
-                    int x = 0;
-                    getyx(topoPad, y, x);
+                    int x = getcurx(topoPad);
                     if (x >= topoPadmaxX) wprintw(topoPad, "\n");
                     wprintw(topoPad, "0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
                 }
