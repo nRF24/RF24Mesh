@@ -345,8 +345,8 @@ public:
     /**
      * Releases the specified address if leased to a mesh node's ID.
      *
-     * This is specific to master nodes, so
-     * network administrators can manage assigned addresses without involving a transaction with nodes that
+     * This is specific to master nodes, so network administrators can
+     * manage assigned addresses without notifying the nodes that
      * might be appropriating them.
      *
      * @param address The address to release from any mesh node.
