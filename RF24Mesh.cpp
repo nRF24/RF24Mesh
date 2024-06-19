@@ -329,12 +329,13 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
     uint32_t timeout = millis() + 55;
 #define MESH_MAXPOLLS 4
     uint16_t contactNode[MESH_MAXPOLLS];
+    bool signalArray[MESH_MAXPOLLS];
     uint8_t pollCount = 0;
 
     while (millis() < timeout && pollCount < MESH_MAXPOLLS) {
-#if defined(RF24MESH_DEBUG)
+
         bool goodSignal = radio.testRPD();
-#endif
+
         if (network.update() == NETWORK_POLL) {
             uint16_t contact = 0;
             memcpy(&contact, &network.frame_buffer[0], sizeof(contact));
@@ -349,6 +350,7 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
             }
             if (!isDupe) {
                 contactNode[pollCount] = contact;
+                signalArray[pollCount] = goodSignal;
                 ++pollCount;
                 IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Poll %c -64dbm from 0%o \n"), (goodSignal ? '>' : '<'), contact));
             }
@@ -362,61 +364,68 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 
     if (!pollCount) return 0;
 
-    for (uint8_t i = 0; i < pollCount; i++) {
+    for (uint8_t h = 0; h < 2; h++) {
+        for (uint8_t i = 0; i < pollCount; i++) {
 
-        bool gotResponse = 0;
-
-        // Request an address via the contact node
-        header.type = NETWORK_REQ_ADDRESS;
-        header.reserved = _nodeID;
-        header.to_node = contactNode[i];
-
-        // Do a direct write (no ack) to the contact node. Include the nodeId and address.
-        network.write(header, 0, 0, contactNode[i]);
-
-        IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Request address from: 0%o\n"), contactNode[i]));
-
-        timeout = millis() + 225;
-
-        while (millis() < timeout) {
-            if (network.update() == NETWORK_ADDR_RESPONSE) {
-                if (network.frame_buffer[7] == _nodeID) {
-                    uint16_t newAddy = 0;
-                    memcpy(&newAddy, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(newAddy));
-                    uint16_t mask = 0xFFFF;
-                    newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
-                    if (newAddy == contactNode[i]) {                      // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
-                        gotResponse = 1;                                  // address to evalute whether 'subnet' of the assigned address matches the contact node address.
-                        break;
-                    }
-                }
-            }
-            MESH_CALLBACK
-        }
-
-        if (!gotResponse) {
-            continue;
-        }
-
-        uint16_t newAddress = 0;
-        memcpy(&newAddress, network.frame_buffer + sizeof(RF24NetworkHeader), sizeof(newAddress));
-
-        IF_RF24MESH_DEBUG(printf_P(PSTR("Set address: Current: 0%o New: 0%o\n"), mesh_address, newAddress));
-        mesh_address = newAddress;
-
-        radio.stopListening();
-        network.begin(mesh_address);
-
-        // getNodeID() doesn't use auto-ack; do a double-check to manually retry 1 more time
-        if (getNodeID(mesh_address) != _nodeID) {
-            if (getNodeID(mesh_address) != _nodeID) {
-                beginDefault();
+            // If signal is weak on first run, continue, if signal is strong on second run, continue
+            if ((!h && !signalArray[i]) || (h && signalArray[i])) {
                 continue;
             }
-        }
-        return 1;
-    } // end for
+            IF_RF24MESH_DEBUG(printf_P(PSTR("Req address: %s signal\n"), signalArray[i] ? "Strong" : "Weak"));
 
+            bool gotResponse = 0;
+
+            // Request an address via the contact node
+            header.type = NETWORK_REQ_ADDRESS;
+            header.reserved = _nodeID;
+            header.to_node = contactNode[i];
+
+            // Do a direct write (no ack) to the contact node. Include the nodeId and address.
+            network.write(header, 0, 0, contactNode[i]);
+
+            IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Request address from: 0%o\n"), contactNode[i]));
+
+            timeout = millis() + 225;
+
+            while (millis() < timeout) {
+                if (network.update() == NETWORK_ADDR_RESPONSE) {
+                    if (network.frame_buffer[7] == _nodeID) {
+                        uint16_t newAddy = 0;
+                        memcpy(&newAddy, &network.frame_buffer[sizeof(RF24NetworkHeader)], sizeof(newAddy));
+                        uint16_t mask = 0xFFFF;
+                        newAddy &= ~(mask << (3 * getLevel(contactNode[i]))); // Get the level of contact node. Multiply by 3 to get the number of bits to shift (3 per digit)
+                        if (newAddy == contactNode[i]) {                      // Then shift the mask by this much, and invert it bitwise. Apply the mask to the newly received
+                            gotResponse = 1;                                  // address to evalute whether 'subnet' of the assigned address matches the contact node address.
+                            break;
+                        }
+                    }
+                }
+                MESH_CALLBACK
+            }
+
+            if (!gotResponse) {
+                continue;
+            }
+
+            uint16_t newAddress = 0;
+            memcpy(&newAddress, network.frame_buffer + sizeof(RF24NetworkHeader), sizeof(newAddress));
+
+            IF_RF24MESH_DEBUG(printf_P(PSTR("Set address: Current: 0%o New: 0%o\n"), mesh_address, newAddress));
+            mesh_address = newAddress;
+
+            radio.stopListening();
+            network.begin(mesh_address);
+
+            // getNodeID() doesn't use auto-ack; do a double-check to manually retry 1 more time
+            if (getNodeID(mesh_address) != _nodeID) {
+                if (getNodeID(mesh_address) != _nodeID) {
+                    beginDefault();
+                    continue;
+                }
+            }
+            return 1;
+        } // end for
+    }
     return 0;
 }
 
