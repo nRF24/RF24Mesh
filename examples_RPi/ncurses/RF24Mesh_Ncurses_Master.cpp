@@ -8,10 +8,13 @@
  * Requirements: NCurses
  * Install NCurses: apt-get install libncurses5-dev
  * Setup:
- * 1: make
- * 2: sudo ./RF24Mesh_Ncurses_Master
+ * 1. cd ~/RF24Mesh/examples_RPi
+ * 2. mkdir build && cd build
+ * 3. cmake ..
+ * 4. make
+ * 5. ./ncurses/RF24Mesh_Ncurses_Master
  *
- * NOTE: DEBUG MUST BE DISABLED IN RF24Mesh_config.h
+ * NOTE: RF24MESH_DEBUG MUST BE DISABLED IN RF24Mesh_config.h
  *
  * Once configured and running, the interface will display the header information, data rate,
  * and address assignments for all connected nodes.*
