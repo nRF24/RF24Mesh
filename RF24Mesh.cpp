@@ -284,7 +284,7 @@ bool ESBMesh<network_t, radio_t>::releaseAddress()
 
 /*****************************************************/
 
-#ifndef MESH_NO_MASTER
+#ifndef MESH_NOMASTER
 template<class network_t, class radio_t>
 bool ESBMesh<network_t, radio_t>::releaseAddress(uint16_t address)
 {
