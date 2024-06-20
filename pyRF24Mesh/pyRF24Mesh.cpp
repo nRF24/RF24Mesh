@@ -104,6 +104,8 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             .def("saveDHCP", &RF24Mesh::saveDHCP)
             //void loadDHCP();
             .def("loadDHCP", &RF24Mesh::loadDHCP)
+            // mesh_address
+            .def_readwrite("mesh_address", &RF24Mesh::mesh_address)
             //void setStaticAddress(uint8_t nodeID, uint16_t address);
             .def("setStaticAddress", &RF24Mesh::setStaticAddress, (bp::arg("nodeID"), bp::arg("address")));
     }
