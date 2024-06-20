@@ -66,11 +66,13 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(renewAddress_overload, RF24Mesh::renewAdd
 BOOST_PYTHON_MODULE(RF24Mesh)
 {
     {
-
+        /* Binding this class is useless unless we can properly expose RF24Mesh::addrList.
+           A converter from addrListStruct[] to bp::list<AddrListStruct> needs to be implemented.
         // ::RF24Mesh::addrListStruct
         bp::class_<RF24Mesh::addrListStruct>("addrListStruct", bp::init<>())
             .def_readonly("nodeID", &RF24Mesh::addrListStruct::nodeID)
             .def_readwrite("address", &RF24Mesh::addrListStruct::address);
+        */
 
         //::RF24Mesh
         bp::class_<RF24Mesh>("RF24Mesh", bp::init<RF24&, RF24Network&>((bp::arg("_radio"), bp::arg("_network"))))
@@ -117,8 +119,12 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             .def("loadDHCP", &RF24Mesh::loadDHCP)
             // mesh_address
             .def_readwrite("mesh_address", &RF24Mesh::mesh_address)
-            .def_readonly("addrListTop", &RF24Mesh::addrListTop)
-            .def_readonly("addrList", &RF24Mesh::addrList)
+
+            // Returning an array of wrapped addrListStruct objects in boost.python is non-trivial.
+            // I'm commenting out the members related to the RF24Mesh::addrList until a solution can be found.
+            // .def_readonly("addrListTop", &RF24Mesh::addrListTop)
+            // .def_readonly("addrList", &RF24Mesh::addrList)
+
             //void setStaticAddress(uint8_t nodeID, uint16_t address);
             .def("setStaticAddress", &RF24Mesh::setStaticAddress, (bp::arg("nodeID"), bp::arg("address")));
     }
