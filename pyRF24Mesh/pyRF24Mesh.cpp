@@ -87,12 +87,16 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             .def("setNodeID", &RF24Mesh::setNodeID, (bp::arg("nodeID")))
             //void DHCP();
             .def("DHCP", &RF24Mesh::DHCP)
-            //int16_t getNodeID(uint16_t address=MESH_BLANK_ID);
+            //int16_t getNodeID(uint16_t address);
             .def("getNodeID", &RF24Mesh::getNodeID, getNodeID_overload(bp::args("address")))
+            //int16_t getNodeID(); where address arg defaults to MESH_BLANK_ID
+            .def("getNodeID", &RF24Mesh::getNodeID, getNodeID_overload())
             //bool checkConnection();
             .def("checkConnection", &RF24Mesh::checkConnection)
-            //uint16_t renewAddress(uint32_t timeout=MESH_RENEWAL_TIMEOUT);
-            .def("renewAddress", &RF24Mesh::renewAddress, getNodeID_overload(bp::args("timeout")))
+            //uint16_t renewAddress(uint32_t timeout);
+            .def("renewAddress", &RF24Mesh::renewAddress, renewAddress_overload(bp::args("timeout")))
+            //uint16_t renewAddress(); where timeout arg defaults to MESH_RENEWAL_TIMEOUT
+            .def("renewAddress", &RF24Mesh::renewAddress, renewAddress_overload())
             //bool releaseAddress();
             .def("releaseAddress", (bool(RF24Mesh::*)()) & RF24Mesh::releaseAddress)
 #ifndef MESH_NO_MASTER
