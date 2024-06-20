@@ -101,7 +101,7 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             .def("renewAddress", &RF24Mesh::renewAddress, renewAddress_overload())
             //bool releaseAddress();
             .def("releaseAddress", (bool(RF24Mesh::*)()) & RF24Mesh::releaseAddress)
-#ifndef MESH_NO_MASTER
+#ifndef MESH_NOMASTER
             //bool releaseAddress(uint16_t address);
             .def("releaseAddress", (bool(RF24Mesh::*)(uint16_t)) & RF24Mesh::releaseAddress, (bp::args("address")))
 #endif
