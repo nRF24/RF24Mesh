@@ -65,7 +65,16 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(renewAddress_overload, RF24Mesh::renewAdd
 // ******************** RF24Mesh exposed  **************************
 BOOST_PYTHON_MODULE(RF24Mesh)
 {
-    { //::RF24Mesh
+    {
+        /* Binding this class is useless unless we can properly expose RF24Mesh::addrList.
+           A converter from addrListStruct[] to bp::list<AddrListStruct> needs to be implemented.
+        // ::RF24Mesh::addrListStruct
+        bp::class_<RF24Mesh::addrListStruct>("addrListStruct", bp::init<>())
+            .def_readonly("nodeID", &RF24Mesh::addrListStruct::nodeID)
+            .def_readwrite("address", &RF24Mesh::addrListStruct::address);
+        */
+
+        //::RF24Mesh
         bp::class_<RF24Mesh>("RF24Mesh", bp::init<RF24&, RF24Network&>((bp::arg("_radio"), bp::arg("_network"))))
             //bool begin(uint8_t channel = MESH_DEFAULT_CHANNEL, rf24_datarate_e data_rate = RF24_1MBPS, uint32_t timeout=MESH_RENEWAL_TIMEOUT );
             .def("begin", &RF24Mesh::begin, begin_overload(bp::args("channel", "data_rate", "timeout")))
@@ -80,14 +89,22 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             .def("setNodeID", &RF24Mesh::setNodeID, (bp::arg("nodeID")))
             //void DHCP();
             .def("DHCP", &RF24Mesh::DHCP)
-            //int16_t getNodeID(uint16_t address=MESH_BLANK_ID);
+            //int16_t getNodeID(uint16_t address);
             .def("getNodeID", &RF24Mesh::getNodeID, getNodeID_overload(bp::args("address")))
+            //int16_t getNodeID(); where address arg defaults to MESH_BLANK_ID
+            .def("getNodeID", &RF24Mesh::getNodeID, getNodeID_overload())
             //bool checkConnection();
             .def("checkConnection", &RF24Mesh::checkConnection)
-            //uint16_t renewAddress(uint32_t timeout=MESH_RENEWAL_TIMEOUT);
-            .def("renewAddress", &RF24Mesh::renewAddress, getNodeID_overload(bp::args("timeout")))
+            //uint16_t renewAddress(uint32_t timeout);
+            .def("renewAddress", &RF24Mesh::renewAddress, renewAddress_overload(bp::args("timeout")))
+            //uint16_t renewAddress(); where timeout arg defaults to MESH_RENEWAL_TIMEOUT
+            .def("renewAddress", &RF24Mesh::renewAddress, renewAddress_overload())
             //bool releaseAddress();
-            .def("releaseAddress", &RF24Mesh::releaseAddress)
+            .def("releaseAddress", (bool(RF24Mesh::*)()) & RF24Mesh::releaseAddress)
+#ifndef MESH_NO_MASTER
+            //bool releaseAddress(uint16_t address);
+            .def("releaseAddress", (bool(RF24Mesh::*)(uint16_t)) & RF24Mesh::releaseAddress, (bp::args("address")))
+#endif
             //int16_t getAddress(uint8_t nodeID);
             .def("getAddress", &RF24Mesh::getAddress, (bp::arg("nodeID")))
             //void setChannel(uint8_t _channel);
@@ -100,6 +117,14 @@ BOOST_PYTHON_MODULE(RF24Mesh)
             .def("saveDHCP", &RF24Mesh::saveDHCP)
             //void loadDHCP();
             .def("loadDHCP", &RF24Mesh::loadDHCP)
+            // mesh_address
+            .def_readwrite("mesh_address", &RF24Mesh::mesh_address)
+
+            // Returning an array of wrapped addrListStruct objects in boost.python is non-trivial.
+            // I'm commenting out the members related to the RF24Mesh::addrList until a solution can be found.
+            // .def_readonly("addrListTop", &RF24Mesh::addrListTop)
+            // .def_readonly("addrList", &RF24Mesh::addrList)
+
             //void setStaticAddress(uint8_t nodeID, uint16_t address);
             .def("setStaticAddress", &RF24Mesh::setStaticAddress, (bp::arg("nodeID"), bp::arg("address")));
     }
