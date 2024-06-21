@@ -8,10 +8,13 @@
  * Requirements: NCurses
  * Install NCurses: apt-get install libncurses5-dev
  * Setup:
- * 1: make
- * 2: sudo ./RF24Mesh_Ncurses_Master
+ * 1. cd ~/RF24Mesh/examples_RPi
+ * 2. mkdir build && cd build
+ * 3. cmake ..
+ * 4. make
+ * 5. ./ncurses/RF24Mesh_Ncurses_Master
  *
- * NOTE: DEBUG MUST BE DISABLED IN RF24Mesh_config.h
+ * NOTE: RF24MESH_DEBUG MUST BE DISABLED IN RF24Mesh_config.h
  *
  * Once configured and running, the interface will display the header information, data rate,
  * and address assignments for all connected nodes.*
@@ -53,7 +56,6 @@ int main()
         return 0;
     }
     radio.printDetails();
-    mesh.setStaticAddress(8, 01);
     win = initscr(); /* Start curses mode 		  */
     getmaxyx(win, maxX, maxY);
     start_color();
@@ -216,7 +218,7 @@ void drawTopology()
     wclear(topoPad);
     wattroff(topoPad, COLOR_PAIR(1));
     mvprintw(17, 10, "Mesh Topology");
-    mvwprintw(topoPad, nodeY > 15 ? nodeY - 16 : 0, 0, "");
+    mvwaddch(topoPad, nodeY > 15 ? nodeY - 16 : 0, 0, 0);
     wattron(topoPad, COLOR_PAIR(1));
     int topoPadmaxX;
     topoPadmaxX = getmaxx(topoPad);
@@ -238,9 +240,7 @@ void drawTopology()
 
             for (int j = 0; j < mesh.addrListTop; j++) {
                 if (mesh.addrList[j].address == i) {
-                    int y = 0;
-                    int x = 0;
-                    getyx(topoPad, y, x);
+                    int x = getcurx(topoPad);
                     if (x >= topoPadmaxX) wprintw(topoPad, "\n");
                     wprintw(topoPad, "0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
                 }
@@ -258,9 +258,7 @@ void drawTopology()
 
             for (int j = 0; j < mesh.addrListTop; j++) {
                 if (mesh.addrList[j].address == i) {
-                    int y = 0;
-                    int x = 0;
-                    getyx(topoPad, y, x);
+                    int x = getcurx(topoPad);
                     if (x >= topoPadmaxX) wprintw(topoPad, "\n");
                     wprintw(topoPad, "0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
                 }
@@ -278,9 +276,7 @@ void drawTopology()
 
             for (int j = 0; j < mesh.addrListTop; j++) {
                 if (mesh.addrList[j].address == i) {
-                    int y = 0;
-                    int x = 0;
-                    getyx(topoPad, y, x);
+                    int x = getcurx(topoPad);
                     if (x >= topoPadmaxX) wprintw(topoPad, "\n");
                     wprintw(topoPad, "0%o[%d] ", mesh.addrList[j].address, mesh.addrList[j].nodeID);
                 }
