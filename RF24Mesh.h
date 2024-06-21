@@ -314,6 +314,18 @@ public:
     addrListStruct* addrList;
     /** @brief The number of entries in the addrListStruct of assigned addresses. */
     uint8_t addrListTop;
+
+    /**
+     * Releases the specified address if leased to a mesh node's ID.
+     *
+     * This is specific to master nodes, so network administrators can
+     * manage assigned addresses without notifying the nodes that
+     * might be appropriating them.
+     *
+     * @param address The address to release from any mesh node.
+     * @return True if successfully released, otherwise false.
+     */
+    bool releaseAddress(uint16_t address);
 #endif
     /**@}*/
 
