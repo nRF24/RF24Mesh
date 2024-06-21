@@ -56,7 +56,6 @@ int main()
         return 0;
     }
     radio.printDetails();
-    mesh.setStaticAddress(8, 01);
     win = initscr(); /* Start curses mode 		  */
     getmaxyx(win, maxX, maxY);
     start_color();
