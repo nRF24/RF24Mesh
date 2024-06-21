@@ -327,15 +327,19 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
     network.multicast(header, 0, 0, level);
 
     uint32_t timeout = millis() + 55;
-#define MESH_MAXPOLLS 4
+#ifndef MESH_MAXPOLLS
+    #define MESH_MAXPOLLS 4
+#endif
     uint16_t contactNode[MESH_MAXPOLLS];
+#if defined NRF52_RADIO_LIBRARY
     bool signalArray[MESH_MAXPOLLS];
+#endif
     uint8_t pollCount = 0;
 
     while (millis() < timeout && pollCount < MESH_MAXPOLLS) {
-
+#if defined NRF52_RADIO_LIBRARY || defined RF24MESH_DEBUG
         bool goodSignal = radio.testRPD();
-
+#endif
         if (network.update() == NETWORK_POLL) {
             uint16_t contact = 0;
             memcpy(&contact, &network.frame_buffer[0], sizeof(contact));
@@ -350,7 +354,9 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
             }
             if (!isDupe) {
                 contactNode[pollCount] = contact;
+#if defined NRF52_RADIO_LIBRARY
                 signalArray[pollCount] = goodSignal;
+#endif
                 ++pollCount;
                 IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Poll %c -64dbm from 0%o \n"), (goodSignal ? '>' : '<'), contact));
             }
@@ -364,14 +370,17 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 
     if (!pollCount) return 0;
 
+#if defined NRF52_RADIO_LIBRARY
     for (uint8_t h = 0; h < 2; h++) {
+#endif
         for (uint8_t i = 0; i < pollCount; i++) {
-
+#if defined NRF52_RADIO_LIBRARY
             // If signal is weak on first run, continue, if signal is strong on second run, continue
             if ((!h && !signalArray[i]) || (h && signalArray[i])) {
                 continue;
             }
             IF_RF24MESH_DEBUG(printf_P(PSTR("Req address: %s signal\n"), signalArray[i] ? "Strong" : "Weak"));
+#endif
 
             bool gotResponse = 0;
 
@@ -425,7 +434,9 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
             }
             return 1;
         } // end for
+#if defined NRF52_RADIO_LIBRARY
     }
+#endif
     return 0;
 }
 
