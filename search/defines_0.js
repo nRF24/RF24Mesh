@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['if_5fmesh_5fdebug_0',['IF_MESH_DEBUG',['../RF24Mesh__config_8h.html#a8d4bf8ac17495dc172a94729a11e62ad',1,'RF24Mesh_config.h']]],
-  ['if_5fmesh_5fdebug_5fminimal_1',['IF_MESH_DEBUG_MINIMAL',['../RF24Mesh__config_8h.html#a6103680c1abbb354076da7af72753dd3',1,'RF24Mesh_config.h']]]
+  ['if_5frf24mesh_5fdebug_0',['IF_RF24MESH_DEBUG',['../RF24Mesh__config_8h.html#a2a55a0c483ba3540629d29a9cf63e84b',1,'RF24Mesh_config.h']]],
+  ['if_5frf24mesh_5fdebug_5fminimal_1',['IF_RF24MESH_DEBUG_MINIMAL',['../RF24Mesh__config_8h.html#a8d2559907bd94ebf3bf2be303ca8d7c2',1,'RF24Mesh_config.h']]]
 ];
