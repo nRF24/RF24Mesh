@@ -369,8 +369,6 @@ private:
 #if !defined(MESH_NOMASTER)
     /** Indicator that an address request is available. */
     bool doDHCP;
-    /** Just ensures we don't re-allocate the memory buffer if restarting the mesh on master. **/
-    bool addrMemAllocated;
 #endif
 
     /** Starts up the network layer with default address. */
