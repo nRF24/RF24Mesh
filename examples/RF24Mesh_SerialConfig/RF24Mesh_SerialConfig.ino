@@ -41,7 +41,7 @@ void setup() {
   while (!mesh.getNodeID()) {
     // Wait for the nodeID to be set via Serial
     if (Serial.available()) {
-      mesh.setNodeID(Serial.read());
+      mesh.setNodeID(Serial.parseInt() & 0xFF);
       Serial.print("Set NodeID: ");
       Serial.println(mesh.getNodeID());
     }

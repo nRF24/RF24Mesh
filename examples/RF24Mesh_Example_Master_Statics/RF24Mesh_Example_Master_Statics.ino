@@ -32,16 +32,7 @@ void setup() {
   }
 
   // Set the nodeID to 0 for the master node
-  mesh.setNodeID(0);
-  Serial.println(mesh.getNodeID());
-  // Connect to the mesh
-  if (!mesh.begin()) {
-    // if mesh.begin() returns false for a master node, then radio.begin() returned false.
-    Serial.println(F("Radio hardware not responding."));
-    while (1) {
-      // hold in an infinite loop
-    }
-  }
+  mesh.setNodeID(0);  // must be called before setStaticAddress()
 
   // In this case, assign a static address to nodeIDs 23,24 at RF24Network address 02 && 03
   // This will prevent this master node from assigning the address to another node
@@ -51,10 +42,20 @@ void setup() {
   // With this example, assign nodes 02 and 03 statically. This allows child nodes to join
   // the network as children of 00(master), node 02, or node 03, or as children of other
   // mesh nodes. If nodes 02 and 03 are placed in proximity to a group of mesh nodes, the
-  // mesh nodes can attatch to the network via the static nodes, and route traffic through
+  // mesh nodes can attach to the network via the static nodes, and route traffic through
   // either node, to the master node.
   mesh.setStaticAddress(23, 02);
   mesh.setStaticAddress(24, 03);
+
+  Serial.println(mesh.getNodeID());
+  // Connect to the mesh
+  if (!mesh.begin()) {
+    // if mesh.begin() returns false for a master node, then radio.begin() returned false.
+    Serial.println(F("Radio hardware not responding."));
+    while (1) {
+      // hold in an infinite loop
+    }
+  }
 }
 
 uint32_t displayTimer = 0;
