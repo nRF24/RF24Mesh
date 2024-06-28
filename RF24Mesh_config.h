@@ -69,10 +69,10 @@
 /**
  * @brief How to verify a connection
  *
- * On child nodes, determine how they verify/check their connection periodically, or when writes start to fail via the `mesh.checkConnection();`
+ * On child nodes, determine how they verify/check their connection periodically, or when writes start to fail via the `RF24Mesh::checkConnection();`
  * function.
- * Set RF24MESH_CONN_CHECK_TYPE to RF24MESH_CONN_CHECK_PARENT for the new behaviour of verifying connectivity only with their parent node
- * Set RF24MESH_CONN_CHECK_TYPE to RF24MESH_CONN_CHECK_MASTER for the old behaviour of verifying connectivity with the master node
+ * Set RF24MESH_CONN_CHECK_TYPE to @ref RF24MESH_CONN_CHECK_PARENT for the new behaviour of verifying connectivity only with their parent node.
+ * Set RF24MESH_CONN_CHECK_TYPE to @ref RF24MESH_CONN_CHECK_MASTER for the old behaviour of verifying connectivity with the master node.
  * The old behaviour typically results in more network congestion, more load on the master node, and less reliable networks,
  * but it can work well when radio conditions are good and/or when there are only a small number of nodes on the network and/or in close proximity
  * to the master node.
