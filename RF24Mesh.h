@@ -190,7 +190,9 @@ public:
     /**
      * Tests connectivity of this node to the mesh.
      * @note If this function fails, address renewal should typically be done.
-     * @return 1 if connected, 0 if mesh not responding
+     * @return 
+     * - True if connected.
+     * - False if not connected, mesh is not responding, or this node is the master node.
      */
     bool checkConnection();
 
