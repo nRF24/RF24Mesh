@@ -190,7 +190,7 @@ public:
     /**
      * Tests connectivity of this node to the mesh.
      * @note If this function fails, address renewal should typically be done.
-     * @return 
+     * @return
      * - True if connected.
      * - False if not connected, mesh is not responding, or this node is the master node.
      */
