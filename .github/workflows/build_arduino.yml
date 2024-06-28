@@ -6,6 +6,8 @@ on:
     paths:
       - ".github/workflows/build_arduino.yml"
       - "examples/**"
+      - "RF24Mesh.*"
+      - "RF24Mesh_config.h"
 
   push:
     branches: [master, v1.x]
