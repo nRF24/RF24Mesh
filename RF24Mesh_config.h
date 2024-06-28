@@ -64,6 +64,8 @@
     #define MESH_CONNECTION_CHECK_ATTEMPTS 3
 #endif
 
+#define RF24MESH_CONN_CHECK_PARENT 1
+#define RF24MESH_CONN_CHECK_MASTER 0
 /**
  * @brief How to verify a connection
  *
@@ -72,14 +74,14 @@
  * Set RF24MESH_CONN_CHECK_TYPE to RF24MESH_CONN_CHECK_PARENT for the new behaviour of verifying connectivity only with their parent node
  * Set RF24MESH_CONN_CHECK_TYPE to RF24MESH_CONN_CHECK_MASTER for the old behaviour of verifying connectivity with the master node
  * The old behaviour typically results in more network congestion, more load on the master node, and less reliable networks,
- * but can work well when radio conditions are good and/or when there are only a small number of nodes on the network and/or in close proximity
+ * but it can work well when radio conditions are good and/or when there are only a small number of nodes on the network and/or in close proximity
  * to the master node.
  */
-#define RF24MESH_CONN_CHECK_PARENT 1
-#define RF24MESH_CONN_CHECK_MASTER 0
-#define RF24MESH_CONN_CHECK_TYPE   RF24MESH_CONN_CHECK_PARENT
-// To use old behavior:
-// #define RF24MESH_CONN_CHECK_TYPE RF24MESH_CONN_CHECK_MASTER
+#ifndef RF24MESH_CONN_CHECK_TYPE
+    #define RF24MESH_CONN_CHECK_TYPE RF24MESH_CONN_CHECK_PARENT
+    // To use old behavior:
+    // #define RF24MESH_CONN_CHECK_TYPE RF24MESH_CONN_CHECK_MASTER
+#endif
 
 /**************************/
 /***       Debug        ***/

@@ -163,7 +163,7 @@ bool ESBMesh<network_t, radio_t>::checkConnection()
     RF24NetworkHeader header;
     header.to_node = network.parent();
     header.type = NETWORK_PING;
-    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; i++) {
+    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; ++i) {
         if (network.write(header, 0, 0)) {
             return true;
         }
@@ -172,7 +172,7 @@ bool ESBMesh<network_t, radio_t>::checkConnection()
 
 #else // Connection check via master node
     // getAddress() doesn't use auto-ack; check connectivity multiple times
-    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; i++) {
+    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; ++i) {
 
         int16_t result = getAddress(_nodeID);
         switch (result) {
