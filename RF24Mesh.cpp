@@ -155,7 +155,7 @@ template<class network_t, class radio_t>
 bool ESBMesh<network_t, radio_t>::checkConnection()
 {
 
-    if (!nodeID) return false;
+    if (!_nodeID) return false;
     if (mesh_address == MESH_DEFAULT_ADDRESS) return false;
 
 // Connection check via parent node
