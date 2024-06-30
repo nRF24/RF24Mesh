@@ -190,7 +190,16 @@ public:
     /**
      * Tests connectivity of this node to the mesh.
      * @note If this function fails, address renewal should typically be done.
-     * @return 1 if connected, 0 if mesh not responding
+     *
+     * The current behavior will only ping this node's parent to validate connection to mesh.
+     * Previously, this function would validate connection by looking up this node's assigned address with
+     * the master node's `RF24Mesh::addrList`.
+     * The old behavior can be mandated by changing @ref RF24MESH_CONN_CHECK_TYPE in RF24Mesh_config.h,
+     * although a large mesh network might suffer a performance cost using the old behavior.
+     *
+     * @return
+     * - True if connected.
+     * - False if not connected, mesh is not responding, or this node is the master node.
      */
     bool checkConnection();
 

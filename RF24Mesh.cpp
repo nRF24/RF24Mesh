@@ -154,8 +154,25 @@ void ESBMesh<network_t, radio_t>::setChild(bool allow)
 template<class network_t, class radio_t>
 bool ESBMesh<network_t, radio_t>::checkConnection()
 {
-    // getAddress() doesn't use auto-ack; do a double-check to manually retry 1 more time
-    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; i++) {
+
+    if (!_nodeID) return false;
+    if (mesh_address == MESH_DEFAULT_ADDRESS) return false;
+
+// Connection check via parent node
+#if RF24MESH_CONN_CHECK_TYPE == RF24MESH_CONN_CHECK_PARENT
+    RF24NetworkHeader header;
+    header.to_node = network.parent();
+    header.type = NETWORK_PING;
+    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; ++i) {
+        if (network.write(header, 0, 0)) {
+            return true;
+        }
+    }
+    return false;
+
+#else // Connection check via master node
+    // getAddress() doesn't use auto-ack; check connectivity multiple times
+    for (uint8_t i = 0; i < MESH_CONNECTION_CHECK_ATTEMPTS; ++i) {
 
         int16_t result = getAddress(_nodeID);
         switch (result) {
@@ -170,6 +187,7 @@ bool ESBMesh<network_t, radio_t>::checkConnection()
         }
     }
     return false;
+#endif
 }
 
 /*****************************************************/

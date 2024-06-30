@@ -143,10 +143,9 @@ if(DEFINED MESH_WRITE_TIMEOUT)
     message(STATUS "MESH_WRITE_TIMEOUT set to ${MESH_WRITE_TIMEOUT}")
     target_compile_definitions(${LibTargetName} PUBLIC MESH_WRITE_TIMEOUT=${MESH_WRITE_TIMEOUT})
 endif()
-# conditionally disable interruot support (a pigpio specific feature)
-if("${LibPIGPIO}" STREQUAL "LibPIGPIO-NOTFOUND" OR DEFINED RF24_NO_INTERRUPT)
-    message(STATUS "Disabling IRQ pin support")
-    target_compile_definitions(${LibTargetName} PUBLIC RF24_NO_INTERRUPT)
+if(DEFINED RF24MESH_CONN_CHECK_TYPE)
+    message(STATUS "RF24MESH_CONN_CHECK_TYPE set to ${RF24MESH_CONN_CHECK_TYPE}")
+    target_compile_definitions(${LibTargetName} PUBLIC RF24MESH_CONN_CHECK_TYPE=${RF24MESH_CONN_CHECK_TYPE})
 endif()
 
 
