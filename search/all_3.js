@@ -1,8 +1,11 @@
 var searchData=
 [
-  ['changelog_0',['Changelog',['../md_CHANGELOG.html',1,'']]],
-  ['changelog_2emd_1',['CHANGELOG.md',['../CHANGELOG_8md.html',1,'']]],
-  ['checkconnection_2',['checkConnection',['../classRF24Mesh.html#a6330a2502e680f13e6ded3ff07d71087',1,'RF24Mesh']]],
-  ['contributing_3',['CONTRIBUTING',['../md_CONTRIBUTING.html',1,'']]],
-  ['contributing_2emd_4',['CONTRIBUTING.md',['../CONTRIBUTING_8md.html',1,'']]]
+  ['3_20🗑️_20removed_0',['3 🗑️ Removed',['../md_CHANGELOG.html#autotoc_md15',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md23',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md29',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md43',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md47',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md50',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md60',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md65',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md70',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md73',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md84',1,'&lt;!-- 3 --&gt; 🗑️ Removed'],['../md_CHANGELOG.html#autotoc_md90',1,'&lt;!-- 3 --&gt; 🗑️ Removed']]],
+  ['3_201_201_203_20a_202020_2008_2017_1',['&lt;a href=&quot;https://github.com/nRF24/RF24Mesh/compare/v1.1.2...v1.1.3&quot; &gt;1.1.3&lt;/a&gt; - 2020-08-17',['../md_CHANGELOG.html#autotoc_md41',1,'']]],
+  ['3_20a_202020_2008_2017_2',['&lt;a href=&quot;https://github.com/nRF24/RF24Mesh/compare/v1.1.2...v1.1.3&quot; &gt;1.1.3&lt;/a&gt; - 2020-08-17',['../md_CHANGELOG.html#autotoc_md41',1,'']]],
+  ['3_20beta_201_200_203_20beta_20a_202015_2011_2027_3',['&lt;a href=&quot;https://github.com/nRF24/RF24Mesh/compare/v1.0.2-beta...v1.0.3-beta&quot; &gt;1.0.3-beta&lt;/a&gt; - 2015-11-27',['../md_CHANGELOG.html#autotoc_md80',1,'']]],
+  ['3_20beta_20a_202015_2011_2027_4',['&lt;a href=&quot;https://github.com/nRF24/RF24Mesh/compare/v1.0.2-beta...v1.0.3-beta&quot; &gt;1.0.3-beta&lt;/a&gt; - 2015-11-27',['../md_CHANGELOG.html#autotoc_md80',1,'']]],
+  ['3_20beta_20v1_200_204_20beta_201_200_204_20beta_20a_202015_2012_2015_5',['&lt;a href=&quot;https://github.com/nRF24/RF24Mesh/compare/v1.0.3-beta...v1.0.4-beta&quot; &gt;1.0.4-beta&lt;/a&gt; - 2015-12-15',['../md_CHANGELOG.html#autotoc_md77',1,'']]],
+  ['3_20v1_201_204_201_201_204_20a_202020_2012_2014_6',['&lt;a href=&quot;https://github.com/nRF24/RF24Mesh/compare/v1.1.3...v1.1.4&quot; &gt;1.1.4&lt;/a&gt; - 2020-12-14',['../md_CHANGELOG.html#autotoc_md37',1,'']]],
+  ['30_7',['&lt;a href=&quot;https://github.com/nRF24/RF24Mesh/compare/v1.0-beta...v1.0.1-beta&quot; &gt;1.0.1-beta&lt;/a&gt; - 2015-10-30',['../md_CHANGELOG.html#autotoc_md85',1,'']]]
 ];

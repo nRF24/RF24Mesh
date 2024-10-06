@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['📝_20documentation_0',['📝 Documentation',['../md_CHANGELOG.html#autotoc_md4',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md8',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md11',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md16',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md25',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md31',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md35',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md39',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md61',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md92',1,'&lt;!-- 8 --&gt; 📝 Documentation']]]
+];
