@@ -473,7 +473,7 @@ template<class network_t, class radio_t>
 void ESBMesh<network_t, radio_t>::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 {
 
-    if (getNodeID()) {
+    if (_nodeID) {
         return;
     }
 
