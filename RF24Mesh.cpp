@@ -453,6 +453,11 @@ void RF24Mesh::setStaticAddress(uint8_t nodeID, uint16_t address)
 
 void RF24Mesh::setAddress(uint8_t nodeID, uint16_t address, bool searchBy)
 {
+
+    if (_nodeID) {
+        return;
+    }
+
     //Look for the node in the list
     for (uint8_t i = 0; i < addrListTop; i++) {
         if (searchBy == false) {
