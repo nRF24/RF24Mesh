@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['update_0',['update',['../classRF24Mesh.html#a7a07df36e2d69a9cdaa9519e32854130',1,'RF24Mesh']]],
-  ['usage_1',['General Usage',['../md_docs_2general__usage.html',1,'']]]
+  ['tests_0',['&lt;!-- 7 --&gt;🚦 Tests',['../md_CHANGELOG.html#autotoc_md61',1,'']]],
+  ['to_20learn_20more_1',['How to learn more',['../index.html#autotoc_md113',1,'']]],
+  ['trade_2',['Tricks of Trade',['../md_docs_2general__usage.html#autotoc_md106',1,'']]],
+  ['tricks_20of_20trade_3',['Tricks of Trade',['../md_docs_2general__usage.html#autotoc_md106',1,'']]]
 ];

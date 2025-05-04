@@ -1,4 +1,5 @@
 var annotated_dup =
 [
-    [ "RF24Mesh", "classRF24Mesh.html", "classRF24Mesh" ]
+    [ "ESBMesh", "classESBMesh.html", "classESBMesh" ],
+    [ "ESBNetwork", "classESBNetwork.html", null ]
 ];

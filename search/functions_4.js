@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['loaddhcp_0',['loadDHCP',['../classRF24Mesh.html#a764ba5fe2faecc77dd5f4b87dd0ceaa1',1,'RF24Mesh']]]
+  ['getaddress_0',['getAddress',['../classESBMesh.html#afbde1f933658813250c87c084a0df846',1,'ESBMesh']]],
+  ['getnodeid_1',['getNodeID',['../classESBMesh.html#a070bfa1f5dea90e417e9131407940823',1,'ESBMesh']]]
 ];

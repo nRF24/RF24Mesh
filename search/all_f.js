@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['fixed_0',['Fixed',['../md_CHANGELOG.html#autotoc_md19',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md24',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md30',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md39',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md53',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md68',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md76',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md80',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md83',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md88',1,'&lt;!-- 4 --&gt; 🛠️ Fixed'],['../md_CHANGELOG.html#autotoc_md93',1,'&lt;!-- 4 --&gt; 🛠️ Fixed']]],
-  ['for_20rf24_20radios_1',['Mesh Networking Layer for RF24 Radios',['../index.html',1,'']]]
+  ['esbmesh_0',['ESBMesh',['../classESBMesh.html',1,'ESBMesh&lt; network_t, radio_t &gt;'],['../classESBMesh.html#a93a2718b62a65f72e1e0eea61fbfb0c0',1,'ESBMesh::ESBMesh()']]],
+  ['esbmesh_3c_20esbnetwork_3c_20rf24_20_3e_2c_20rf24_20_3e_1',['ESBMesh&lt; ESBNetwork&lt; RF24 &gt;, RF24 &gt;',['../classESBMesh.html',1,'']]],
+  ['esbnetwork_2',['ESBNetwork',['../classESBNetwork.html',1,'']]],
+  ['esbnetwork_3c_20rf24_20_3e_3',['ESBNetwork&lt; RF24 &gt;',['../classESBNetwork.html',1,'']]]
 ];
