@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['work_0',['How does it work?',['../index.html#autotoc_md107',1,'']]],
-  ['write_1',['write',['../classESBMesh.html#aceefd01852997514bdb5bc8f89e7ca55',1,'ESBMesh::write(const void *data, uint8_t msg_type, size_t size, uint8_t nodeID=0)'],['../classESBMesh.html#a39eec0fb9900722af8646a5a88df90e7',1,'ESBMesh::write(uint16_t to_node, const void *data, uint8_t msg_type, size_t size)']]]
+  ['📝_20documentation_0',['📝 Documentation',['../md_CHANGELOG.html#autotoc_md6',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md16',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md25',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md31',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md35',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md40',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md63',1,'&lt;!-- 8 --&gt; 📝 Documentation'],['../md_CHANGELOG.html#autotoc_md94',1,'&lt;!-- 8 --&gt; 📝 Documentation']]]
 ];
