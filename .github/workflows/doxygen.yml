@@ -35,5 +35,6 @@ jobs:
   build-docs:
     uses: nRF24/.github/.github/workflows/build_docs.yaml@main
     with:
+      doxygen-version: '1.13.2'
       deploy-gh-pages: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master') }}
     secrets: inherit
