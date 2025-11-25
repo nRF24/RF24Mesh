@@ -15,10 +15,15 @@ on:
       - ".github/workflows/build_arduino.yml"
       - "examples/**"
 
-jobs:
+permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
   build:
-    uses: nRF24/.github/.github/workflows/build_arduino.yaml@main
+    uses: nRF24/.github/.github/workflows/build_arduino.yaml@review-ci
     with:
       sketch-paths: |
         - examples/RF24Mesh_Example
@@ -97,5 +102,8 @@ jobs:
   # When using a matrix to compile for multiple boards, it's necessary to use a separate job for the deltas report
   report:
     needs: [build]
+    permissions:
+      # needed to post/update comment on PR threads
+      pull-requests: write
     if: github.event_name == 'pull_request'
-    uses: nRF24/.github/.github/workflows/arduino_size_deltas.yaml@main
+    uses: nRF24/.github/.github/workflows/arduino_size_deltas.yaml@review-ci
