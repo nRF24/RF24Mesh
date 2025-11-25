@@ -15,6 +15,11 @@ concurrency:
 jobs:
   check:
     uses: nRF24/.github/.github/workflows/cpp_lint.yaml@review-ci
+    permissions:
+      # needed to detect changed files
+      contents: read
+      # needed to post review suggestions on PRs
+      pull-requests: write
     with:
       ignore: examples/old_backups|utility/RPi/bcm2835.h|utility/RPi/bcm2835.c
       extensions: ino,c,cpp,h
