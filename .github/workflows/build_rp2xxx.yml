@@ -1,4 +1,4 @@
-name: Pico SDK build
+name: Pico SDK
 
 on:
   push:
@@ -20,8 +20,13 @@ on:
       - "cmake/**"
       - "examples_pico/*"
 
-jobs:
+permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
   build:
     uses: nRF24/.github/.github/workflows/build_pico_sdk.yaml@main
     with:

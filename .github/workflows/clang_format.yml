@@ -1,14 +1,25 @@
-name: check code formatting
+name: Code format
 
 on:
-    push:
-        branches: [master, v1.x]
-    pull_request:
-        branches: [master, v1.x]
+  push:
+    branches: [master, v1.x]
+  pull_request:
+    branches: [master, v1.x]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
-    check_formatting:
-        uses: nRF24/.github/.github/workflows/cpp_lint.yaml@main
-        with:
-          ignore: examples/old_backups|utility/RPi/bcm2835.h|utility/RPi/bcm2835.c
-          extensions: ino,c,cpp,h
+  check:
+    uses: nRF24/.github/.github/workflows/cpp_lint.yaml@main
+    permissions:
+      # needed to detect changed files
+      contents: read
+      # needed to post review suggestions on PRs
+      pull-requests: write
+    with:
+      ignore: examples/old_backups|utility/RPi/bcm2835.h|utility/RPi/bcm2835.c
+      extensions: ino,c,cpp,h

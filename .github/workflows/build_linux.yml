@@ -1,4 +1,4 @@
-name: Linux build
+name: Linux
 
 on:
   pull_request:
@@ -28,16 +28,16 @@ on:
       - "!**Makefile" # old build system is not tested in this workflow
       - "pyRF24Mesh/*"
       - ".github/workflows/build_linux.yml"
-  release:
-    types: [created]
+    tags: ["*"]
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
-
-  using_cmake:
+  build:
     uses: nRF24/.github/.github/workflows/build_linux_cmake.yaml@main
     with:
       rf24network-ref: v1.x
@@ -45,7 +45,6 @@ jobs:
       compiler: ${{ matrix.toolchain.compiler }}
       usr-dir: ${{ matrix.toolchain.usr_dir }}
       examples-path: examples_RPi
-      deploy-release: ${{ github.event_name == 'release' && (matrix.toolchain.compiler == 'armhf' || matrix.toolchain.compiler == 'arm64') }}
       py-wrapper-path: pyRF24Mesh
     strategy:
       fail-fast: false
@@ -61,3 +60,13 @@ jobs:
           #   usr_dir: "i686-linux-gnu"
           - compiler: "default" # github runner is hosted on a "amd64"
             usr_dir: "local"
+
+  deploy:
+    name: deploy release assets
+    needs: [build]
+    permissions:
+      # needed for uploading release assets
+      contents: write
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: nRF24/.github/.github/workflows/deploy_cpack_artifacts.yaml@main
+    secrets: inherit
