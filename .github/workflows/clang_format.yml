@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   check:
-    uses: nRF24/.github/.github/workflows/cpp_lint.yaml@review-ci
+    uses: nRF24/.github/.github/workflows/cpp_lint.yaml@main
     permissions:
       # needed to detect changed files
       contents: read

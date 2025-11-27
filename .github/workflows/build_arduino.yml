@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   build:
-    uses: nRF24/.github/.github/workflows/build_arduino.yaml@review-ci
+    uses: nRF24/.github/.github/workflows/build_arduino.yaml@main
     with:
       sketch-paths: |
         - examples/RF24Mesh_Example
@@ -106,4 +106,4 @@ jobs:
       # needed to post/update comment on PR threads
       pull-requests: write
     if: github.event_name == 'pull_request'
-    uses: nRF24/.github/.github/workflows/arduino_size_deltas.yaml@review-ci
+    uses: nRF24/.github/.github/workflows/arduino_size_deltas.yaml@main

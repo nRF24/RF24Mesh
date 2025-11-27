@@ -38,7 +38,7 @@ concurrency:
 
 jobs:
   build:
-    uses: nRF24/.github/.github/workflows/build_docs.yaml@review-ci
+    uses: nRF24/.github/.github/workflows/build_docs.yaml@main
     with:
       doxygen-version: '1.15.0'
 
@@ -50,5 +50,5 @@ jobs:
       id-token: write
       # to upload to GitHub Pages
       pages: write
-    uses: nRF24/.github/.github/workflows/deploy_docs.yaml@review-ci
+    uses: nRF24/.github/.github/workflows/deploy_docs.yaml@main
     secrets: inherit
