@@ -1,0 +1,30 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.py text eol=lf
+*.rst text eol=lf
+*.sh text eol=lf
+*.h text eol=lf
+*.cpp text eol=lf
+*.c text eol=lf
+.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.properties text eol=lf
+LICENSE text eol=lf
+nurfile text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.clang-format text eol=lf
+.clang-tidy text eol=lf
+Makefile text eol=lf
+*.svg text eol=lf
+*.ino text eol=lf
+*.dot text eol=lf
+*.cmake text eol=lf
+*.css text eol=lf
+Doxyfile text eol=lf
