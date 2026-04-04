@@ -41,7 +41,7 @@
 #else
     #include <RF24.h>
     #include <RF24Network.h>
-    #if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840)
+    #if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_NRF54L15)
         #include <nrf_to_nrf.h>
     #endif
 #endif
@@ -50,7 +50,7 @@
 #include <stdint.h>
 
 class RF24;
-#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833)
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833) || defined(ARDUINO_NRF54L15)
 class nrf_to_nrf;
 #endif
 
@@ -403,7 +403,7 @@ private:
  * ```
  */
 typedef ESBMesh<ESBNetwork<RF24>, RF24> RF24Mesh;
-#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833)
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_ARCH_NRF52833) || defined(ARDUINO_NRF54L15)
 typedef ESBMesh<ESBNetwork<nrf_to_nrf>, nrf_to_nrf> RF52Mesh;
 #endif
 

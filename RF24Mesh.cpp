@@ -653,6 +653,6 @@ void ESBMesh<network_t, radio_t>::setCallback(void (*meshCallback)(void))
 
 // ensure the compiler is aware of the possible datatype for the template class
 template class ESBMesh<ESBNetwork<RF24>, RF24>;
-#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840)
+#if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_NRF54L15)
 template class ESBMesh<ESBNetwork<nrf_to_nrf>, nrf_to_nrf>;
 #endif
