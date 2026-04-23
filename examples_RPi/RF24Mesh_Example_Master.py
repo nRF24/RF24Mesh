@@ -29,7 +29,7 @@ try:
         mesh.update()
         mesh.DHCP()
 
-        # The following code can be commented out in a production environment to limit
+        # The following code can be un-commented in a production environment to limit
         # the authorized nodes to a specified list of nodes. Any nodes not in this list
         # will be de-allocated. Can be run on a timer.
         # AUTHORIZED NODES LIST:

@@ -68,7 +68,7 @@ void loop() {
   // be assigned to the sensor nodes
   mesh.DHCP();
 
-  // The following code can be commented out in a production environment to limit the authorized nodes
+  // The following code can be un-commented in a production environment to limit the authorized nodes
   // to a specified list of nodes. Any nodes not in this list will be de-allocated. Can be run on a timer.
   // AUTHORIZED NODES LIST:
   /*for(int i=0; i< mesh.addrListTop; i++){
