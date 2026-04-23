@@ -29,6 +29,14 @@ try:
         mesh.update()
         mesh.DHCP()
 
+        # The following code can be commented out in a production environment to limit
+        # the authorized nodes to a specified list of nodes. Any nodes not in this list
+        # will be de-allocated. Can be run on a timer.
+        # AUTHORIZED NODES LIST:
+        # for i in range(mesh.addrListTop):
+        #     if mesh.addrList[i].nodeID not in (2, 3, 4):
+        #         mesh.addrList[i].address = 0
+
         while network.available():
             header, payload = network.read(struct.calcsize("L"))
             print(f"Received message {header.toString()}")
