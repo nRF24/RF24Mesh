@@ -504,8 +504,7 @@ void ESBMesh<network_t, radio_t>::setAddress(uint8_t nodeID, uint16_t address, b
     }
 
     if (addrListTop > 0 && addrListTop % MESH_MEM_ALLOC_SIZE == 0) {
-        addrListStruct* newList =
-            (addrListStruct*)realloc(addrList, (addrListTop + MESH_MEM_ALLOC_SIZE) * sizeof(addrListStruct));
+        addrListStruct* newList = (addrListStruct*)realloc(addrList, (addrListTop + MESH_MEM_ALLOC_SIZE) * sizeof(addrListStruct));
         if (!newList) {
             return;
         }
