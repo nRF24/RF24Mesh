@@ -450,7 +450,7 @@ void ESBMesh<network_t, radio_t>::setNodeID(uint8_t nodeID)
 {
     _nodeID = nodeID;
 #if !defined(MESH_NOMASTER)
-    if (!nodeID && addrList == nullptr) {
+    if (nodeID == 0 && addrList == nullptr) {
         addrList = (addrListStruct*)malloc((MESH_MEM_ALLOC_SIZE * sizeof(addrListStruct)));
         if (!addrList) {
             return;
