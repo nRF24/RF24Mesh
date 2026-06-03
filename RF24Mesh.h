@@ -40,10 +40,10 @@
     #define RF24_LINUX
 #else
     #include <RF24.h>
-    #include <RF24Network.h>
     #if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_NRF54L15)
         #include <nrf_to_nrf.h>
     #endif
+    #include <RF24Network.h>
 #endif
 
 #include <stddef.h>
@@ -378,8 +378,6 @@ private:
 #if !defined(MESH_NOMASTER)
     /** Indicator that an address request is available. */
     bool doDHCP;
-    /** Just ensures we don't re-allocate the memory buffer if restarting the mesh on master. **/
-    bool addrMemAllocated;
 #endif
 
     /** Starts up the network layer with default address. */
