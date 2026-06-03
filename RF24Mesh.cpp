@@ -16,7 +16,8 @@ ESBMesh<network_t, radio_t>::ESBMesh(radio_t& _radio, network_t& _network) : rad
     setCallback(NULL);
     meshStarted = false;
 #if !defined(MESH_NOMASTER)
-    addrMemAllocated = false;
+    addrList = nullptr;
+    addrListTop = 0;
 #endif
 }
 
@@ -42,14 +43,6 @@ bool ESBMesh<network_t, radio_t>::begin(uint8_t channel, rf24_datarate_e data_ra
         }
     }
     else {
-#if !defined(MESH_NOMASTER)
-        if (!addrMemAllocated) {
-            addrMemAllocated = true;
-            addrList = (addrListStruct*)malloc((MESH_MEM_ALLOC_SIZE * sizeof(addrListStruct)));
-            addrListTop = 0;
-            loadDHCP();
-        }
-#endif
         mesh_address = 0;
         network.begin(mesh_address);
     }
@@ -456,6 +449,12 @@ template<class network_t, class radio_t>
 void ESBMesh<network_t, radio_t>::setNodeID(uint8_t nodeID)
 {
     _nodeID = nodeID;
+#if !defined(MESH_NOMASTER)
+    if (!nodeID && addrList == nullptr) {
+        addrList = (addrListStruct*)malloc((MESH_MEM_ALLOC_SIZE * sizeof(addrListStruct)));
+        loadDHCP();
+    }
+#endif
 }
 
 /*****************************************************/
