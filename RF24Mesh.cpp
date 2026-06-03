@@ -455,6 +455,7 @@ void ESBMesh<network_t, radio_t>::setNodeID(uint8_t nodeID)
         if (!addrList) {
             return;
         }
+        addrListTop = 0;
         loadDHCP();
     }
 #endif
