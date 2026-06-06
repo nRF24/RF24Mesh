@@ -450,8 +450,12 @@ void ESBMesh<network_t, radio_t>::setNodeID(uint8_t nodeID)
 {
     _nodeID = nodeID;
 #if !defined(MESH_NOMASTER)
-    if (!nodeID && addrList == nullptr) {
+    if (nodeID == 0 && addrList == nullptr) {
         addrList = (addrListStruct*)malloc((MESH_MEM_ALLOC_SIZE * sizeof(addrListStruct)));
+        if (!addrList) {
+            return;
+        }
+        addrListTop = 0;
         loadDHCP();
     }
 #endif
@@ -500,7 +504,14 @@ void ESBMesh<network_t, radio_t>::setAddress(uint8_t nodeID, uint16_t address, b
     }
 
     if (addrListTop > 0 && addrListTop % MESH_MEM_ALLOC_SIZE == 0) {
-        addrList = (addrListStruct*)realloc(addrList, (addrListTop + MESH_MEM_ALLOC_SIZE) * sizeof(addrListStruct));
+        addrListStruct* newList = (addrListStruct*)realloc(addrList, (addrListTop + MESH_MEM_ALLOC_SIZE) * sizeof(addrListStruct));
+        if (!newList) {
+            return;
+        }
+        addrList = newList;
+    }
+    if (!addrList) {
+        return;
     }
     addrList[addrListTop].address = address;
     addrList[addrListTop++].nodeID = nodeID; //Set the value AND increment Top without another line of code
