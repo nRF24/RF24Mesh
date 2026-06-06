@@ -109,12 +109,12 @@ bool ESBMesh<network_t, radio_t>::write(const void* data, uint8_t msg_type, size
     if (mesh_address == MESH_DEFAULT_ADDRESS) return 0;
 
     int16_t toNode = 0;
-    uint32_t lookupTimeout = millis() + MESH_WRITE_TIMEOUT;
+    uint32_t lookupStart = millis();
     uint32_t retryDelay = 5;
 
     if (nodeID) {
         while ((toNode = getAddress(nodeID)) < 0) {
-            if (millis() > lookupTimeout || toNode == -2) {
+            if (millis() - lookupStart > MESH_WRITE_TIMEOUT || toNode == -2) {
                 return 0;
             }
             retryDelay += 10;
@@ -349,12 +349,12 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
     IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Poll Level %d\n"), level));
     network.multicast(header, 0, 0, level);
 
-    uint32_t timeout = millis() + 55;
+    const uint32_t pollStart = millis();
 #define MESH_MAXPOLLS 4
     uint16_t contactNode[MESH_MAXPOLLS];
     uint8_t pollCount = 0;
 
-    while (millis() < timeout && pollCount < MESH_MAXPOLLS) {
+    while (millis() - pollStart < 55 && pollCount < MESH_MAXPOLLS) {
 #if defined(RF24MESH_DEBUG)
         bool goodSignal = radio.testRPD();
 #endif
@@ -399,9 +399,9 @@ bool ESBMesh<network_t, radio_t>::requestAddress(uint8_t level)
 
         IF_RF24MESH_DEBUG(printf_P(PSTR("MSH Request address from: 0%o\n"), contactNode[i]));
 
-        timeout = millis() + 225;
+        const uint32_t responseStart = millis();
 
-        while (millis() < timeout) {
+        while (millis() - responseStart < 225) {
             if (network.update() == NETWORK_ADDR_RESPONSE) {
                 if (network.frame_buffer[7] == _nodeID) {
                     uint16_t newAddy = 0;
