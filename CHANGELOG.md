@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!-- markdownlint-disable MD024 -->
 
+## [2.1.1] - 2026-06-06
+
+### <!-- 1 --> 🚀 Added
+
+- Add authorized-nodes filtering example to all master examples by \@Copilot in [#265](https://github.com/nRF24/RF24Mesh/pull/265)
+- Move allocation of `addrList` into `setNodeID()` by \@2bndy5 in [#248](https://github.com/nRF24/RF24Mesh/pull/248)
+
+### <!-- 9 --> 🗨️ Changed
+
+- Inform AI agents about dev workflows by \@2bndy5 in [#267](https://github.com/nRF24/RF24Mesh/pull/267)
+- Include network after nrf_to_nrf by \@TMRh20 in [#269](https://github.com/nRF24/RF24Mesh/pull/269)
+- Replace rollover-unsafe `millis()` deadlines with elapsed-time checks by \@Copilot in [#270](https://github.com/nRF24/RF24Mesh/pull/270)
+- Handle addrList allocation failures safely in RF24Mesh master nodes by \@Copilot in [#266](https://github.com/nRF24/RF24Mesh/pull/266)
+
+[2.1.1]: https://github.com/nRF24/RF24Mesh/compare/v2.1.0...v2.1.1
+
+Full commit diff: [`v2.1.0...v2.1.1`][2.1.1]
+
+## New Contributors
+
+- \@Copilot made their first contribution in [#266](https://github.com/nRF24/RF24Mesh/pull/266)
+
 ## [2.1.0] - 2026-04-08
 
 ### <!-- 9 --> 🗨️ Changed
@@ -15,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Revise CI by \@2bndy5 in [#262](https://github.com/nRF24/RF24Mesh/pull/262)
 - Modify call to reusable PIO workflow by \@2bndy5 in [`08a1ec3`](https://github.com/nRF24/RF24Mesh/commit/08a1ec346e3c234c2fdd9b08237579a04733e026)
 - NRF54l15 support by \@TMRh20 in [#263](https://github.com/nRF24/RF24Mesh/pull/263)
+- Bump version to v2.1.0 by \@TMRh20 in [`d731b47`](https://github.com/nRF24/RF24Mesh/commit/d731b4710acd69a1eed988d28c015f348e1a5019)
 
 [2.1.0]: https://github.com/nRF24/RF24Mesh/compare/v2.0.3...v2.1.0
 
