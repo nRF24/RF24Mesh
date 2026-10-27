@@ -9,6 +9,9 @@
 #if defined(__linux) && !defined(__ARDUINO_X86__)
     #include <fstream>
 #endif
+#if defined(RF24NETWORK_CCM)
+    #include <RF24Network/RF24CCM.h>
+#endif
 
 template<class network_t, class radio_t>
 ESBMesh<network_t, radio_t>::ESBMesh(radio_t& _radio, network_t& _network) : radio(_radio), network(_network)
@@ -663,6 +666,9 @@ void ESBMesh<network_t, radio_t>::setCallback(void (*meshCallback)(void))
 
 // ensure the compiler is aware of the possible datatype for the template class
 template class ESBMesh<ESBNetwork<RF24>, RF24>;
+#if defined(RF24NETWORK_CCM)
+template class ESBMesh<ESBNetwork<RF24CCM>, RF24CCM>;
+#endif
 #if defined(ARDUINO_ARCH_NRF52) || defined(ARDUINO_ARCH_NRF52840) || defined(ARDUINO_NRF54L15)
 template class ESBMesh<ESBNetwork<nrf_to_nrf>, nrf_to_nrf>;
 #endif
