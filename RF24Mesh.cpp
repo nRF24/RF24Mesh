@@ -317,7 +317,7 @@ bool ESBMesh<network_t, radio_t>::releaseAddress(uint16_t address)
 template<class network_t, class radio_t>
 uint16_t ESBMesh<network_t, radio_t>::renewAddress(uint32_t timeout)
 {
-    if(!_nodeID) return true;
+    if (!_nodeID) return true;
 
     if (radio.available()) network.update();
 
