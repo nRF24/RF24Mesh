@@ -198,8 +198,8 @@ public:
      * although a large mesh network might suffer a performance cost using the old behavior.
      *
      * @return
-     * - True if connected.
-     * - False if not connected, mesh is not responding, or this node is the master node.
+     * - True if connected or this is the master node
+     * - False if not connected, mesh is not responding
      */
     bool checkConnection();
 

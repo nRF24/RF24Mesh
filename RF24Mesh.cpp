@@ -151,7 +151,7 @@ template<class network_t, class radio_t>
 bool ESBMesh<network_t, radio_t>::checkConnection()
 {
 
-    if (!_nodeID) return false;
+    if (!_nodeID) return true;
     if (mesh_address == MESH_DEFAULT_ADDRESS) return false;
 
 // Connection check via parent node
@@ -317,6 +317,8 @@ bool ESBMesh<network_t, radio_t>::releaseAddress(uint16_t address)
 template<class network_t, class radio_t>
 uint16_t ESBMesh<network_t, radio_t>::renewAddress(uint32_t timeout)
 {
+    if (!_nodeID) return true;
+
     if (radio.available()) network.update();
 
     uint8_t reqCounter = 0;
